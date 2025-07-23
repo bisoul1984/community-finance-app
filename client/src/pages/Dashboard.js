@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CreateLoan from './CreateLoan';
 import BrowseLoans from './BrowseLoans';
+import LoanHistory from './LoanHistory';
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('main');
@@ -220,6 +221,46 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
             </nav>
             <BrowseLoans user={user} />
+          </div>
+        );
+      case 'loan-history':
+      case 'investment-history':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                {currentView === 'loan-history' ? 'Loan History' : 'Investment History'}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <LoanHistory user={user} />
           </div>
         );
       default:
