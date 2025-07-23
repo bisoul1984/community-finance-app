@@ -7,6 +7,17 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['borrower', 'lender', 'admin'], default: 'borrower' },
   status: { type: String, enum: ['active', 'suspended', 'pending'], default: 'active' },
   reputation: { type: Number, default: 0 },
+  emailPreferences: {
+    loanUpdates: { type: Boolean, default: true },
+    paymentReminders: { type: Boolean, default: true },
+    accountAlerts: { type: Boolean, default: true },
+    marketingEmails: { type: Boolean, default: false }
+  },
+  emailVerified: { type: Boolean, default: false },
+  verificationCode: { type: String },
+  verificationCodeExpires: { type: Date },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema); 

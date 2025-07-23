@@ -2,6 +2,7 @@ const express = require('express');
 const Loan = require('../models/Loan');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const NotificationHelper = require('../services/notificationHelper');
 const router = express.Router();
 
 // Apply auth middleware to all routes
@@ -76,6 +77,14 @@ router.post('/create', async (req, res) => {
     });
 
     await loan.save();
+    
+    // Send loan submitted notification
+    await NotificationHelper.sendLoanSubmittedNotification(
+      borrowerId, 
+      amount, 
+      loan._id
+    );
+    
     res.status(201).json(loan);
   } catch (err) {
     console.error('Error creating loan:', err);
@@ -173,6 +182,25 @@ router.post('/repay/:loanId', async (req, res) => {
     }
 
     await loan.save();
+    
+    // Send payment received notification
+    const remainingBalance = loan.amount - loan.totalRepaid;
+    await NotificationHelper.sendPaymentReceivedNotification(
+      borrowerId,
+      amount,
+      loan._id,
+      remainingBalance
+    );
+    
+    // If loan is fully repaid, send completion notification
+    if (loan.status === 'completed') {
+      await NotificationHelper.sendLoanRepaidNotification(
+        borrowerId,
+        loan._id,
+        loan.amount
+      );
+    }
+    
     res.json(loan);
   } catch (err) {
     console.error('Error repaying loan:', err);
