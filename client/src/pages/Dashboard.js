@@ -5,7 +5,6 @@ import LoanHistory from './LoanHistory';
 import RepaymentTracker from './RepaymentTracker';
 import CommunityVerification from './CommunityVerification';
 import AdminPanel from './AdminPanel';
-import NotificationCenter from '../components/NotificationCenter';
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('main');
@@ -227,7 +226,6 @@ const Dashboard = ({ user, onLogout }) => {
           Welcome, {user.name}!
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <NotificationCenter />
           <span>Role: {user.role}</span>
           <button 
             onClick={onLogout}
