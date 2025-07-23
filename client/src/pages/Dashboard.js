@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import CreateLoan from './CreateLoan';
 import BrowseLoans from './BrowseLoans';
 import LoanHistory from './LoanHistory';
+import RepaymentTracker from './RepaymentTracker';
+import CommunityVerification from './CommunityVerification';
+import AdminPanel from './AdminPanel';
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('main');
@@ -43,6 +46,21 @@ const Dashboard = ({ user, onLogout }) => {
           Request New Loan
         </button>
         <button 
+          onClick={() => setCurrentView('repayment-tracker')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#dc2626', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Track Repayments
+        </button>
+        <button 
           onClick={() => setCurrentView('loan-history')}
           style={{ 
             padding: '0.75rem 1.5rem', 
@@ -56,6 +74,21 @@ const Dashboard = ({ user, onLogout }) => {
           }}
         >
           View Loan History
+        </button>
+        <button 
+          onClick={() => setCurrentView('community-verification')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#7c3aed', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Community Verification
         </button>
       </div>
     </div>
@@ -112,6 +145,76 @@ const Dashboard = ({ user, onLogout }) => {
         >
           View Investment History
         </button>
+        <button 
+          onClick={() => setCurrentView('community-verification')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#7c3aed', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Community Verification
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderAdminDashboard = () => (
+    <div style={{ padding: '2rem' }}>
+      <h2 style={{ color: '#1e40af', marginBottom: '1rem' }}>Admin Dashboard</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>System Status</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#059669' }}>Active</p>
+          <p style={{ color: '#6b7280' }}>All systems operational</p>
+        </div>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Admin Access</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>Full</p>
+          <p style={{ color: '#6b7280' }}>Complete system control</p>
+        </div>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Security Level</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>High</p>
+          <p style={{ color: '#6b7280' }}>Enhanced protection</p>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <button 
+          onClick={() => setCurrentView('admin-panel')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#dc2626', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          System Management
+        </button>
+        <button 
+          onClick={() => setCurrentView('community-verification')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#7c3aed', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Community Verification
+        </button>
       </div>
     </div>
   );
@@ -139,12 +242,52 @@ const Dashboard = ({ user, onLogout }) => {
           </button>
         </div>
       </nav>
-      {user.role === 'borrower' ? renderBorrowerDashboard() : renderLenderDashboard()}
+      {user.role === 'admin' ? renderAdminDashboard() : 
+       user.role === 'borrower' ? renderBorrowerDashboard() : renderLenderDashboard()}
     </div>
   );
 
   const renderCurrentView = () => {
     switch (currentView) {
+      case 'admin-panel':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                System Management
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <AdminPanel user={user} />
+          </div>
+        );
       case 'create-loan':
         return (
           <div>
@@ -182,6 +325,84 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
             </nav>
             <CreateLoan user={user} onLoanCreated={() => setCurrentView('main')} />
+          </div>
+        );
+      case 'repayment-tracker':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Repayment Tracker
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <RepaymentTracker user={user} />
+          </div>
+        );
+      case 'community-verification':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Community Verification
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <CommunityVerification user={user} />
           </div>
         );
       case 'browse-loans':

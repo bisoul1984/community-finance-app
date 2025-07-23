@@ -1,7 +1,11 @@
 const express = require('express');
 const Loan = require('../models/Loan');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 const router = express.Router();
+
+// Apply auth middleware to all routes
+router.use(auth);
 
 // Get all loan requests (for lenders to browse)
 router.get('/requests', async (req, res) => {
@@ -18,8 +22,13 @@ router.get('/requests', async (req, res) => {
 // Get user's loans (borrower's loans or lender's investments)
 router.get('/user/:userId', async (req, res) => {
   try {
+    console.log('GET /user/:userId - Request params:', req.params);
+    console.log('GET /user/:userId - Authenticated user:', req.user);
+    
     const { userId } = req.params;
     const user = await User.findById(userId);
+    
+    console.log('GET /user/:userId - Found user:', user ? user.name : 'User not found');
     
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
@@ -28,18 +37,22 @@ router.get('/user/:userId', async (req, res) => {
     let loans;
     if (user.role === 'borrower') {
       // Get loans where user is the borrower
+      console.log('GET /user/:userId - Fetching borrower loans for:', user.name);
       loans = await Loan.find({ borrower: userId })
         .populate('lenders.lender', 'name email')
         .sort({ createdAt: -1 });
     } else {
       // Get loans where user is a lender
+      console.log('GET /user/:userId - Fetching lender investments for:', user.name);
       loans = await Loan.find({ 'lenders.lender': userId })
         .populate('borrower', 'name email')
         .sort({ createdAt: -1 });
     }
 
+    console.log('GET /user/:userId - Found loans:', loans.length);
     res.json(loans);
   } catch (err) {
+    console.error('Error fetching user loans:', err);
     res.status(500).json({ message: 'Server error.' });
   }
 });
@@ -47,11 +60,12 @@ router.get('/user/:userId', async (req, res) => {
 // Create a new loan request
 router.post('/create', async (req, res) => {
   try {
-    const { borrowerId, amount, purpose, term } = req.body;
+    const { amount, purpose, term } = req.body;
+    const borrowerId = req.user.id; // Use authenticated user's ID
     
     const borrower = await User.findById(borrowerId);
     if (!borrower || borrower.role !== 'borrower') {
-      return res.status(400).json({ message: 'Invalid borrower.' });
+      return res.status(400).json({ message: 'Only borrowers can create loan requests.' });
     }
 
     const loan = new Loan({
@@ -64,6 +78,7 @@ router.post('/create', async (req, res) => {
     await loan.save();
     res.status(201).json(loan);
   } catch (err) {
+    console.error('Error creating loan:', err);
     res.status(500).json({ message: 'Server error.' });
   }
 });
@@ -72,7 +87,13 @@ router.post('/create', async (req, res) => {
 router.post('/fund/:loanId', async (req, res) => {
   try {
     const { loanId } = req.params;
-    const { lenderId, amount } = req.body;
+    const { amount } = req.body;
+    const lenderId = req.user.id; // Use authenticated user's ID
+
+    const lender = await User.findById(lenderId);
+    if (!lender || lender.role !== 'lender') {
+      return res.status(400).json({ message: 'Only lenders can fund loans.' });
+    }
 
     const loan = await Loan.findById(loanId);
     if (!loan) {
@@ -90,7 +111,8 @@ router.post('/fund/:loanId', async (req, res) => {
     // Add lender to the loan
     loan.lenders.push({
       lender: lenderId,
-      amount
+      amount,
+      fundedAt: new Date()
     });
 
     loan.fundedAmount += amount;
@@ -105,6 +127,7 @@ router.post('/fund/:loanId', async (req, res) => {
     await loan.save();
     res.json(loan);
   } catch (err) {
+    console.error('Error funding loan:', err);
     res.status(500).json({ message: 'Server error.' });
   }
 });
@@ -114,10 +137,20 @@ router.post('/repay/:loanId', async (req, res) => {
   try {
     const { loanId } = req.params;
     const { amount } = req.body;
+    const borrowerId = req.user.id; // Use authenticated user's ID
+
+    const borrower = await User.findById(borrowerId);
+    if (!borrower || borrower.role !== 'borrower') {
+      return res.status(400).json({ message: 'Only borrowers can make repayments.' });
+    }
 
     const loan = await Loan.findById(loanId);
     if (!loan) {
       return res.status(404).json({ message: 'Loan not found.' });
+    }
+
+    if (loan.borrower.toString() !== borrowerId) {
+      return res.status(403).json({ message: 'You can only repay your own loans.' });
     }
 
     if (loan.status !== 'funded' && loan.status !== 'active') {
@@ -126,7 +159,8 @@ router.post('/repay/:loanId', async (req, res) => {
 
     loan.repayments.push({
       amount,
-      status: 'completed'
+      status: 'completed',
+      date: new Date()
     });
 
     loan.totalRepaid += amount;
@@ -141,6 +175,7 @@ router.post('/repay/:loanId', async (req, res) => {
     await loan.save();
     res.json(loan);
   } catch (err) {
+    console.error('Error repaying loan:', err);
     res.status(500).json({ message: 'Server error.' });
   }
 });

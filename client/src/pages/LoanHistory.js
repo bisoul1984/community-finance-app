@@ -7,15 +7,24 @@ const LoanHistory = ({ user }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    console.log('LoanHistory component mounted with user:', user);
     fetchUserLoans();
   }, []);
 
   const fetchUserLoans = async () => {
     try {
+      console.log('Attempting to fetch loans for user ID:', user.id);
+      console.log('User object:', user);
+      console.log('Token in localStorage:', localStorage.getItem('token'));
+      
       const data = await getUserLoans(user.id);
+      console.log('Successfully fetched loans:', data);
       setLoans(data);
     } catch (err) {
-      setError('Failed to load loan history.');
+      console.error('Detailed error in fetchUserLoans:', err);
+      console.error('Error response:', err.response);
+      console.error('Error message:', err.message);
+      setError(`Failed to load loan history: ${err.response?.data?.message || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -52,7 +61,21 @@ const LoanHistory = ({ user }) => {
   if (error) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center', color: '#dc2626' }}>
-        {error}
+        <p>{error}</p>
+        <button 
+          onClick={fetchUserLoans}
+          style={{ 
+            marginTop: '1rem',
+            padding: '0.5rem 1rem', 
+            backgroundColor: '#2563eb', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer'
+          }}
+        >
+          Retry
+        </button>
       </div>
     );
   }

@@ -15,13 +15,17 @@ const Login = ({ onLogin }) => {
     setError('');
     setSuccess('');
     try {
+      console.log('Attempting login with:', form);
       const response = await login(form);
+      console.log('Login response:', response);
+      console.log('Token stored:', localStorage.getItem('token'));
       setSuccess('Login successful!');
       // Call onLogin with user data after successful login
       setTimeout(() => {
         onLogin(response.user);
       }, 1000);
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed.');
     }
   };

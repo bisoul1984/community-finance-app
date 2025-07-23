@@ -5,7 +5,7 @@ const BrowseLoans = ({ user }) => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [fundingAmount, setFundingAmount] = useState({});
+  const [fundingAmounts, setFundingAmounts] = useState({});
 
   useEffect(() => {
     fetchLoans();
@@ -23,29 +23,26 @@ const BrowseLoans = ({ user }) => {
   };
 
   const handleFund = async (loanId) => {
-    const amount = parseFloat(fundingAmount[loanId]);
+    const amount = parseFloat(fundingAmounts[loanId]);
     if (!amount || amount <= 0) {
-      alert('Please enter a valid amount.');
+      setError('Please enter a valid amount.');
       return;
     }
 
     try {
-      await fundLoan(loanId, {
-        lenderId: user.id,
-        amount
-      });
-      
-      // Refresh loans after funding
+      await fundLoan(loanId, { amount });
+      setError('');
+      // Refresh the loans list
       fetchLoans();
-      setFundingAmount({ ...fundingAmount, [loanId]: '' });
-      alert('Loan funded successfully!');
+      // Clear the funding amount
+      setFundingAmounts({ ...fundingAmounts, [loanId]: '' });
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to fund loan.');
+      setError(err.response?.data?.message || 'Failed to fund loan.');
     }
   };
 
-  const getProgressPercentage = (funded, total) => {
-    return Math.round((funded / total) * 100);
+  const handleAmountChange = (loanId, value) => {
+    setFundingAmounts({ ...fundingAmounts, [loanId]: value });
   };
 
   if (loading) {
@@ -56,21 +53,28 @@ const BrowseLoans = ({ user }) => {
     );
   }
 
-  if (error) {
-    return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#dc2626' }}>
-        {error}
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: '2rem', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      <h2 style={{ color: '#1e40af', marginBottom: '1.5rem' }}>Available Loan Requests</h2>
+      <h2 style={{ color: '#1e40af', marginBottom: '1.5rem' }}>Browse Loan Requests</h2>
       
+      {error && (
+        <div style={{ 
+          backgroundColor: '#fee2e2', 
+          color: '#dc2626', 
+          padding: '1rem', 
+          borderRadius: '0.375rem', 
+          marginBottom: '1rem',
+          border: '1px solid #fecaca'
+        }}>
+          {error}
+        </div>
+      )}
+
       {loans.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p style={{ color: '#6b7280', fontSize: '1.1rem' }}>No loan requests available at the moment.</p>
+        <div style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: '#6b7280', fontSize: '1.1rem' }}>
+            No loan requests available at the moment.
+          </p>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '1.5rem' }}>
@@ -88,26 +92,44 @@ const BrowseLoans = ({ user }) => {
                     ${loan.amount.toLocaleString()} Loan Request
                   </h3>
                   <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                    <strong>Borrower:</strong> {loan.borrower.name} (Reputation: {loan.borrower.reputation || 0})
+                    <strong>Borrower:</strong> {loan.borrower.name}
                   </p>
                   <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                     <strong>Purpose:</strong> {loan.purpose}
                   </p>
-                  <p style={{ color: '#6b7280' }}>
+                  <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                     <strong>Term:</strong> {loan.term} days
+                  </p>
+                  <p style={{ color: '#6b7280' }}>
+                    <strong>Reputation:</strong> {loan.borrower.reputation || 0}
                   </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <p style={{ color: '#059669', fontWeight: 'bold' }}>
-                    ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}
-                  </p>
-                  <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
-                    {getProgressPercentage(loan.fundedAmount, loan.amount)}% funded
-                  </p>
+                  <span style={{ 
+                    padding: '0.25rem 0.75rem', 
+                    backgroundColor: '#f59e0b', 
+                    color: 'white', 
+                    borderRadius: '1rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}>
+                    Pending
+                  </span>
                 </div>
               </div>
 
-              <div style={{ marginBottom: '1rem' }}>
+              <div style={{ 
+                backgroundColor: '#f3f4f6', 
+                padding: '1rem', 
+                borderRadius: '0.375rem',
+                marginBottom: '1rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ color: '#374151', fontWeight: '500' }}>Funding Progress</span>
+                  <span style={{ color: '#6b7280' }}>
+                    ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}
+                  </span>
+                </div>
                 <div style={{ 
                   width: '100%', 
                   height: '8px', 
@@ -116,7 +138,7 @@ const BrowseLoans = ({ user }) => {
                   overflow: 'hidden'
                 }}>
                   <div style={{ 
-                    width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%`,
+                    width: `${(loan.fundedAmount / loan.amount) * 100}%`,
                     height: '100%',
                     backgroundColor: '#059669',
                     transition: 'width 0.3s ease'
@@ -127,35 +149,35 @@ const BrowseLoans = ({ user }) => {
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <input
                   type="number"
-                  placeholder="Amount to fund"
-                  value={fundingAmount[loan._id] || ''}
-                  onChange={(e) => setFundingAmount({
-                    ...fundingAmount,
-                    [loan._id]: e.target.value
-                  })}
+                  placeholder="Enter amount to fund"
+                  value={fundingAmounts[loan._id] || ''}
+                  onChange={(e) => handleAmountChange(loan._id, e.target.value)}
                   min="1"
                   max={loan.amount - loan.fundedAmount}
-                  step="0.01"
                   style={{ 
-                    padding: '0.5rem', 
+                    flex: 1,
+                    padding: '0.75rem', 
                     border: '1px solid #d1d5db', 
                     borderRadius: '0.375rem',
-                    flex: 1
+                    fontSize: '1rem'
                   }}
                 />
-                <button
+                <button 
                   onClick={() => handleFund(loan._id)}
-                  disabled={loan.fundedAmount >= loan.amount}
+                  disabled={!fundingAmounts[loan._id] || parseFloat(fundingAmounts[loan._id]) <= 0}
                   style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: loan.fundedAmount >= loan.amount ? '#9ca3af' : '#2563eb', 
+                    padding: '0.75rem 1.5rem', 
+                    backgroundColor: '#2563eb', 
                     color: 'white', 
                     border: 'none',
                     borderRadius: '0.375rem',
-                    cursor: loan.fundedAmount >= loan.amount ? 'not-allowed' : 'pointer'
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    opacity: (!fundingAmounts[loan._id] || parseFloat(fundingAmounts[loan._id]) <= 0) ? 0.5 : 1
                   }}
                 >
-                  {loan.fundedAmount >= loan.amount ? 'Fully Funded' : 'Fund Loan'}
+                  Fund Loan
                 </button>
               </div>
             </div>
