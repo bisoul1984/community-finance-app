@@ -14,6 +14,8 @@ import NotificationPage from './NotificationPage';
 import PaymentSchedulerPage from './PaymentSchedulerPage';
 import UserProfilePage from './UserProfilePage';
 import ReportingPage from './ReportingPage';
+import ReturnsTracker from './ReturnsTracker';
+import LenderNotifications from './LenderNotifications';
 
 const navItems = [
   { key: 'main', label: 'Overview', icon: BarChart2 },
@@ -32,6 +34,8 @@ const navItems = [
   { key: 'reporting', label: 'Reporting', icon: FileText, roles: ['admin'] },
   { key: 'browse-loans', label: 'Browse Loans', icon: ClipboardList, roles: ['lender'] },
   { key: 'investment-history', label: 'Investments', icon: TrendingUp, roles: ['lender'] },
+  { key: 'returns-tracker', label: 'Returns Tracker', icon: BarChart2, roles: ['lender'] },
+  { key: 'lender-notifications', label: 'Notifications', icon: Bell, roles: ['lender'] },
 ];
 
 const Dashboard = ({ user, onLogout }) => {
@@ -167,6 +171,8 @@ const Dashboard = ({ user, onLogout }) => {
             case 'reporting': return <ReportingPage />;
             case 'browse-loans': return <BrowseLoans user={user} />;
             case 'investment-history': return <LoanHistory user={user} />;
+            case 'returns-tracker': return <ReturnsTracker user={user} />;
+            case 'lender-notifications': return <LenderNotifications user={user} />;
             default: return renderOverview();
           }
         })()}
