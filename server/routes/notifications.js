@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Notification = require('../models/Notification');
 const emailService = require('../services/emailService');
+const User = require('../models/User');
 
 // Get user notifications
 router.get('/', auth, async (req, res) => {
@@ -93,7 +94,6 @@ router.post('/test-email', auth, async (req, res) => {
     const { emailType, testData } = req.body;
     
     // Get user info
-    const User = require('../models/User');
     const user = await User.findById(req.user.id);
     
     if (!user) {
@@ -156,6 +156,24 @@ router.post('/test-email', auth, async (req, res) => {
   } catch (error) {
     console.error('Error sending test email:', error);
     res.status(500).json({ message: 'Failed to send test email', error: error.message });
+  }
+});
+
+// Update notification settings
+router.put('/settings/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updates = req.body;
+    // Only allow the user themselves or an admin to update
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    const user = await User.findByIdAndUpdate(userId, updates, { new: true });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'Settings updated', notificationPreferences: user.notificationPreferences || {}, smsNotifications: user.smsNotifications, phone: user.phone, emailNotifications: user.emailNotifications });
+  } catch (err) {
+    console.error('Error updating notification settings:', err);
+    res.status(500).json({ message: 'Failed to update notification settings' });
   }
 });
 

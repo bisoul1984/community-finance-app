@@ -85,14 +85,14 @@ const ReportingSystem = ({ user, isAdmin = false }) => {
     }
   };
 
-  const exportReport = async (type) => {
+  const exportReport = async (type, format = 'csv') => {
     try {
       const token = localStorage.getItem('token');
       const queryParams = new URLSearchParams();
       if (filters.startDate) queryParams.append('startDate', filters.startDate);
       if (filters.endDate) queryParams.append('endDate', filters.endDate);
 
-      const response = await fetch(`http://localhost:5000/api/reports/export/${type}?${queryParams}`, {
+      const response = await fetch(`http://localhost:5000/api/reports/export/${type}?${queryParams}&format=${format}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ const ReportingSystem = ({ user, isAdmin = false }) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${type}_${new Date().toISOString().split('T')[0]}.csv`;
+        a.download = `${type}_${new Date().toISOString().split('T')[0]}.${format}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -452,14 +452,65 @@ const ReportingSystem = ({ user, isAdmin = false }) => {
               onClick={() => exportReport('loans')}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Export Loans
+              Export Loans (CSV)
+            </button>
+            <button
+              onClick={() => exportReport('loans', 'json')}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              Export Loans (JSON)
             </button>
             <button
               onClick={() => exportReport('payments')}
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             >
-              Export Payments
+              Export Payments (CSV)
             </button>
+            <button
+              onClick={() => exportReport('payments', 'json')}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+            >
+              Export Payments (JSON)
+            </button>
+            <button
+              onClick={() => exportReport('user')}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Export User Report (CSV)
+            </button>
+            <button
+              onClick={() => exportReport('user', 'json')}
+              className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            >
+              Export User Report (JSON)
+            </button>
+            {/* Add similar buttons for admin and performance reports if isAdmin */}
+            {isAdmin && <>
+              <button
+                onClick={() => exportReport('admin')}
+                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              >
+                Export Admin Report (CSV)
+              </button>
+              <button
+                onClick={() => exportReport('admin', 'json')}
+                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              >
+                Export Admin Report (JSON)
+              </button>
+              <button
+                onClick={() => exportReport('performance')}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                Export Performance Report (CSV)
+              </button>
+              <button
+                onClick={() => exportReport('performance', 'json')}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                Export Performance Report (JSON)
+              </button>
+            </>}
           </div>
         </div>
       )}

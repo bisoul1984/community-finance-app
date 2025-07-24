@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 const NotificationSystem = ({ user }) => {
   const [notifications, setNotifications] = useState([]);
@@ -17,6 +18,18 @@ const NotificationSystem = ({ user }) => {
   useEffect(() => {
     fetchNotifications();
     fetchNotificationSettings();
+
+    // Real-time notifications
+    const socket = io('http://localhost:5000', {
+      auth: { token: localStorage.getItem('token') },
+      query: { userId: user.id }
+    });
+    socket.on('notification', (notif) => {
+      setNotifications(prev => [notif, ...prev]);
+    });
+    return () => {
+      socket.disconnect();
+    };
   }, [user]);
 
   const fetchNotifications = async () => {

@@ -8,6 +8,7 @@ export const signup = async (userData) => {
     // Store token in localStorage
     if (res.data.token) {
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
     }
     return res.data;
   } catch (error) {
@@ -22,12 +23,18 @@ export const login = async (credentials) => {
     // Store token in localStorage
     if (res.data.token) {
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
     }
     return res.data;
   } catch (error) {
     console.error('Login error:', error);
     throw error;
   }
+};
+
+export const getCurrentUser = () => {
+  const userStr = localStorage.getItem('user');
+  return userStr ? JSON.parse(userStr) : null;
 };
 
 export const logout = () => {

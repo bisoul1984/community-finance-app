@@ -92,21 +92,31 @@ const LoanHistory = ({ user }) => {
           </div>
         )}
         {/* Status Legend */}
-        <div className="flex flex-wrap gap-3 mb-6 items-center">
+        <div className="flex flex-wrap gap-3 mb-6 items-center" aria-label="Status Legend">
           <span className="text-slate-500 text-sm font-medium mr-2">Status Legend:</span>
           {Object.entries(STATUS_MAP).map(([key, { label, color, icon: Icon }]) => (
-            <span key={key} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${color}`}> <Icon className="w-4 h-4" /> {label} </span>
+            <span key={key} className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${color}`} title={label} aria-label={label} tabIndex={0}> <Icon className="w-4 h-4" /> {label} </span>
           ))}
         </div>
         {/* Status Filter */}
         <div className="mb-6 flex flex-wrap gap-2">
-          <button onClick={() => setStatusFilter('all')} className={`px-3 py-1 rounded-full text-sm font-medium border ${statusFilter==='all' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'} transition`}>All</button>
+          <button onClick={() => setStatusFilter('all')} className={`px-3 py-1 rounded-full text-sm font-medium border ${statusFilter==='all' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'} transition`} title="Show all statuses" aria-label="Show all statuses">All</button>
           {Object.keys(STATUS_MAP).map(key => (
-            <button key={key} onClick={() => setStatusFilter(key)} className={`px-3 py-1 rounded-full text-sm font-medium border ${statusFilter===key ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'} transition`}>{STATUS_MAP[key].label}</button>
+            <button key={key} onClick={() => setStatusFilter(key)} className={`px-3 py-1 rounded-full text-sm font-medium border ${statusFilter===key ? 'bg-slate-800 text-white' : 'bg-white text-slate-700'} transition`} title={STATUS_MAP[key].label} aria-label={STATUS_MAP[key].label}>{STATUS_MAP[key].label}</button>
           ))}
         </div>
         {loading ? (
-          <div className="text-center py-16 text-slate-500">Loading loan history...</div>
+          <div className="space-y-6 min-h-[300px]" aria-busy="true" aria-live="polite">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow border border-slate-100 p-6 animate-pulse">
+                <div className="h-6 bg-slate-200 rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-slate-100 rounded w-1/2 mb-2"></div>
+                <div className="h-4 bg-slate-100 rounded w-1/4 mb-2"></div>
+                <div className="h-3 bg-slate-100 rounded w-1/5 mb-2"></div>
+                <div className="h-2 bg-slate-100 rounded w-full mb-2"></div>
+              </div>
+            ))}
+          </div>
         ) : error ? (
           <div className="text-center py-16 text-rose-600">
             <p>{error}</p>
@@ -127,7 +137,7 @@ const LoanHistory = ({ user }) => {
                       {activeInvestments.map((loan) => {
                         const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
                         return (
-                          <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6">
+                          <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
                             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
                               <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
@@ -142,6 +152,25 @@ const LoanHistory = ({ user }) => {
                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
                               </div>
                             </div>
+                            {loan.lenders && loan.lenders.length > 0 && (
+                              <div className="mb-3">
+                                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                  <span>Lenders</span>
+                                  <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                </div>
+                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                                  <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                </div>
+                                <ul className="text-xs text-blue-700 space-y-1">
+                                  {loan.lenders.map((l, idx) => (
+                                    <li key={idx} className="flex items-center gap-2">
+                                      <span>{l.lender?.name || 'Anonymous'}:</span>
+                                      <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                             {/* Funding Progress */}
                             {user.role === 'borrower' && (
                               <div className="mb-3">
@@ -199,7 +228,7 @@ const LoanHistory = ({ user }) => {
                       {pastInvestments.map((loan) => {
                         const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
                         return (
-                          <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6">
+                          <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
                             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
                               <div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
@@ -214,6 +243,25 @@ const LoanHistory = ({ user }) => {
                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
                               </div>
                             </div>
+                            {loan.lenders && loan.lenders.length > 0 && (
+                              <div className="mb-3">
+                                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                  <span>Lenders</span>
+                                  <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                </div>
+                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                                  <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                </div>
+                                <ul className="text-xs text-blue-700 space-y-1">
+                                  {loan.lenders.map((l, idx) => (
+                                    <li key={idx} className="flex items-center gap-2">
+                                      <span>{l.lender?.name || 'Anonymous'}:</span>
+                                      <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                             {/* Funding Progress */}
                             {user.role === 'borrower' && (
                               <div className="mb-3">
@@ -269,7 +317,7 @@ const LoanHistory = ({ user }) => {
               filteredLoans.map((loan) => {
                 const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
                 return (
-                  <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6">
+                  <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
                       <div>
                         <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
@@ -281,6 +329,25 @@ const LoanHistory = ({ user }) => {
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
                       </div>
                     </div>
+                    {loan.lenders && loan.lenders.length > 0 && (
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs text-slate-500 mb-1">
+                          <span>Lenders</span>
+                          <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                          <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                        </div>
+                        <ul className="text-xs text-blue-700 space-y-1">
+                          {loan.lenders.map((l, idx) => (
+                            <li key={idx} className="flex items-center gap-2">
+                              <span>{l.lender?.name || 'Anonymous'}:</span>
+                              <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                     {/* Funding Progress */}
                     {user.role === 'borrower' && (
                       <div className="mb-3">

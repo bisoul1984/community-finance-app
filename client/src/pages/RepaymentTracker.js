@@ -29,9 +29,9 @@ const RepaymentCalendar = ({ repayments }) => {
   return (
     <div className="bg-white rounded-xl shadow border border-slate-100 p-6 mb-8">
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => setCurrentMonth(m => m === 0 ? 11 : m - 1)} className="p-2 rounded hover:bg-slate-100">&lt;</button>
+        <button onClick={() => setCurrentMonth(m => m === 0 ? 11 : m - 1)} className="p-2 rounded hover:bg-slate-100" title="Previous month" aria-label="Previous month">&lt;</button>
         <h3 className="text-lg font-bold text-slate-800">Repayment Calendar - {today.toLocaleString('default', { month: 'long' })} {currentYear}</h3>
-        <button onClick={() => setCurrentMonth(m => m === 11 ? 0 : m + 1)} className="p-2 rounded hover:bg-slate-100">&gt;</button>
+        <button onClick={() => setCurrentMonth(m => m === 11 ? 0 : m + 1)} className="p-2 rounded hover:bg-slate-100" title="Next month" aria-label="Next month">&gt;</button>
       </div>
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-slate-500 mb-2">
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => <div key={d}>{d}</div>)}
@@ -45,7 +45,7 @@ const RepaymentCalendar = ({ repayments }) => {
           else if (status === 'late') bg = 'bg-rose-100 text-rose-700';
           else if (status === 'upcoming') bg = 'bg-amber-100 text-amber-700';
           return (
-            <div key={day.toISOString()} className={`rounded-full p-2 cursor-pointer ${bg} hover:ring-2 ring-slate-300 transition`}>{day.getDate()}</div>
+            <div key={day.toISOString()} className={`rounded-full p-2 cursor-pointer ${bg} hover:ring-2 ring-slate-300 transition`} title={`Repayment status for ${day.toLocaleDateString()}`} aria-label={`Repayment status for ${day.toLocaleDateString()}`}>{day.getDate()}</div>
           );
         })}
       </div>
@@ -142,8 +142,11 @@ const RepaymentTracker = ({ user }) => {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <p>Loading your loans...</p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50" aria-busy="true" aria-live="polite">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-3" role="status" aria-label="Loading"></div>
+          <span className="text-slate-600">Loading your loans...</span>
+        </div>
       </div>
     );
   }
@@ -312,6 +315,9 @@ const RepaymentTracker = ({ user }) => {
                         fontWeight: '500',
                         opacity: (!repaymentAmounts[loan._id] || parseFloat(repaymentAmounts[loan._id]) <= 0 || parseFloat(repaymentAmounts[loan._id]) > remainingAmount) ? 0.5 : 1
                       }}
+                      title="Make payment"
+                      aria-label="Make payment"
+                      tabIndex={0}
                     >
                       {isOverdue ? 'Pay Now' : 'Make Payment'}
                     </button>

@@ -210,6 +210,68 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
   }
 });
 
+// Fund wallet
+router.post('/:userId/wallet/fund', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { amount, description } = req.body;
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    user.walletBalance += amount;
+    user.walletTransactions.push({ type: 'fund', amount, description });
+    await user.save();
+    res.json({ walletBalance: user.walletBalance, transaction: user.walletTransactions[user.walletTransactions.length - 1] });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fund wallet' });
+  }
+});
+
+// Withdraw from wallet
+router.post('/:userId/wallet/withdraw', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { amount, description } = req.body;
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.walletBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+    user.walletBalance -= amount;
+    user.walletTransactions.push({ type: 'withdraw', amount, description });
+    await user.save();
+    res.json({ walletBalance: user.walletBalance, transaction: user.walletTransactions[user.walletTransactions.length - 1] });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to withdraw from wallet' });
+  }
+});
+
+// Get wallet balance and transactions
+router.get('/:userId/wallet', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ walletBalance: user.walletBalance, walletTransactions: user.walletTransactions });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get wallet info' });
+  }
+});
+
 // Get all users (admin only)
 router.get('/', auth, async (req, res) => {
   try {

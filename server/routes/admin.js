@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const User = require('../models/User');
 const Loan = require('../models/Loan');
+const NotificationHelper = require('../services/notificationHelper');
 
 // Admin middleware - check if user is admin
 const adminAuth = async (req, res, next) => {
@@ -107,6 +108,33 @@ router.put('/loans/:loanId/status', async (req, res) => {
     }
     
     console.log(`Admin: Loan ${loanId} status updated to ${status}`);
+    // Real-time notifications for borrower
+    if (['funded', 'active', 'completed', 'overdue'].includes(status)) {
+      if (status === 'funded' || status === 'active') {
+        await NotificationHelper.sendLoanApprovedNotification(
+          loan.borrower._id,
+          loan.amount,
+          loan._id,
+          { term: loan.term },
+          req.app.get('io')
+        );
+      } else if (status === 'completed') {
+        await NotificationHelper.sendLoanRepaidNotification(
+          loan.borrower._id,
+          loan._id,
+          loan.amount,
+          req.app.get('io')
+        );
+      } else if (status === 'overdue') {
+        await NotificationHelper.sendRepaymentReminderNotification(
+          loan.borrower._id,
+          loan.amount - loan.totalRepaid,
+          loan.dueDate,
+          loan._id,
+          req.app.get('io')
+        );
+      }
+    }
     res.json(loan);
   } catch (error) {
     console.error('Error updating loan status:', error);

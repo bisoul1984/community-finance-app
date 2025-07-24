@@ -40,6 +40,14 @@ const userSchema = new mongoose.Schema({
     url: { type: String },
     verified: { type: Boolean, default: false },
     uploadedAt: { type: Date, default: Date.now }
+  }],
+  walletBalance: { type: Number, default: 0 },
+  walletTransactions: [{
+    type: { type: String, enum: ['fund', 'withdraw', 'invest', 'repayment', 'transfer'], required: true },
+    amount: { type: Number, required: true },
+    date: { type: Date, default: Date.now },
+    ref: { type: mongoose.Schema.Types.ObjectId }, // Reference to related entity (e.g., Loan, Payment)
+    description: { type: String }
   }]
 }, { timestamps: true });
 

@@ -64,8 +64,16 @@ const BrowseLoans = ({ user }) => {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <p>Loading loan requests...</p>
+      <div className="space-y-6 min-h-screen flex flex-col items-center justify-center bg-slate-50" aria-busy="true" aria-live="polite">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white rounded-xl shadow border border-slate-100 p-6 animate-pulse w-full max-w-xl mb-4">
+            <div className="h-6 bg-slate-200 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-slate-100 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-slate-100 rounded w-1/4 mb-2"></div>
+            <div className="h-3 bg-slate-100 rounded w-1/5 mb-2"></div>
+            <div className="h-2 bg-slate-100 rounded w-full mb-2"></div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -88,10 +96,10 @@ const BrowseLoans = ({ user }) => {
       )}
 
       <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <input name="location" value={filters.location} onChange={handleFilterChange} placeholder="Location" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} />
-        <input name="trustScore" value={filters.trustScore} onChange={handleFilterChange} placeholder="Min Trust Score" type="number" min="0" max="5" step="0.1" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} />
-        <input name="amount" value={filters.amount} onChange={handleFilterChange} placeholder="Min Amount" type="number" min="0" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} />
-        <input name="category" value={filters.category} onChange={handleFilterChange} placeholder="Category" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} />
+        <input name="location" value={filters.location} onChange={handleFilterChange} placeholder="Location" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} title="Filter by location" aria-label="Filter by location" />
+        <input name="trustScore" value={filters.trustScore} onChange={handleFilterChange} placeholder="Min Trust Score" type="number" min="0" max="5" step="0.1" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} title="Filter by trust score" aria-label="Filter by trust score" />
+        <input name="amount" value={filters.amount} onChange={handleFilterChange} placeholder="Min Amount" type="number" min="0" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} title="Filter by amount" aria-label="Filter by amount" />
+        <input name="category" value={filters.category} onChange={handleFilterChange} placeholder="Category" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} title="Filter by category" aria-label="Filter by category" />
       </div>
 
       {filteredLoans.length === 0 ? (
@@ -109,7 +117,7 @@ const BrowseLoans = ({ user }) => {
               borderRadius: '0.5rem', 
               boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
               border: '1px solid #e5e7eb'
-            }}>
+            }} tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
                   <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>
@@ -170,6 +178,20 @@ const BrowseLoans = ({ user }) => {
                 </div>
               </div>
 
+              {loan.lenders && loan.lenders.length > 0 && (
+                <div style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+                  <span style={{ color: '#374151', fontWeight: 500, fontSize: '0.95rem' }}>Lenders:</span>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {loan.lenders.map((l, idx) => (
+                      <li key={idx} style={{ color: '#2563eb', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>{l.lender?.name || 'Anonymous'}:</span>
+                        <span style={{ color: '#059669', fontWeight: 600 }}>${l.amount.toLocaleString()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <input
                   type="number"
@@ -200,11 +222,12 @@ const BrowseLoans = ({ user }) => {
                     fontWeight: '500',
                     opacity: (!fundingAmounts[loan._id] || parseFloat(fundingAmounts[loan._id]) <= 0) ? 0.5 : 1
                   }}
+                  title="Fund this loan" aria-label="Fund this loan"
                 >
                   Fund Loan
                 </button>
               </div>
-              <button onClick={() => { setSelectedBorrower(loan.borrower); setShowProfile(true); }} style={{ marginTop: '1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '0.375rem', padding: '0.5rem 1rem', fontWeight: '500', cursor: 'pointer' }}>View Profile</button>
+              <button onClick={() => { setSelectedBorrower(loan.borrower); setShowProfile(true); }} style={{ marginTop: '1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '0.375rem', padding: '0.5rem 1rem', fontWeight: '500', cursor: 'pointer' }} title="View borrower profile" aria-label="View borrower profile">View Profile</button>
             </div>
           ))}
         </div>

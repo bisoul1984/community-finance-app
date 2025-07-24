@@ -82,7 +82,8 @@ router.post('/create', async (req, res) => {
     await NotificationHelper.sendLoanSubmittedNotification(
       borrowerId, 
       amount, 
-      loan._id
+      loan._id,
+      req.app.get('io')
     );
     
     res.status(201).json(loan);
@@ -117,13 +118,27 @@ router.post('/fund/:loanId', async (req, res) => {
       return res.status(400).json({ message: 'Funding amount exceeds loan amount.' });
     }
 
-    // Add lender to the loan
-    loan.lenders.push({
-      lender: lenderId,
-      amount,
-      fundedAt: new Date()
-    });
+    // Before adding lender to loan, check wallet balance
+    const lenderUser = await User.findById(lenderId);
+    if (lenderUser.walletBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+    lenderUser.walletBalance -= amount;
+    lenderUser.walletTransactions.push({ type: 'invest', amount, ref: loanId, description: `Invested in loan ${loanId}` });
+    await lenderUser.save();
 
+    // Instead of always pushing a new lender entry, check if lender already exists
+    const existingLender = loan.lenders.find(l => l.lender.toString() === lenderId);
+    if (existingLender) {
+      existingLender.amount += amount;
+      existingLender.fundedAt = new Date();
+    } else {
+      loan.lenders.push({
+        lender: lenderId,
+        amount,
+        fundedAt: new Date()
+      });
+    }
     loan.fundedAmount += amount;
 
     // Check if loan is fully funded
@@ -134,6 +149,17 @@ router.post('/fund/:loanId', async (req, res) => {
     }
 
     await loan.save();
+    if (loan.lenders && loan.lenders.length > 0) {
+      for (const lenderEntry of loan.lenders) {
+        await NotificationHelper.sendPaymentReceivedNotification(
+          lenderEntry.lender,
+          lenderEntry.amount,
+          loan._id,
+          loan.amount - loan.fundedAmount,
+          req.app.get('io')
+        );
+      }
+    }
     res.json(loan);
   } catch (err) {
     console.error('Error funding loan:', err);
@@ -166,6 +192,15 @@ router.post('/repay/:loanId', async (req, res) => {
       return res.status(400).json({ message: 'Loan is not active.' });
     }
 
+    // Before adding repayment, check borrower's wallet balance
+    const borrowerUser = await User.findById(borrowerId);
+    if (borrowerUser.walletBalance < amount) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+    borrowerUser.walletBalance -= amount;
+    borrowerUser.walletTransactions.push({ type: 'repayment', amount, ref: loanId, description: `Repayment for loan ${loanId}` });
+    await borrowerUser.save();
+
     loan.repayments.push({
       amount,
       status: 'completed',
@@ -183,21 +218,30 @@ router.post('/repay/:loanId', async (req, res) => {
 
     await loan.save();
     
-    // Send payment received notification
-    const remainingBalance = loan.amount - loan.totalRepaid;
-    await NotificationHelper.sendPaymentReceivedNotification(
-      borrowerId,
-      amount,
-      loan._id,
-      remainingBalance
-    );
+    // After loan.totalRepaid += amount;
+    if (loan.lenders && loan.lenders.length > 0) {
+      // Calculate each lender's share
+      const totalFunded = loan.lenders.reduce((sum, l) => sum + l.amount, 0);
+      for (const lenderEntry of loan.lenders) {
+        const share = (lenderEntry.amount / totalFunded) * amount;
+        // Notify each lender of their repayment share
+        await NotificationHelper.sendPaymentReceivedNotification(
+          lenderEntry.lender,
+          share,
+          loan._id,
+          loan.amount - loan.totalRepaid,
+          req.app.get('io')
+        );
+      }
+    }
     
     // If loan is fully repaid, send completion notification
     if (loan.status === 'completed') {
       await NotificationHelper.sendLoanRepaidNotification(
         borrowerId,
         loan._id,
-        loan.amount
+        loan.amount,
+        req.app.get('io')
       );
     }
     

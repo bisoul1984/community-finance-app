@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRef } from 'react';
 
 const DashboardCharts = ({ user, loans, payments }) => {
   const [chartData, setChartData] = useState({
@@ -198,6 +199,60 @@ const DashboardCharts = ({ user, loans, payments }) => {
     );
   };
 
+  const [exportFormat, setExportFormat] = useState('csv');
+  const chartRef = useRef();
+
+  // Portfolio Diversification by Category
+  const categoryBreakdown = loans.reduce((acc, loan) => {
+    if (!loan.category) return acc;
+    acc[loan.category] = (acc[loan.category] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Region Breakdown
+  const regionBreakdown = loans.reduce((acc, loan) => {
+    if (!loan.borrower?.city) return acc;
+    acc[loan.borrower.city] = (acc[loan.borrower.city] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Risk Over Time (default rate by month)
+  const riskOverTime = [];
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
+    const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+    const monthLoans = loans.filter(loan => {
+      const loanDate = new Date(loan.createdAt);
+      return loanDate.getMonth() === date.getMonth() && loanDate.getFullYear() === date.getFullYear();
+    });
+    const defaulted = monthLoans.filter(l => l.status === 'defaulted').length;
+    const rate = monthLoans.length > 0 ? (defaulted / monthLoans.length) * 100 : 0;
+    riskOverTime.push({ month: monthName, defaultRate: rate });
+  }
+
+  // Export chart data
+  const exportChartData = (type) => {
+    let data;
+    if (type === 'category') data = categoryBreakdown;
+    else if (type === 'region') data = regionBreakdown;
+    else if (type === 'risk') data = riskOverTime;
+    else data = chartData;
+    const blob = new Blob([
+      exportFormat === 'csv' ?
+        Object.entries(data).map(([k, v]) => `${k},${typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n') :
+        JSON.stringify(data, null, 2)
+    ], { type: exportFormat === 'csv' ? 'text/csv' : 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${type}_chart.${exportFormat}`;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
   return (
     <div className="space-y-6">
       {renderQuickStats()}
@@ -207,6 +262,36 @@ const DashboardCharts = ({ user, loans, payments }) => {
         {renderPaymentHistoryChart()}
         {renderMonthlyTrendsChart()}
         {renderRiskMetrics()}
+        {/* Portfolio Diversification */}
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Portfolio Diversification (by Category)</h3>
+          <ul className="mb-4">
+            {Object.entries(categoryBreakdown).map(([cat, count]) => (
+              <li key={cat} className="flex justify-between"><span>{cat}</span><span>{count}</span></li>
+            ))}
+          </ul>
+          <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => exportChartData('category')}>Export</button>
+        </div>
+        {/* Region Breakdown */}
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Region Breakdown</h3>
+          <ul className="mb-4">
+            {Object.entries(regionBreakdown).map(([region, count]) => (
+              <li key={region} className="flex justify-between"><span>{region}</span><span>{count}</span></li>
+            ))}
+          </ul>
+          <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => exportChartData('region')}>Export</button>
+        </div>
+        {/* Risk Over Time */}
+        <div className="bg-white p-6 rounded-lg shadow-lg col-span-2">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Risk Over Time (Default Rate by Month)</h3>
+          <ul className="mb-4 flex gap-4">
+            {riskOverTime.map((item, idx) => (
+              <li key={idx} className="flex flex-col items-center"><span className="font-bold">{item.month}</span><span>{item.defaultRate.toFixed(1)}%</span></li>
+            ))}
+          </ul>
+          <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => exportChartData('risk')}>Export</button>
+        </div>
       </div>
 
       {/* Insights Section */}

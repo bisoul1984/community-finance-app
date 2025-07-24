@@ -11,10 +11,33 @@ const paymentRoutes = require('./routes/payments');
 const userRoutes = require('./routes/users');
 const categoryRoutes = require('./routes/categories');
 const reportRoutes = require('./routes/reports');
+const http = require('http');
+const { Server } = require('socket.io');
 
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+  const userId = socket.handshake.query.userId;
+  if (userId) {
+    socket.join(userId);
+    console.log(`Socket ${socket.id} joined room ${userId}`);
+  }
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+app.set('io', io); // Make io accessible in routes/services
 app.use(cors());
 app.use(express.json());
 
@@ -45,6 +68,6 @@ app.get('/api/health', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }); 
