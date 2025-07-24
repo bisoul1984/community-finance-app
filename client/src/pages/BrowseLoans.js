@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getLoanRequests, fundLoan } from '../api/loans';
+import UserProfile from '../components/UserProfile';
 
 const BrowseLoans = ({ user }) => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [fundingAmounts, setFundingAmounts] = useState({});
+  const [filters, setFilters] = useState({ location: '', trustScore: '', amount: '', category: '' });
+  const [showProfile, setShowProfile] = useState(false);
+  const [selectedBorrower, setSelectedBorrower] = useState(null);
 
   useEffect(() => {
     fetchLoans();
@@ -45,6 +49,19 @@ const BrowseLoans = ({ user }) => {
     setFundingAmounts({ ...fundingAmounts, [loanId]: value });
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const filteredLoans = loans.filter(loan => {
+    const matchesLocation = !filters.location || (loan.borrower.city && loan.borrower.city.toLowerCase().includes(filters.location.toLowerCase()));
+    const matchesTrust = !filters.trustScore || (loan.borrower.reputation >= Number(filters.trustScore));
+    const matchesAmount = !filters.amount || (loan.amount >= Number(filters.amount));
+    const matchesCategory = !filters.category || (loan.category && loan.category.toLowerCase().includes(filters.category.toLowerCase()));
+    return matchesLocation && matchesTrust && matchesAmount && matchesCategory;
+  });
+
   if (loading) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -70,7 +87,14 @@ const BrowseLoans = ({ user }) => {
         </div>
       )}
 
-      {loans.length === 0 ? (
+      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <input name="location" value={filters.location} onChange={handleFilterChange} placeholder="Location" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} />
+        <input name="trustScore" value={filters.trustScore} onChange={handleFilterChange} placeholder="Min Trust Score" type="number" min="0" max="5" step="0.1" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} />
+        <input name="amount" value={filters.amount} onChange={handleFilterChange} placeholder="Min Amount" type="number" min="0" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db', width: '8rem' }} />
+        <input name="category" value={filters.category} onChange={handleFilterChange} placeholder="Category" style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }} />
+      </div>
+
+      {filteredLoans.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '3rem' }}>
           <p style={{ color: '#6b7280', fontSize: '1.1rem' }}>
             No loan requests available at the moment.
@@ -78,7 +102,7 @@ const BrowseLoans = ({ user }) => {
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '1.5rem' }}>
-          {loans.map((loan) => (
+          {filteredLoans.map((loan) => (
             <div key={loan._id} style={{ 
               backgroundColor: 'white', 
               padding: '1.5rem', 
@@ -180,8 +204,17 @@ const BrowseLoans = ({ user }) => {
                   Fund Loan
                 </button>
               </div>
+              <button onClick={() => { setSelectedBorrower(loan.borrower); setShowProfile(true); }} style={{ marginTop: '1rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '0.375rem', padding: '0.5rem 1rem', fontWeight: '500', cursor: 'pointer' }}>View Profile</button>
             </div>
           ))}
+        </div>
+      )}
+      {showProfile && selectedBorrower && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.4)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', borderRadius: '1rem', padding: '2rem', maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+            <button onClick={() => setShowProfile(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+            <UserProfile user={selectedBorrower} readOnly />
+          </div>
         </div>
       )}
     </div>
