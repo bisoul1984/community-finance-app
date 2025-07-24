@@ -1,6 +1,37 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
+const PaymentReceiptModal = ({ payment, onClose }) => {
+  if (!payment) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6 relative">
+        <button onClick={onClose} className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+        <h3 className="text-lg font-bold text-slate-900 mb-2">Payment Receipt</h3>
+        <div className="text-sm text-slate-700 space-y-1 mb-4">
+          <div><span className="font-medium">Payment ID:</span> {payment._id}</div>
+          <div><span className="font-medium">Type:</span> {payment.paymentType}</div>
+          <div><span className="font-medium">Amount:</span> {payment.amount} {payment.currency}</div>
+          <div><span className="font-medium">Status:</span> {payment.status}</div>
+          <div><span className="font-medium">Date:</span> {new Date(payment.createdAt).toLocaleString()}</div>
+          {payment.penalty && (
+            <div className="text-rose-600 font-semibold">Penalty: {payment.penalty} {payment.currency}</div>
+          )}
+          {payment.loanId && (
+            <div><span className="font-medium">Loan:</span> {payment.loanId.title || payment.loanId._id}</div>
+          )}
+        </div>
+        <button
+          onClick={() => window.print()}
+          className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded-md shadow transition-colors"
+        >
+          Print Receipt
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const PaymentHistory = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,6 +39,7 @@ const PaymentHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState('all');
+  const [selectedPayment, setSelectedPayment] = useState(null);
 
   const fetchPayments = useCallback(async () => {
     try {
@@ -162,7 +194,7 @@ const PaymentHistory = () => {
             {payments.map((payment) => (
               <div
                 key={payment._id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                className={`border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow ${payment.penalty ? 'border-rose-400 bg-rose-50' : ''}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -179,6 +211,9 @@ const PaymentHistory = () => {
                       <p className="text-xs text-gray-400">
                         {formatDate(payment.createdAt)}
                       </p>
+                      {payment.penalty && (
+                        <p className="text-xs text-rose-600 font-semibold">Penalty: {formatAmount(payment.penalty, payment.currency)}</p>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
@@ -188,6 +223,12 @@ const PaymentHistory = () => {
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(payment.status)}`}>
                       {payment.status}
                     </span>
+                    <button
+                      onClick={() => setSelectedPayment(payment)}
+                      className="ml-2 px-2 py-1 text-xs bg-slate-100 hover:bg-slate-200 rounded font-medium text-slate-700 border border-slate-200"
+                    >
+                      View Receipt
+                    </button>
                   </div>
                 </div>
               </div>
@@ -220,6 +261,8 @@ const PaymentHistory = () => {
           </div>
         )}
       </div>
+      {/* Receipt Modal */}
+      {selectedPayment && <PaymentReceiptModal payment={selectedPayment} onClose={() => setSelectedPayment(null)} />}
     </div>
   );
 };

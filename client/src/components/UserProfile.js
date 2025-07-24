@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Star, ThumbsUp, ThumbsDown, MessageCircle, ShieldCheck } from 'lucide-react';
 
 const UserProfile = ({ user, onProfileUpdate }) => {
   const [profile, setProfile] = useState({
@@ -597,6 +598,107 @@ const UserProfile = ({ user, onProfileUpdate }) => {
     </div>
   );
 
+  const mockFeedback = [
+    {
+      id: 1,
+      lender: 'Jane Doe',
+      rating: 5,
+      comment: 'Great borrower, always pays on time!',
+      upvotes: 12,
+      downvotes: 0,
+      date: '2024-07-01',
+    },
+    {
+      id: 2,
+      lender: 'John Smith',
+      rating: 4,
+      comment: 'Good communication, minor delay but resolved.',
+      upvotes: 8,
+      downvotes: 1,
+      date: '2024-06-15',
+    },
+  ];
+
+  const CommunityTrustSection = ({ trustScore = 4.7, feedback = mockFeedback }) => (
+    <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+        <Star className="w-5 h-5 text-amber-400" /> Community Trust & Feedback
+      </h3>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-2xl font-bold text-amber-500">{trustScore.toFixed(1)}</span>
+        <span className="flex gap-0.5">
+          {[1,2,3,4,5].map(i => (
+            <Star key={i} className={`w-5 h-5 ${i <= Math.round(trustScore) ? 'text-amber-400' : 'text-slate-200'}`} fill={i <= Math.round(trustScore) ? '#fbbf24' : 'none'} />
+          ))}
+        </span>
+        <span className="text-slate-500 text-sm">({feedback.length} reviews)</span>
+      </div>
+      <div className="space-y-4">
+        {feedback.map(fb => (
+          <div key={fb.id} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-slate-800">{fb.lender}</span>
+              <span className="flex gap-0.5">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className={`w-4 h-4 ${i <= fb.rating ? 'text-amber-400' : 'text-slate-200'}`} fill={i <= fb.rating ? '#fbbf24' : 'none'} />
+                ))}
+              </span>
+              <span className="text-xs text-slate-400 ml-2">{new Date(fb.date).toLocaleDateString()}</span>
+            </div>
+            <div className="text-slate-700 text-sm mb-2 flex items-center gap-2"><MessageCircle className="w-4 h-4 text-slate-400" /> {fb.comment}</div>
+            <div className="flex gap-3 text-xs text-slate-500">
+              <span className="inline-flex items-center gap-1"><ThumbsUp className="w-4 h-4" /> {fb.upvotes}</span>
+              <span className="inline-flex items-center gap-1"><ThumbsDown className="w-4 h-4" /> {fb.downvotes}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Add feedback form for lenders (mock, not functional) */}
+      <div className="mt-6 border-t pt-4">
+        <h4 className="font-semibold text-slate-800 mb-2">Leave Feedback (Lender Only)</h4>
+        <form className="flex flex-col gap-2">
+          <textarea className="w-full border border-slate-300 rounded-md p-2 text-sm" placeholder="Write a comment..." disabled />
+          <div className="flex gap-2 items-center">
+            <span className="text-xs text-slate-400">Rating:</span>
+            {[1,2,3,4,5].map(i => <Star key={i} className="w-5 h-5 text-slate-200" />)}
+            <button className="ml-auto px-4 py-1 bg-slate-300 text-slate-600 rounded font-medium text-xs cursor-not-allowed" disabled>Submit</button>
+          </div>
+          <span className="text-xs text-slate-400">(Only available to lenders after repayment)</span>
+        </form>
+      </div>
+    </div>
+  );
+
+  const KYCSection = ({ kycStatus = 'pending', kycDocs = {}, onUpload }) => (
+    <div className="bg-white rounded-lg shadow p-6 mb-8">
+      <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+        <ShieldCheck className="w-5 h-5 text-blue-500" /> KYC Verification
+      </h3>
+      <div className="mb-4">
+        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700' : kycStatus === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>{kycStatus.charAt(0).toUpperCase() + kycStatus.slice(1)}</span>
+      </div>
+      <form className="space-y-4" onSubmit={e => { e.preventDefault(); }}>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Upload ID Document</label>
+          <input type="file" name="id" accept=".pdf,.jpg,.jpeg,.png" className="w-full px-2 py-1 border border-slate-300 rounded-md bg-white text-slate-900" disabled />
+          {kycDocs.id && <span className="text-xs text-slate-500 ml-2">Uploaded: {kycDocs.id}</span>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Upload Proof of Address</label>
+          <input type="file" name="address" accept=".pdf,.jpg,.jpeg,.png" className="w-full px-2 py-1 border border-slate-300 rounded-md bg-white text-slate-900" disabled />
+          {kycDocs.address && <span className="text-xs text-slate-500 ml-2">Uploaded: {kycDocs.address}</span>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Upload Bank Statement</label>
+          <input type="file" name="bank" accept=".pdf,.jpg,.jpeg,.png" className="w-full px-2 py-1 border border-slate-300 rounded-md bg-white text-slate-900" disabled />
+          {kycDocs.bank && <span className="text-xs text-slate-500 ml-2">Uploaded: {kycDocs.bank}</span>}
+        </div>
+        <button className="w-full bg-slate-300 text-slate-600 rounded font-medium py-2 cursor-not-allowed" disabled>Submit KYC (Demo Only)</button>
+      </form>
+      <div className="text-xs text-slate-400 mt-2">(KYC upload is demo only. Integrate with backend for full functionality.)</div>
+    </div>
+  );
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="mb-8">
@@ -656,6 +758,8 @@ const UserProfile = ({ user, onProfileUpdate }) => {
           {activeTab === 'security' && renderSecurity()}
         </div>
       </div>
+      <KYCSection kycStatus="pending" kycDocs={{ id: 'id.pdf', address: '', bank: '' }} />
+      <CommunityTrustSection trustScore={user.trustScore} feedback={user.feedback} />
     </div>
   );
 };
