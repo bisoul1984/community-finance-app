@@ -32,4 +32,7 @@ export const login = async (credentials) => {
 
 export const logout = () => {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  // Clear any other auth-related data
+  sessionStorage.clear();
 }; 
