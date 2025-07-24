@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import Signup from './pages/Signup';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import { logout } from './api/auth';
 
@@ -11,23 +13,29 @@ function App() {
     setUser(userData);
   };
 
+  const handleSignup = (userData) => {
+    setUser(userData);
+  };
+
   const handleLogout = () => {
     logout(); // Clear token from localStorage
     setUser(null);
   };
 
-  if (!user) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f1f5f9' }}>
-        <div style={{ display: 'flex', gap: '2rem' }}>
-          <Signup onSignup={handleLogin} />
-          <Login onLogin={handleLogin} />
-        </div>
-      </div>
-    );
-  }
-
-  return <Dashboard user={user} onLogout={handleLogout} />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
+        <Route 
+          path="/dashboard" 
+          element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

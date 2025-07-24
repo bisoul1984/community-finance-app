@@ -17,7 +17,30 @@ const userSchema = new mongoose.Schema({
   verificationCode: { type: String },
   verificationCodeExpires: { type: Date },
   resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date }
+  resetPasswordExpires: { type: Date },
+  stripeCustomerId: { type: String },
+  paymentHistory: [{
+    paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' },
+    amount: { type: Number },
+    date: { type: Date },
+    type: { type: String, enum: ['repayment', 'funding', 'fee'] }
+  }],
+  fundingHistory: [{
+    paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' },
+    loanId: { type: mongoose.Schema.Types.ObjectId, ref: 'Loan' },
+    amount: { type: Number },
+    date: { type: Date }
+  }],
+  totalFunded: { type: Number, default: 0 },
+  totalRepaid: { type: Number, default: 0 },
+  creditScore: { type: Number, default: 650 },
+  kycVerified: { type: Boolean, default: false },
+  kycDocuments: [{
+    type: { type: String, enum: ['id', 'passport', 'utility_bill', 'bank_statement'] },
+    url: { type: String },
+    verified: { type: Boolean, default: false },
+    uploadedAt: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema); 

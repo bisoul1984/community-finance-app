@@ -7,6 +7,10 @@ const loanRoutes = require('./routes/loans');
 const communityRoutes = require('./routes/community');
 const adminRoutes = require('./routes/admin');
 const notificationRoutes = require('./routes/notifications');
+const paymentRoutes = require('./routes/payments');
+const userRoutes = require('./routes/users');
+const categoryRoutes = require('./routes/categories');
+const reportRoutes = require('./routes/reports');
 
 dotenv.config();
 
@@ -30,6 +34,10 @@ app.use('/api/loans', loanRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/loans/categories', categoryRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

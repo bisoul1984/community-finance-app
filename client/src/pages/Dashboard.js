@@ -5,6 +5,14 @@ import LoanHistory from './LoanHistory';
 import RepaymentTracker from './RepaymentTracker';
 import CommunityVerification from './CommunityVerification';
 import AdminPanel from './AdminPanel';
+import Payments from './Payments';
+import LoanCalculatorPage from './LoanCalculatorPage';
+import DocumentUploadPage from './DocumentUploadPage';
+import EnhancedDashboard from './EnhancedDashboard';
+import NotificationPage from './NotificationPage';
+import PaymentSchedulerPage from './PaymentSchedulerPage';
+import UserProfilePage from './UserProfilePage';
+import ReportingPage from './ReportingPage';
 
 const Dashboard = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('main');
@@ -89,6 +97,111 @@ const Dashboard = ({ user, onLogout }) => {
           }}
         >
           Community Verification
+        </button>
+        <button 
+          onClick={() => setCurrentView('payments')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#f59e0b', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Payments
+        </button>
+        <button 
+          onClick={() => setCurrentView('loan-calculator')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#8b5cf6', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Loan Calculator
+        </button>
+        <button 
+          onClick={() => setCurrentView('document-upload')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#10b981', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Document Upload
+        </button>
+        <button 
+          onClick={() => setCurrentView('enhanced-dashboard')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#6366f1', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Enhanced Dashboard
+        </button>
+        <button 
+          onClick={() => setCurrentView('notifications')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#ec4899', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Notifications
+        </button>
+        <button 
+          onClick={() => setCurrentView('payment-scheduler')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#f97316', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Payment Scheduler
+        </button>
+        <button 
+          onClick={() => setCurrentView('user-profile')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#06b6d4', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Profile Settings
         </button>
       </div>
     </div>
@@ -214,6 +327,21 @@ const Dashboard = ({ user, onLogout }) => {
           }}
         >
           Community Verification
+        </button>
+        <button 
+          onClick={() => setCurrentView('reporting')}
+          style={{ 
+            padding: '0.75rem 1.5rem', 
+            backgroundColor: '#059669', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: '500'
+          }}
+        >
+          Reporting System
         </button>
       </div>
     </div>
@@ -405,6 +533,45 @@ const Dashboard = ({ user, onLogout }) => {
             <CommunityVerification user={user} />
           </div>
         );
+      case 'payments':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Payments
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <Payments user={user} />
+          </div>
+        );
       case 'browse-loans':
         return (
           <div>
@@ -482,6 +649,279 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
             </nav>
             <LoanHistory user={user} />
+          </div>
+        );
+      case 'loan-calculator':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Loan Calculator
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <LoanCalculatorPage />
+          </div>
+        );
+      case 'document-upload':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Document Upload
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <DocumentUploadPage user={user} />
+          </div>
+        );
+      case 'enhanced-dashboard':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Enhanced Dashboard
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <EnhancedDashboard user={user} />
+          </div>
+        );
+      case 'notifications':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Notifications
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <NotificationPage user={user} />
+          </div>
+        );
+      case 'payment-scheduler':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Payment Scheduler
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <PaymentSchedulerPage user={user} />
+          </div>
+        );
+      case 'user-profile':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Profile Settings
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <UserProfilePage user={user} />
+          </div>
+        );
+      case 'reporting':
+        return (
+          <div>
+            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                Reporting System
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <button 
+                  onClick={() => setCurrentView('main')}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#374151', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+                <button 
+                  onClick={onLogout}
+                  style={{ 
+                    padding: '0.5rem 1rem', 
+                    backgroundColor: '#dc2626', 
+                    color: 'white', 
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+            <ReportingPage />
           </div>
         );
       default:

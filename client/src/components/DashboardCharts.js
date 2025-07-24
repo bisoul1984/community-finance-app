@@ -1,0 +1,240 @@
+import React, { useState, useEffect } from 'react';
+
+const DashboardCharts = ({ user, loans, payments }) => {
+  const [chartData, setChartData] = useState({
+    loanStatus: [],
+    paymentHistory: [],
+    monthlyTrends: [],
+    riskMetrics: {}
+  });
+
+  useEffect(() => {
+    // Generate sample data for charts
+    generateChartData();
+  }, [loans, payments]);
+
+  const generateChartData = () => {
+    // Loan Status Distribution
+    const loanStatusData = [
+      { status: 'Active', count: loans?.filter(loan => loan.status === 'active').length || 0, color: '#10b981' },
+      { status: 'Pending', count: loans?.filter(loan => loan.status === 'pending').length || 0, color: '#f59e0b' },
+      { status: 'Completed', count: loans?.filter(loan => loan.status === 'completed').length || 0, color: '#3b82f6' },
+      { status: 'Defaulted', count: loans?.filter(loan => loan.status === 'defaulted').length || 0, color: '#ef4444' }
+    ];
+
+    // Payment History (last 6 months)
+    const paymentHistoryData = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+      const monthPayments = payments?.filter(payment => {
+        const paymentDate = new Date(payment.date);
+        return paymentDate.getMonth() === date.getMonth() && 
+               paymentDate.getFullYear() === date.getFullYear();
+      }) || [];
+      
+      paymentHistoryData.push({
+        month: monthName,
+        amount: monthPayments.reduce((sum, payment) => sum + payment.amount, 0),
+        count: monthPayments.length
+      });
+    }
+
+    // Monthly Trends
+    const monthlyTrendsData = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+      const monthLoans = loans?.filter(loan => {
+        const loanDate = new Date(loan.createdAt);
+        return loanDate.getMonth() === date.getMonth() && 
+               loanDate.getFullYear() === date.getFullYear();
+      }) || [];
+      
+      monthlyTrendsData.push({
+        month: monthName,
+        loans: monthLoans.length,
+        amount: monthLoans.reduce((sum, loan) => sum + loan.amount, 0)
+      });
+    }
+
+    // Risk Metrics
+    const totalLoans = loans?.length || 0;
+    const activeLoans = loans?.filter(loan => loan.status === 'active').length || 0;
+    const defaultedLoans = loans?.filter(loan => loan.status === 'defaulted').length || 0;
+    const defaultRate = totalLoans > 0 ? (defaultedLoans / totalLoans) * 100 : 0;
+
+    setChartData({
+      loanStatus: loanStatusData,
+      paymentHistory: paymentHistoryData,
+      monthlyTrends: monthlyTrendsData,
+      riskMetrics: {
+        totalLoans,
+        activeLoans,
+        defaultRate: defaultRate.toFixed(1),
+        averageLoanAmount: totalLoans > 0 ? 
+          (loans.reduce((sum, loan) => sum + loan.amount, 0) / totalLoans).toFixed(2) : 0
+      }
+    });
+  };
+
+  const renderLoanStatusChart = () => (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Loan Status Distribution</h3>
+      <div className="space-y-3">
+        {chartData.loanStatus.map((item, index) => (
+          <div key={index} className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div 
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: item.color }}
+              ></div>
+              <span className="text-gray-700">{item.status}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-gray-800">{item.count}</span>
+              <span className="text-sm text-gray-500">
+                ({((item.count / Math.max(1, chartData.loanStatus.reduce((sum, i) => sum + i.count, 0))) * 100).toFixed(1)}%)
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderPaymentHistoryChart = () => (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment History (Last 6 Months)</h3>
+      <div className="space-y-4">
+        {chartData.paymentHistory.map((item, index) => (
+          <div key={index} className="flex items-center justify-between">
+            <span className="text-gray-700 font-medium">{item.month}</span>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-500">{item.count} payments</span>
+              <span className="font-semibold text-green-600">
+                ${item.amount.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderMonthlyTrendsChart = () => (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Loan Trends</h3>
+      <div className="space-y-4">
+        {chartData.monthlyTrends.map((item, index) => (
+          <div key={index} className="flex items-center justify-between">
+            <span className="text-gray-700 font-medium">{item.month}</span>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-500">{item.loans} loans</span>
+              <span className="font-semibold text-blue-600">
+                ${item.amount.toFixed(2)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderRiskMetrics = () => (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Risk & Performance Metrics</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="text-center p-4 bg-blue-50 rounded-lg">
+          <div className="text-2xl font-bold text-blue-600">
+            {chartData.riskMetrics.totalLoans}
+          </div>
+          <div className="text-sm text-gray-600">Total Loans</div>
+        </div>
+        <div className="text-center p-4 bg-green-50 rounded-lg">
+          <div className="text-2xl font-bold text-green-600">
+            {chartData.riskMetrics.activeLoans}
+          </div>
+          <div className="text-sm text-gray-600">Active Loans</div>
+        </div>
+        <div className="text-center p-4 bg-yellow-50 rounded-lg">
+          <div className="text-2xl font-bold text-yellow-600">
+            {chartData.riskMetrics.defaultRate}%
+          </div>
+          <div className="text-sm text-gray-600">Default Rate</div>
+        </div>
+        <div className="text-center p-4 bg-purple-50 rounded-lg">
+          <div className="text-2xl font-bold text-purple-600">
+            ${chartData.riskMetrics.averageLoanAmount}
+          </div>
+          <div className="text-sm text-gray-600">Avg Loan Amount</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderQuickStats = () => {
+    const totalBorrowed = loans?.reduce((sum, loan) => sum + loan.amount, 0) || 0;
+    const totalPaid = payments?.reduce((sum, payment) => sum + payment.amount, 0) || 0;
+    const outstandingBalance = totalBorrowed - totalPaid;
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg text-white">
+          <div className="text-3xl font-bold">${totalBorrowed.toFixed(2)}</div>
+          <div className="text-blue-100">Total Borrowed</div>
+        </div>
+        <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg text-white">
+          <div className="text-3xl font-bold">${totalPaid.toFixed(2)}</div>
+          <div className="text-green-100">Total Paid</div>
+        </div>
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-lg text-white">
+          <div className="text-3xl font-bold">${outstandingBalance.toFixed(2)}</div>
+          <div className="text-orange-100">Outstanding Balance</div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {renderQuickStats()}
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {renderLoanStatusChart()}
+        {renderPaymentHistoryChart()}
+        {renderMonthlyTrendsChart()}
+        {renderRiskMetrics()}
+      </div>
+
+      {/* Insights Section */}
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">💡 Insights & Recommendations</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-2">Performance Highlights</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>• {chartData.riskMetrics.activeLoans} active loans currently</li>
+              <li>• {chartData.riskMetrics.defaultRate}% default rate (industry avg: 5-10%)</li>
+              <li>• Average loan amount: ${chartData.riskMetrics.averageLoanAmount}</li>
+              <li>• Payment consistency: {payments?.length || 0} total payments</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-2">Recommendations</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>• Maintain current payment schedule for better rates</li>
+              <li>• Consider consolidating multiple loans if applicable</li>
+              <li>• Build credit history with consistent payments</li>
+              <li>• Review loan terms for refinancing opportunities</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DashboardCharts; 
