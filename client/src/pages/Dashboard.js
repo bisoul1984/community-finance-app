@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LogOut, Bell, User, TrendingUp, FileText, CreditCard, Shield, Users, ClipboardList, Calendar, Settings, BarChart2, FilePlus, CheckCircle, AlertCircle } from 'lucide-react';
 import CreateLoan from './CreateLoan';
 import BrowseLoans from './BrowseLoans';
 import LoanHistory from './LoanHistory';
@@ -14,922 +15,164 @@ import PaymentSchedulerPage from './PaymentSchedulerPage';
 import UserProfilePage from './UserProfilePage';
 import ReportingPage from './ReportingPage';
 
+const navItems = [
+  { key: 'main', label: 'Overview', icon: BarChart2 },
+  { key: 'create-loan', label: 'Request Loan', icon: FilePlus, roles: ['borrower'] },
+  { key: 'repayment-tracker', label: 'Repayments', icon: CreditCard, roles: ['borrower'] },
+  { key: 'loan-history', label: 'Loan History', icon: ClipboardList, roles: ['borrower'] },
+  { key: 'community-verification', label: 'Community', icon: Users },
+  { key: 'payments', label: 'Payments', icon: CreditCard },
+  { key: 'loan-calculator', label: 'Calculator', icon: TrendingUp },
+  { key: 'document-upload', label: 'Documents', icon: FileText },
+  { key: 'enhanced-dashboard', label: 'Enhanced', icon: BarChart2 },
+  { key: 'notifications', label: 'Notifications', icon: Bell },
+  { key: 'payment-scheduler', label: 'Scheduler', icon: Calendar },
+  { key: 'user-profile', label: 'Profile', icon: User },
+  { key: 'admin-panel', label: 'Admin', icon: Shield, roles: ['admin'] },
+  { key: 'reporting', label: 'Reporting', icon: FileText, roles: ['admin'] },
+  { key: 'browse-loans', label: 'Browse Loans', icon: ClipboardList, roles: ['lender'] },
+  { key: 'investment-history', label: 'Investments', icon: TrendingUp, roles: ['lender'] },
+];
+
 const Dashboard = ({ user, onLogout }) => {
   const [currentView, setCurrentView] = useState('main');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const renderBorrowerDashboard = () => (
-    <div style={{ padding: '2rem' }}>
-      <h2 style={{ color: '#1e40af', marginBottom: '1rem' }}>Borrower Dashboard</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Active Loans</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#059669' }}>0</p>
-          <p style={{ color: '#6b7280' }}>No active loans</p>
-        </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Total Borrowed</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>$0</p>
-          <p style={{ color: '#6b7280' }}>Lifetime total</p>
-        </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Reputation Score</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>{user.reputation || 0}</p>
-          <p style={{ color: '#6b7280' }}>Community trust</p>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <button 
-          onClick={() => setCurrentView('create-loan')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#2563eb', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Request New Loan
-        </button>
-        <button 
-          onClick={() => setCurrentView('repayment-tracker')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#dc2626', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Track Repayments
-        </button>
-        <button 
-          onClick={() => setCurrentView('loan-history')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#059669', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          View Loan History
-        </button>
-        <button 
-          onClick={() => setCurrentView('community-verification')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#7c3aed', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Community Verification
-        </button>
-        <button 
-          onClick={() => setCurrentView('payments')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#f59e0b', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Payments
-        </button>
-        <button 
-          onClick={() => setCurrentView('loan-calculator')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#8b5cf6', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Loan Calculator
-        </button>
-        <button 
-          onClick={() => setCurrentView('document-upload')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#10b981', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Document Upload
-        </button>
-        <button 
-          onClick={() => setCurrentView('enhanced-dashboard')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#6366f1', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Enhanced Dashboard
-        </button>
-        <button 
-          onClick={() => setCurrentView('notifications')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#ec4899', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Notifications
-        </button>
-        <button 
-          onClick={() => setCurrentView('payment-scheduler')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#f97316', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Payment Scheduler
-        </button>
-        <button 
-          onClick={() => setCurrentView('user-profile')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#06b6d4', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Profile Settings
-        </button>
-      </div>
-    </div>
-  );
+  // Dummy stats for demonstration
+  const stats = user.role === 'borrower' ? [
+    { label: 'Active Loans', value: 0, icon: CreditCard, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Total Borrowed', value: '$0', icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50' },
+    { label: 'Reputation', value: user.reputation || 0, icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-50' },
+  ] : user.role === 'lender' ? [
+    { label: 'Active Investments', value: 0, icon: CreditCard, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Total Invested', value: '$0', icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50' },
+    { label: 'Returns Earned', value: '$0', icon: BarChart2, color: 'text-blue-600', bg: 'bg-blue-50' },
+  ] : [
+    { label: 'System Status', value: 'Active', icon: Shield, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Admin Access', value: 'Full', icon: User, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Security Level', value: 'High', icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50' },
+  ];
 
-  const renderLenderDashboard = () => (
-    <div style={{ padding: '2rem' }}>
-      <h2 style={{ color: '#1e40af', marginBottom: '1rem' }}>Lender Dashboard</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Active Investments</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#059669' }}>0</p>
-          <p style={{ color: '#6b7280' }}>Loans funded</p>
-        </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Total Invested</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>$0</p>
-          <p style={{ color: '#6b7280' }}>Lifetime total</p>
-        </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Returns Earned</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>$0</p>
-          <p style={{ color: '#6b7280' }}>Total returns</p>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <button 
-          onClick={() => setCurrentView('browse-loans')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#2563eb', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Browse Loan Requests
-        </button>
-        <button 
-          onClick={() => setCurrentView('investment-history')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#059669', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          View Investment History
-        </button>
-        <button 
-          onClick={() => setCurrentView('community-verification')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#7c3aed', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Community Verification
-        </button>
-      </div>
-    </div>
-  );
+  // Sidebar navigation items filtered by role
+  const filteredNav = navItems.filter(item => !item.roles || item.roles.includes(user.role));
 
-  const renderAdminDashboard = () => (
-    <div style={{ padding: '2rem' }}>
-      <h2 style={{ color: '#1e40af', marginBottom: '1rem' }}>Admin Dashboard</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>System Status</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#059669' }}>Active</p>
-          <p style={{ color: '#6b7280' }}>All systems operational</p>
+  // Main dashboard content
+  const renderOverview = () => (
+    <div className="flex-1 p-6 md:p-10 bg-slate-50 min-h-screen">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome, {user.name}!</h2>
+          <div className="text-slate-500 text-sm md:text-base">Role: <span className="font-semibold text-slate-700 capitalize">{user.role}</span></div>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Admin Access</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2563eb' }}>Full</p>
-          <p style={{ color: '#6b7280' }}>Complete system control</p>
-        </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ color: '#374151', marginBottom: '0.5rem' }}>Security Level</h3>
-          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>High</p>
-          <p style={{ color: '#6b7280' }}>Enhanced protection</p>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-        <button 
-          onClick={() => setCurrentView('admin-panel')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#dc2626', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          System Management
-        </button>
-        <button 
-          onClick={() => setCurrentView('community-verification')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#7c3aed', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Community Verification
-        </button>
-        <button 
-          onClick={() => setCurrentView('reporting')}
-          style={{ 
-            padding: '0.75rem 1.5rem', 
-            backgroundColor: '#059669', 
-            color: 'white', 
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}
-        >
-          Reporting System
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderMainDashboard = () => (
-    <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-          Welcome, {user.name}!
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span>Role: {user.role}</span>
-          <button 
-            onClick={onLogout}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              backgroundColor: '#dc2626', 
-              color: 'white', 
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer'
-            }}
-          >
-            Logout
+        <div className="flex items-center gap-4">
+          <button onClick={onLogout} className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md font-medium shadow transition-colors">
+            <LogOut className="w-5 h-5" /> Logout
+          </button>
+          <button onClick={() => setCurrentView('notifications')} className="relative p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+            <Bell className="w-5 h-5" />
+            <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full px-1.5 py-0.5">3</span>
           </button>
         </div>
-      </nav>
-      {user.role === 'admin' ? renderAdminDashboard() : 
-       user.role === 'borrower' ? renderBorrowerDashboard() : renderLenderDashboard()}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {stats.map((stat, i) => (
+          <div key={i} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white border border-slate-100 hover:shadow-lg transition-all ${stat.bg}`}>
+            <span className={`p-3 rounded-full bg-white shadow ${stat.color} text-xl`}><stat.icon className="w-7 h-7" /></span>
+            <div>
+              <div className="text-2xl font-bold {stat.color}">{stat.value}</div>
+              <div className="text-slate-600 text-sm font-medium">{stat.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-white rounded-2xl shadow p-6 border border-slate-100 mb-8">
+        <h3 className="text-lg font-semibold text-slate-800 mb-2">Quick Tips</h3>
+        <ul className="list-disc pl-5 text-slate-600 space-y-1 text-sm">
+          <li>Use the sidebar to quickly access all dashboard features.</li>
+          <li>Check your notifications for important updates.</li>
+          <li>Keep your profile up to date for a better experience.</li>
+        </ul>
+      </div>
+      <div className="bg-white rounded-2xl shadow p-6 border border-slate-100">
+        <h3 className="text-lg font-semibold text-slate-800 mb-2">Get Started</h3>
+        <div className="flex flex-wrap gap-4">
+          {filteredNav.filter(item => item.key !== 'main').map(item => (
+            <button
+              key={item.key}
+              onClick={() => setCurrentView(item.key)}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-medium shadow transition-colors"
+            >
+              <item.icon className="w-5 h-5" /> {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'admin-panel':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                System Management
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <AdminPanel user={user} />
-          </div>
-        );
-      case 'create-loan':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Request New Loan
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <CreateLoan user={user} onLoanCreated={() => setCurrentView('main')} />
-          </div>
-        );
-      case 'repayment-tracker':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Repayment Tracker
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <RepaymentTracker user={user} />
-          </div>
-        );
-      case 'community-verification':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Community Verification
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <CommunityVerification user={user} />
-          </div>
-        );
-      case 'payments':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Payments
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <Payments user={user} />
-          </div>
-        );
-      case 'browse-loans':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Browse Loan Requests
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <BrowseLoans user={user} />
-          </div>
-        );
-      case 'loan-history':
-      case 'investment-history':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                {currentView === 'loan-history' ? 'Loan History' : 'Investment History'}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <LoanHistory user={user} />
-          </div>
-        );
-      case 'loan-calculator':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Loan Calculator
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <LoanCalculatorPage />
-          </div>
-        );
-      case 'document-upload':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Document Upload
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <DocumentUploadPage user={user} />
-          </div>
-        );
-      case 'enhanced-dashboard':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Enhanced Dashboard
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <EnhancedDashboard user={user} />
-          </div>
-        );
-      case 'notifications':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Notifications
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <NotificationPage user={user} />
-          </div>
-        );
-      case 'payment-scheduler':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Payment Scheduler
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <PaymentSchedulerPage user={user} />
-          </div>
-        );
-      case 'user-profile':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Profile Settings
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <UserProfilePage user={user} />
-          </div>
-        );
-      case 'reporting':
-        return (
-          <div>
-            <nav style={{ backgroundColor: '#2563eb', padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-                Reporting System
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <button 
-                  onClick={() => setCurrentView('main')}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#374151', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-                <button 
-                  onClick={onLogout}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#dc2626', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
-            <ReportingPage />
-          </div>
-        );
-      default:
-        return renderMainDashboard();
-    }
-  };
+  // Sidebar
+  const Sidebar = () => (
+    <aside className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-white border-r border-slate-100 shadow-lg md:shadow-none transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <span className="text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">MicroLoan</span>
+        <button className="md:hidden text-slate-400 hover:text-slate-700" onClick={() => setSidebarOpen(false)}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <nav className="mt-6 flex flex-col gap-1 px-4">
+        {filteredNav.map(item => (
+          <button
+            key={item.key}
+            onClick={() => { setCurrentView(item.key); setSidebarOpen(false); }}
+            className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium text-slate-700 hover:bg-slate-100 transition-colors ${currentView === item.key ? 'bg-slate-100 font-bold' : ''}`}
+          >
+            <item.icon className="w-5 h-5" /> {item.label}
+          </button>
+        ))}
+      </nav>
+      <div className="mt-auto px-4 py-6">
+        <button onClick={onLogout} className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md font-medium shadow transition-colors w-full">
+          <LogOut className="w-5 h-5" /> Logout
+        </button>
+      </div>
+    </aside>
+  );
 
-  return renderCurrentView();
+  // Main layout
+  return (
+    <div className="flex min-h-screen bg-slate-50">
+      {/* Sidebar for desktop, drawer for mobile */}
+      <Sidebar />
+      {/* Mobile sidebar toggle */}
+      <button className="fixed top-4 left-4 z-50 md:hidden bg-white border border-slate-200 p-2 rounded-full shadow-lg text-slate-700 hover:bg-slate-100" onClick={() => setSidebarOpen(true)}>
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </button>
+      {/* Main content */}
+      <main className="flex-1">
+        {(() => {
+          switch (currentView) {
+            case 'main': return renderOverview();
+            case 'create-loan': return <CreateLoan user={user} onLoanCreated={() => setCurrentView('main')} />;
+            case 'repayment-tracker': return <RepaymentTracker user={user} />;
+            case 'loan-history': return <LoanHistory user={user} />;
+            case 'community-verification': return <CommunityVerification user={user} />;
+            case 'payments': return <Payments user={user} />;
+            case 'loan-calculator': return <LoanCalculatorPage />;
+            case 'document-upload': return <DocumentUploadPage user={user} />;
+            case 'enhanced-dashboard': return <EnhancedDashboard user={user} />;
+            case 'notifications': return <NotificationPage user={user} />;
+            case 'payment-scheduler': return <PaymentSchedulerPage user={user} />;
+            case 'user-profile': return <UserProfilePage user={user} />;
+            case 'admin-panel': return <AdminPanel user={user} />;
+            case 'reporting': return <ReportingPage />;
+            case 'browse-loans': return <BrowseLoans user={user} />;
+            case 'investment-history': return <LoanHistory user={user} />;
+            default: return renderOverview();
+          }
+        })()}
+      </main>
+    </div>
+  );
 };
 
 export default Dashboard; 
