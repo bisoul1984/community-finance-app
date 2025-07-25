@@ -6,6 +6,7 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^3.8.0",
     "@stripe/stripe-js": "^7.6.1",
+    "axios": "^1.6.0",
     "cra-template-pwa": "2.0.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",

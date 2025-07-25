@@ -17,6 +17,8 @@ import ReportingPage from './ReportingPage';
 import ReturnsTracker from './ReturnsTracker';
 import LenderNotifications from './LenderNotifications';
 import Wallet from './Wallet';
+import ChatSystem from '../components/ChatSystem';
+import ChatWidget from '../components/ChatWidget';
 
 const navItems = [
   { key: 'main', label: 'Overview', icon: BarChart2 },
@@ -38,6 +40,7 @@ const navItems = [
   { key: 'returns-tracker', label: 'Returns Tracker', icon: BarChart2, roles: ['lender'] },
   { key: 'lender-notifications', label: 'Notifications', icon: Bell, roles: ['lender'] },
   { key: 'wallet', label: 'Wallet', icon: BarChart2, roles: ['borrower', 'lender', 'admin'] },
+  { key: 'chat', label: 'Community Chat', icon: MessageCircle, roles: ['borrower', 'lender', 'admin'] },
 ];
 
 const Dashboard = ({ user, onLogout }) => {
@@ -355,11 +358,15 @@ const Dashboard = ({ user, onLogout }) => {
               case 'returns-tracker': return <ReturnsTracker user={user} />;
               case 'lender-notifications': return <LenderNotifications user={user} />;
               case 'wallet': return <Wallet user={user} />;
+              case 'chat': return <ChatSystem user={user} />;
               default: return renderOverview();
             }
           })()}
         </main>
       </div>
+      
+      {/* Chat Widget */}
+      <ChatWidget user={user} />
     </div>
   );
 };

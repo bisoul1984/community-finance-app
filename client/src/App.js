@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import ChatPage from './pages/ChatPage';
 import { logout, getCurrentUser } from './api/auth';
 
 // Wrapper component to use useNavigate hook
@@ -42,6 +43,10 @@ function AppContent() {
       <Route 
         path="/dashboard" 
         element={user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/" />} 
+      />
+      <Route 
+        path="/chat" 
+        element={user ? <ChatPage user={user} /> : <Navigate to="/" />} 
       />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
