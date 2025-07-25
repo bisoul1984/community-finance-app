@@ -149,9 +149,6 @@ const Dashboard = ({ user, onLogout }) => {
               className="relative p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
             </button>
             
             {notificationsOpen && (
