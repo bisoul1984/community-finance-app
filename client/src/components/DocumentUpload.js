@@ -3,7 +3,6 @@ import {
   getDocuments, 
   uploadDocument, 
   deleteDocument, 
-  downloadDocument, 
   getDocumentStats 
 } from '../api/documents';
 
@@ -95,7 +94,8 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
 
   const handleDownload = async (documentId, originalName) => {
     try {
-      await downloadDocument(documentId);
+      // For now, just show a message that download is not implemented
+      alert('Download functionality will be implemented soon!');
     } catch (error) {
       console.error('Error downloading document:', error);
       alert('Failed to download document. Please try again.');
