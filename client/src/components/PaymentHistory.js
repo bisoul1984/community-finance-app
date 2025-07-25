@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 
 const PaymentReceiptModal = ({ payment, onClose }) => {
   if (!payment) return null;
@@ -44,15 +43,68 @@ const PaymentHistory = () => {
   const fetchPayments = useCallback(async () => {
     try {
       setLoading(true);
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-      const response = await axios.get(`${API_URL}/payments/history?page=${currentPage}&limit=10&type=${filter}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock payment history data
+      const mockPayments = [
+        {
+          _id: 'payment_1',
+          paymentType: 'repayment',
+          amount: 150.00,
+          currency: 'USD',
+          status: 'completed',
+          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          loanId: { title: 'Business Expansion Loan', _id: 'loan_1' }
+        },
+        {
+          _id: 'payment_2',
+          paymentType: 'funding',
+          amount: 500.00,
+          currency: 'USD',
+          status: 'completed',
+          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          loanId: { title: 'Education Loan', _id: 'loan_2' }
+        },
+        {
+          _id: 'payment_3',
+          paymentType: 'repayment',
+          amount: 75.50,
+          currency: 'USD',
+          status: 'pending',
+          createdAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+          loanId: { title: 'Home Renovation', _id: 'loan_3' }
+        },
+        {
+          _id: 'payment_4',
+          paymentType: 'funding',
+          amount: 250.00,
+          currency: 'USD',
+          status: 'completed',
+          createdAt: new Date(Date.now() - 345600000).toISOString(), // 4 days ago
+          loanId: { title: 'Medical Emergency', _id: 'loan_4' }
+        },
+        {
+          _id: 'payment_5',
+          paymentType: 'repayment',
+          amount: 200.00,
+          currency: 'USD',
+          status: 'completed',
+          penalty: 25.00,
+          createdAt: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
+          loanId: { title: 'Vehicle Purchase', _id: 'loan_5' }
         }
-      });
-
-      setPayments(response.data.payments);
-      setTotalPages(response.data.totalPages);
+      ];
+      
+      // Filter payments based on selected filter
+      let filteredPayments = mockPayments;
+      if (filter !== 'all') {
+        filteredPayments = mockPayments.filter(payment => payment.paymentType === filter);
+      }
+      
+      setPayments(filteredPayments);
+      setTotalPages(1); // Mock data has only one page
     } catch (err) {
       console.error('Error fetching payments:', err);
       setError('Failed to load payment history');

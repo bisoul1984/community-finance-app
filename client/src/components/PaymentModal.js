@@ -1,23 +1,18 @@
 import React from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import PaymentForm from './PaymentForm';
-
-// Initialize Stripe (you'll need to add your publishable key to environment variables)
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_publishable_key_here');
 
 const PaymentModal = ({ 
   isOpen, 
   onClose, 
-  paymentData, 
+  amount,
+  loanId,
+  paymentType,
   onSuccess, 
   onError 
 }) => {
-  if (!isOpen || !paymentData) {
+  if (!isOpen) {
     return null;
   }
-
-  const { amount, loanId, paymentType } = paymentData;
 
   const handleSuccess = (data) => {
     onSuccess?.(data);
@@ -71,16 +66,14 @@ const PaymentModal = ({
           </div>
 
           {/* Payment Form */}
-          <Elements stripe={stripePromise}>
-            <PaymentForm
-              amount={amount}
-              loanId={loanId}
-              paymentType={paymentType}
-              onSuccess={handleSuccess}
-              onError={handleError}
-              onCancel={handleCancel}
-            />
-          </Elements>
+          <PaymentForm
+            amount={amount}
+            loanId={loanId}
+            paymentType={paymentType}
+            onSuccess={handleSuccess}
+            onError={handleError}
+            onCancel={handleCancel}
+          />
         </div>
       </div>
     </div>

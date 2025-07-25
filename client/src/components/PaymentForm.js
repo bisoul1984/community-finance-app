@@ -1,21 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import axios from 'axios';
 
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#424770',
-      '::placeholder': {
-        color: '#aab7c4',
-      },
-    },
-    invalid: {
-      color: '#9e2146',
-    },
-  },
-};
+
 
 const PaymentForm = ({ 
   amount, 
@@ -26,35 +11,24 @@ const PaymentForm = ({
   onCancel,
   currency = 'USD'
 }) => {
-  const stripe = useStripe();
-  const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [clientSecret, setClientSecret] = useState(null);
 
+  // Mock payment intent creation for demo purposes
   const createPaymentIntent = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const endpoint = paymentType === 'repayment' 
-        ? '/api/payments/create-payment-intent'
-        : '/api/payments/create-funding-intent';
-
-      const response = await axios.post(endpoint, {
-        amount: parseFloat(amount),
-        loanId,
-        currency: currency.toLowerCase()
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      setClientSecret(response.data.clientSecret);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock client secret for demo
+      setClientSecret('mock_client_secret_' + Date.now());
     } catch (err) {
       console.error('Error creating payment intent:', err);
-      setError(err.response?.data?.message || 'Failed to create payment intent');
+      setError('Failed to create payment intent');
     } finally {
       setLoading(false);
     }
@@ -67,7 +41,7 @@ const PaymentForm = ({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!stripe || !elements || !clientSecret) {
+    if (!clientSecret) {
       return;
     }
 
@@ -75,41 +49,23 @@ const PaymentForm = ({
     setError(null);
 
     try {
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        }
-      });
-
-      if (stripeError) {
-        setError(stripeError.message);
-        return;
-      }
-
-      if (paymentIntent.status === 'succeeded') {
-        // Confirm payment with our backend
-        const confirmEndpoint = paymentType === 'repayment' 
-          ? '/api/payments/confirm-payment'
-          : '/api/payments/confirm-funding';
-
-        const response = await axios.post(confirmEndpoint, {
-          paymentIntentId: paymentIntent.id,
-          loanId
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        if (response.data.success) {
-          onSuccess(response.data);
-        } else {
-          setError('Payment confirmation failed');
-        }
-      }
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock successful payment
+      const mockPaymentData = {
+        id: 'mock_payment_' + Date.now(),
+        amount: amount,
+        status: 'succeeded',
+        paymentType: paymentType,
+        loanId: loanId,
+        timestamp: new Date().toISOString()
+      };
+      
+      onSuccess(mockPaymentData);
     } catch (err) {
       console.error('Payment error:', err);
-      setError(err.response?.data?.message || 'Payment failed');
+      setError('Payment failed');
     } finally {
       setLoading(false);
     }
@@ -164,10 +120,12 @@ const PaymentForm = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Card Information
+              Demo Payment
             </label>
-            <div className="border border-gray-300 rounded-lg p-3 bg-white">
-              <CardElement options={CARD_ELEMENT_OPTIONS} />
+            <div className="border border-gray-300 rounded-lg p-3 bg-gray-50">
+              <p className="text-sm text-gray-600">
+                This is a demo payment system. Click "Pay" to simulate a successful payment.
+              </p>
             </div>
           </div>
 
@@ -182,7 +140,7 @@ const PaymentForm = ({
             </button>
             <button
               type="submit"
-              disabled={!stripe || loading || !clientSecret}
+              disabled={loading || !clientSecret}
               className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
             >
               {loading ? (
