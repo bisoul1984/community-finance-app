@@ -347,10 +347,10 @@ const Dashboard = ({ user, onLogout }) => {
               case 'payments': return <Payments user={user} />;
               case 'loan-calculator': return <LoanCalculatorPage />;
               case 'document-upload': return <DocumentUploadPage user={user} />;
-              case 'enhanced-dashboard': return <EnhancedDashboard user={user} />;
-              case 'notifications': return <NotificationPage user={user} />;
-              case 'payment-scheduler': return <PaymentSchedulerPage user={user} />;
-              case 'user-profile': return <UserProfilePage user={user} />;
+                              case 'enhanced-dashboard': return <EnhancedDashboard user={user} />;
+                case 'notifications': return <NotificationPage user={user} />;
+                case 'payment-scheduler': return <PaymentSchedulerPage user={user} />;
+                case 'user-profile': return <UserProfilePage user={user} />;
               case 'admin-panel': return <AdminPanel user={user} />;
               case 'reporting': return <ReportingPage />;
               case 'browse-loans': return <BrowseLoans user={user} />;

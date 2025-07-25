@@ -303,74 +303,7 @@ const RepaymentAnalytics = ({ loans }) => {
   );
 };
 
-const PaymentScheduler = ({ loans, onSchedulePayment }) => {
-  const [amount, setAmount] = useState('');
-  const [scheduleDate, setScheduleDate] = useState('');
-  const [frequency, setFrequency] = useState('monthly');
 
-  const handleSchedule = () => {
-    if (!amount || !scheduleDate) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    onSchedulePayment({
-      amount: parseFloat(amount),
-      scheduleDate,
-      frequency
-    });
-
-    setAmount('');
-    setScheduleDate('');
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">
-      <h3 className="text-xl font-bold text-slate-900 mb-4">Schedule Payment</h3>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Amount</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="Enter amount"
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Schedule Date</label>
-          <input
-            type="date"
-            value={scheduleDate}
-            onChange={(e) => setScheduleDate(e.target.value)}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Frequency</label>
-          <select
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="monthly">Monthly</option>
-            <option value="weekly">Weekly</option>
-            <option value="biweekly">Bi-weekly</option>
-          </select>
-        </div>
-        <div className="flex items-end">
-          <button
-            onClick={handleSchedule}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            Schedule
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const RepaymentTracker = ({ user }) => {
   const [loans, setLoans] = useState([]);
@@ -424,10 +357,7 @@ const RepaymentTracker = ({ user }) => {
     setRepaymentAmounts({ ...repaymentAmounts, [loanId]: value });
   };
 
-  const handleSchedulePayment = (paymentData) => {
-    setScheduledPayments([...scheduledPayments, { ...paymentData, id: Date.now() }]);
-    alert('Payment scheduled successfully!');
-  };
+
 
   const getDaysRemaining = (dueDate) => {
     const today = new Date();
@@ -671,8 +601,7 @@ const RepaymentTracker = ({ user }) => {
         {/* Analytics */}
         <RepaymentAnalytics loans={loans} />
 
-        {/* Payment Scheduler */}
-        <PaymentScheduler loans={loans} onSchedulePayment={handleSchedulePayment} />
+
 
         {/* Filters and Search */}
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">

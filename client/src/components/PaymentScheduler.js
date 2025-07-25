@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 const PaymentScheduler = ({ user, loans }) => {
   const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [newSchedule, setNewSchedule] = useState({
     loanId: '',
     amount: '',
@@ -12,210 +14,117 @@ const PaymentScheduler = ({ user, loans }) => {
     autoPay: false,
     paymentMethod: 'bank_transfer'
   });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [editingSchedule, setEditingSchedule] = useState(null);
+
+  // Mock data for schedules
+  const mockSchedules = [
+    {
+      _id: '1',
+      loanId: 'loan1',
+      amount: 500,
+      frequency: 'monthly',
+      startDate: '2025-07-25',
+      nextPaymentDate: '2025-08-25',
+      isActive: true,
+      paymentMethod: 'bank_transfer',
+      autoPay: true
+    },
+    {
+      _id: '2',
+      loanId: 'loan2',
+      amount: 300,
+      frequency: 'weekly',
+      startDate: '2025-07-20',
+      nextPaymentDate: '2025-07-27',
+      isActive: false,
+      paymentMethod: 'credit_card',
+      autoPay: false
+    }
+  ];
 
   useEffect(() => {
-    fetchPaymentSchedules();
-  }, [user]);
-
-  const fetchPaymentSchedules = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payments/schedules/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setSchedules(data);
-      }
-    } catch (error) {
-      console.error('Error fetching payment schedules:', error);
-    }
-  };
+    // Load mock schedules
+    setSchedules(mockSchedules);
+  }, []);
 
   const createPaymentSchedule = async () => {
     if (!newSchedule.loanId || !newSchedule.amount || !newSchedule.startDate) {
       setMessage('Please fill in all required fields');
-      setTimeout(() => setMessage(''), 3000);
       return;
     }
 
     setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payments/schedules`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...newSchedule,
-          userId: user.id
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setSchedules(prev => [...prev, data]);
-        setNewSchedule({
-          loanId: '',
-          amount: '',
-          frequency: 'monthly',
-          startDate: '',
-          endDate: '',
-          reminderDays: 3,
-          autoPay: false,
-          paymentMethod: 'bank_transfer'
-        });
-        setMessage('Payment schedule created successfully!');
-        setTimeout(() => setMessage(''), 3000);
-      } else {
-        setMessage('Failed to create payment schedule');
-        setTimeout(() => setMessage(''), 3000);
-      }
-    } catch (error) {
-      console.error('Error creating payment schedule:', error);
-      setMessage('Error creating schedule');
-      setTimeout(() => setMessage(''), 3000);
-    } finally {
-      setLoading(false);
-    }
-  };
+    
+    // Simulate API call
+    setTimeout(() => {
+      const newScheduleData = {
+        _id: Date.now().toString(),
+        ...newSchedule,
+        amount: parseFloat(newSchedule.amount),
+        nextPaymentDate: newSchedule.startDate,
+        isActive: true
+      };
 
-  const updatePaymentSchedule = async (scheduleId, updatedSchedule) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payments/schedules/${scheduleId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedSchedule)
+      setSchedules([...schedules, newScheduleData]);
+      setNewSchedule({
+        loanId: '',
+        amount: '',
+        frequency: 'monthly',
+        startDate: '',
+        endDate: '',
+        reminderDays: 3,
+        autoPay: false,
+        paymentMethod: 'bank_transfer'
       });
-      
-      if (response.ok) {
-        setSchedules(prev => 
-          prev.map(schedule => 
-            schedule._id === scheduleId 
-              ? { ...schedule, ...updatedSchedule }
-              : schedule
-          )
-        );
-        setEditingSchedule(null);
-        setMessage('Payment schedule updated successfully!');
-        setTimeout(() => setMessage(''), 3000);
-      } else {
-        setMessage('Failed to update payment schedule');
-        setTimeout(() => setMessage(''), 3000);
-      }
-    } catch (error) {
-      console.error('Error updating payment schedule:', error);
-      setMessage('Error updating schedule');
-      setTimeout(() => setMessage(''), 3000);
-    } finally {
+      setMessage('Payment schedule created successfully!');
       setLoading(false);
-    }
+    }, 1000);
   };
 
   const deletePaymentSchedule = async (scheduleId) => {
-    if (!window.confirm('Are you sure you want to delete this payment schedule?')) {
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payments/schedules/${scheduleId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        setSchedules(prev => prev.filter(schedule => schedule._id !== scheduleId));
-        setMessage('Payment schedule deleted successfully!');
-        setTimeout(() => setMessage(''), 3000);
-      }
-    } catch (error) {
-      console.error('Error deleting payment schedule:', error);
-      setMessage('Error deleting schedule');
-      setTimeout(() => setMessage(''), 3000);
-    }
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setSchedules(schedules.filter(schedule => schedule._id !== scheduleId));
+      setMessage('Payment schedule deleted successfully!');
+      setLoading(false);
+    }, 500);
   };
 
   const toggleScheduleStatus = async (scheduleId, isActive) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payments/schedules/${scheduleId}/toggle`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ isActive: !isActive })
-      });
-      
-      if (response.ok) {
-        setSchedules(prev => 
-          prev.map(schedule => 
-            schedule._id === scheduleId 
-              ? { ...schedule, isActive: !isActive }
-              : schedule
-          )
-        );
-      }
-    } catch (error) {
-      console.error('Error toggling schedule status:', error);
-    }
+    setLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setSchedules(schedules.map(schedule => 
+        schedule._id === scheduleId 
+          ? { ...schedule, isActive: !isActive }
+          : schedule
+      ));
+      setMessage(`Schedule ${!isActive ? 'activated' : 'deactivated'} successfully!`);
+      setLoading(false);
+    }, 500);
   };
 
   const getFrequencyLabel = (frequency) => {
-    switch (frequency) {
-      case 'weekly': return 'Weekly';
-      case 'biweekly': return 'Bi-weekly';
-      case 'monthly': return 'Monthly';
-      case 'quarterly': return 'Quarterly';
-      default: return frequency;
-    }
-  };
-
-  const getNextPaymentDate = (schedule) => {
-    const startDate = new Date(schedule.startDate);
-    const now = new Date();
-    const frequencyDays = {
-      weekly: 7,
-      biweekly: 14,
-      monthly: 30,
-      quarterly: 90
+    const labels = {
+      weekly: 'Weekly',
+      biweekly: 'Bi-weekly',
+      monthly: 'Monthly',
+      quarterly: 'Quarterly'
     };
-    
-    let nextDate = new Date(startDate);
-    while (nextDate <= now) {
-      nextDate.setDate(nextDate.getDate() + frequencyDays[schedule.frequency]);
-    }
-    
-    return nextDate.toLocaleDateString();
+    return labels[frequency] || frequency;
   };
 
   const getLoanById = (loanId) => {
-    return loans?.find(loan => loan._id === loanId);
+    return loans?.find(loan => loan._id === loanId) || { amount: 'Unknown' };
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="mb-8">
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Scheduler</h1>
-        <p className="text-gray-600">Set up automatic payment reminders and recurring payment schedules</p>
+        <p className="text-gray-600">Create and manage recurring payment schedules for your loans</p>
       </div>
 
       {message && (
@@ -389,53 +298,41 @@ const PaymentScheduler = ({ user, loans }) => {
                         schedule.isActive ? 'bg-green-500' : 'bg-gray-400'
                       }`}></span>
                       <span className="font-medium text-gray-800">
-                        {getLoanById(schedule.loanId)?.amount ? 
-                          `Loan #${schedule.loanId.slice(-6)}` : 'Unknown Loan'
-                        }
+                        ${schedule.amount} - {getFrequencyLabel(schedule.frequency)}
                       </span>
                     </div>
                     <div className="flex space-x-2">
                       <button
                         onClick={() => toggleScheduleStatus(schedule._id, schedule.isActive)}
-                        className={`text-sm px-2 py-1 rounded ${
+                        className={`px-3 py-1 text-xs rounded-md ${
                           schedule.isActive 
                             ? 'bg-red-100 text-red-700 hover:bg-red-200' 
                             : 'bg-green-100 text-green-700 hover:bg-green-200'
                         }`}
                       >
-                        {schedule.isActive ? 'Pause' : 'Resume'}
-                      </button>
-                      <button
-                        onClick={() => setEditingSchedule(schedule)}
-                        className="text-blue-600 hover:text-blue-800 text-sm"
-                      >
-                        Edit
+                        {schedule.isActive ? 'Deactivate' : 'Activate'}
                       </button>
                       <button
                         onClick={() => deletePaymentSchedule(schedule._id)}
-                        className="text-red-600 hover:text-red-800 text-sm"
+                        className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200"
                       >
                         Delete
                       </button>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
                     <div>
-                      <span className="text-gray-600">Amount:</span>
-                      <span className="font-medium ml-1">${schedule.amount}</span>
+                      <span className="font-medium">Start Date:</span> {new Date(schedule.startDate).toLocaleDateString()}
                     </div>
                     <div>
-                      <span className="text-gray-600">Frequency:</span>
-                      <span className="font-medium ml-1">{getFrequencyLabel(schedule.frequency)}</span>
+                      <span className="font-medium">Next Payment:</span> {new Date(schedule.nextPaymentDate).toLocaleDateString()}
                     </div>
                     <div>
-                      <span className="text-gray-600">Next Payment:</span>
-                      <span className="font-medium ml-1">{getNextPaymentDate(schedule)}</span>
+                      <span className="font-medium">Method:</span> {schedule.paymentMethod.replace('_', ' ')}
                     </div>
                     <div>
-                      <span className="text-gray-600">Auto Pay:</span>
-                      <span className="font-medium ml-1">{schedule.autoPay ? 'Yes' : 'No'}</span>
+                      <span className="font-medium">Auto Pay:</span> {schedule.autoPay ? 'Yes' : 'No'}
                     </div>
                   </div>
                 </div>
@@ -444,78 +341,6 @@ const PaymentScheduler = ({ user, loans }) => {
           </div>
         </div>
       </div>
-
-      {/* Edit Schedule Modal */}
-      {editingSchedule && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Payment Schedule</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Payment Amount ($)
-                </label>
-                <input
-                  type="number"
-                  value={editingSchedule.amount}
-                  onChange={(e) => setEditingSchedule(prev => ({ ...prev, amount: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Frequency
-                </label>
-                <select
-                  value={editingSchedule.frequency}
-                  onChange={(e) => setEditingSchedule(prev => ({ ...prev, frequency: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="weekly">Weekly</option>
-                  <option value="biweekly">Bi-weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                </select>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="editAutoPay"
-                  checked={editingSchedule.autoPay}
-                  onChange={(e) => setEditingSchedule(prev => ({ ...prev, autoPay: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <label htmlFor="editAutoPay" className="text-sm text-gray-700">
-                  Enable automatic payments
-                </label>
-              </div>
-
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => updatePaymentSchedule(editingSchedule._id, editingSchedule)}
-                  disabled={loading}
-                  className={`flex-1 py-2 px-4 rounded-md text-white font-medium ${
-                    loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  {loading ? 'Saving...' : 'Save Changes'}
-                </button>
-                <button
-                  onClick={() => setEditingSchedule(null)}
-                  className="flex-1 py-2 px-4 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
