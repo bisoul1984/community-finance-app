@@ -12,6 +12,7 @@ const userRoutes = require('./routes/users');
 const categoryRoutes = require('./routes/categories');
 const reportRoutes = require('./routes/reports');
 const chatRoutes = require('./routes/chat');
+const documentRoutes = require('./routes/documents');
 const http = require('http');
 const { Server } = require('socket.io');
 
@@ -103,6 +104,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/documents', documentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payments', paymentRoutes);

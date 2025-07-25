@@ -83,8 +83,6 @@ const Payments = () => {
           </button>
         </div>
 
-
-
         {/* Content */}
         <div className="space-y-6">
           {!showHistory && <PaymentStats />}
