@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getUserLoans, repayLoan } from '../api/loans';
-import { Calendar, Clock, DollarSign, TrendingUp, AlertTriangle, CheckCircle, Download, Bell, BarChart3, Filter, Search, Plus, Minus, Eye, EyeOff } from 'lucide-react';
+import { Clock, DollarSign, TrendingUp, AlertTriangle, CheckCircle, Download, BarChart3, Filter, Search, Eye, EyeOff, Calendar, Plus, Minus } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
+// Calendar helper functions
 function getMonthDays(year, month) {
   const date = new Date(year, month, 1);
   const days = [];
@@ -12,19 +15,45 @@ function getMonthDays(year, month) {
   return days;
 }
 
-function getRepaymentStatusForDate(repayments, date) {
+function getRepaymentStatusForDate(loans, date) {
   const dStr = date.toISOString().slice(0, 10);
-  const rep = repayments.find(r => r.dueDate && r.dueDate.slice(0, 10) === dStr);
-  if (!rep) return null;
-  if (rep.status === 'completed') return 'paid';
-  if (new Date(rep.dueDate) < new Date() && rep.status !== 'completed') return 'late';
-  return 'upcoming';
+  
+  // Check for due dates
+  const dueLoans = loans.filter(loan => {
+    if (!loan.dueDate) return false;
+    const loanDueDate = new Date(loan.dueDate).toISOString().slice(0, 10);
+    return loanDueDate === dStr;
+  });
+  
+  if (dueLoans.length > 0) {
+    const overdueLoans = dueLoans.filter(loan => {
+      const daysRemaining = Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+      return daysRemaining < 0;
+    });
+    
+    if (overdueLoans.length > 0) return 'late';
+    return 'upcoming';
+  }
+  
+  // Check for actual repayments
+  const repayments = loans.flatMap(loan => loan.repayments || []);
+  const rep = repayments.find(r => {
+    if (!r.date) return false;
+    const repDate = new Date(r.date).toISOString().slice(0, 10);
+    return repDate === dStr;
+  });
+  
+  if (rep) return 'paid';
+  
+  return null;
 }
 
-const RepaymentCalendar = ({ repayments, onDateClick }) => {
+// RepaymentCalendar Component
+const RepaymentCalendar = ({ loans, onDateClick }) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [selectedDate, setSelectedDate] = useState(null);
   const days = getMonthDays(currentYear, currentMonth);
 
   const monthNames = [
@@ -77,7 +106,7 @@ const RepaymentCalendar = ({ repayments, onDateClick }) => {
       <div className="grid grid-cols-7 gap-1">
         {Array(days[0].getDay()).fill(null).map((_, i) => <div key={i}></div>)}
         {days.map(day => {
-          const status = getRepaymentStatusForDate(repayments, day);
+          const status = getRepaymentStatusForDate(loans, day);
           let bg = 'bg-slate-50 text-slate-600';
           let border = '';
           
@@ -104,7 +133,10 @@ const RepaymentCalendar = ({ repayments, onDateClick }) => {
               className={`rounded-lg p-2 cursor-pointer ${bg} ${border} hover:ring-2 ring-slate-300 transition-all duration-200 min-h-[40px] flex items-center justify-center`} 
               title={`${day.toLocaleDateString()} - ${status || 'No payments'}`} 
               aria-label={`${day.toLocaleDateString()} - ${status || 'No payments'}`}
-              onClick={() => onDateClick && onDateClick(day, status)}
+              onClick={() => {
+                setSelectedDate(day);
+                onDateClick && onDateClick(day, status);
+              }}
             >
               {day.getDate()}
             </div>
@@ -130,74 +162,140 @@ const RepaymentCalendar = ({ repayments, onDateClick }) => {
           Today
         </span>
       </div>
+      
+      {/* Selected Date Details */}
+      {selectedDate && (
+        <div className="mt-6 p-4 bg-slate-50 rounded-lg">
+          <h4 className="font-semibold text-slate-800 mb-3">
+            {selectedDate.toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </h4>
+          
+          {(() => {
+            const dStr = selectedDate.toISOString().slice(0, 10);
+            
+            // Find loans due on this date
+            const dueLoans = loans.filter(loan => {
+              if (!loan.dueDate) return false;
+              const loanDueDate = new Date(loan.dueDate).toISOString().slice(0, 10);
+              return loanDueDate === dStr;
+            });
+            
+            // Find repayments made on this date
+            const repayments = loans.flatMap(loan => 
+              (loan.repayments || []).map(rep => ({ ...rep, loanPurpose: loan.purpose }))
+            ).filter(rep => {
+              if (!rep.date) return false;
+              const repDate = new Date(rep.date).toISOString().slice(0, 10);
+              return repDate === dStr;
+            });
+            
+            if (dueLoans.length === 0 && repayments.length === 0) {
+              return <p className="text-slate-600">No loan activities on this date.</p>;
+            }
+            
+            return (
+              <div className="space-y-3">
+                {dueLoans.length > 0 && (
+                  <div>
+                    <h5 className="font-medium text-slate-700 mb-2">Due Payments:</h5>
+                    {dueLoans.map((loan, index) => {
+                      const daysRemaining = Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                      const isOverdue = daysRemaining < 0;
+                      return (
+                        <div key={index} className="p-2 bg-white rounded border-l-4 border-amber-400">
+                          <p className="font-medium">${loan.amount.toLocaleString()} - {loan.purpose}</p>
+                          <p className={`text-sm ${isOverdue ? 'text-red-600' : 'text-slate-600'}`}>
+                            {isOverdue ? `Overdue by ${Math.abs(daysRemaining)} days` : 'Due today'}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {repayments.length > 0 && (
+                  <div>
+                    <h5 className="font-medium text-slate-700 mb-2">Payments Made:</h5>
+                    {repayments.map((repayment, index) => (
+                      <div key={index} className="p-2 bg-white rounded border-l-4 border-emerald-400">
+                        <p className="font-medium">${repayment.amount.toLocaleString()}</p>
+                        <p className="text-sm text-slate-600">{repayment.loanPurpose}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </div>
+      )}
     </div>
   );
 };
 
 const RepaymentAnalytics = ({ loans }) => {
-  const totalBorrowed = loans.reduce((sum, loan) => sum + loan.amount, 0);
+  const totalLoans = loans.length;
+  const totalAmount = loans.reduce((sum, loan) => sum + loan.amount, 0);
   const totalRepaid = loans.reduce((sum, loan) => sum + loan.totalRepaid, 0);
-  const totalRemaining = totalBorrowed - totalRepaid;
-  const repaymentRate = totalBorrowed > 0 ? (totalRepaid / totalBorrowed) * 100 : 0;
-  
   const overdueLoans = loans.filter(loan => {
     if (!loan.dueDate) return false;
     const daysRemaining = Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
     return daysRemaining < 0;
-  });
-  
-  const upcomingPayments = loans.filter(loan => {
-    if (!loan.dueDate) return false;
-    const daysRemaining = Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-    return daysRemaining >= 0 && daysRemaining <= 7;
-  });
+  }).length;
+
+  const repaymentRate = totalAmount > 0 ? (totalRepaid / totalAmount) * 100 : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Total Borrowed</p>
-            <p className="text-2xl font-bold text-slate-900">${totalBorrowed.toLocaleString()}</p>
+            <p className="text-sm font-medium text-slate-600">Total Loans</p>
+            <p className="text-2xl font-bold text-slate-900">{totalLoans}</p>
           </div>
-          <div className="p-3 bg-blue-100 rounded-lg">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
             <DollarSign className="w-6 h-6 text-blue-600" />
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Total Repaid</p>
-            <p className="text-2xl font-bold text-emerald-600">${totalRepaid.toLocaleString()}</p>
+            <p className="text-sm font-medium text-slate-600">Total Amount</p>
+            <p className="text-2xl font-bold text-slate-900">${totalAmount.toLocaleString()}</p>
           </div>
-          <div className="p-3 bg-emerald-100 rounded-lg">
-            <CheckCircle className="w-6 h-6 text-emerald-600" />
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-600">Remaining</p>
-            <p className="text-2xl font-bold text-amber-600">${totalRemaining.toLocaleString()}</p>
-          </div>
-          <div className="p-3 bg-amber-100 rounded-lg">
-            <TrendingUp className="w-6 h-6 text-amber-600" />
+          <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-emerald-600" />
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-slate-600">Repayment Rate</p>
-            <p className="text-2xl font-bold text-blue-600">{repaymentRate.toFixed(1)}%</p>
+            <p className="text-2xl font-bold text-slate-900">{repaymentRate.toFixed(1)}%</p>
           </div>
-          <div className="p-3 bg-blue-100 rounded-lg">
-            <BarChart3 className="w-6 h-6 text-blue-600" />
+          <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+            <BarChart3 className="w-6 h-6 text-amber-600" />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-600">Overdue Loans</p>
+            <p className="text-2xl font-bold text-red-600">{overdueLoans}</p>
+          </div>
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-600" />
           </div>
         </div>
       </div>
@@ -206,139 +304,68 @@ const RepaymentAnalytics = ({ loans }) => {
 };
 
 const PaymentScheduler = ({ loans, onSchedulePayment }) => {
-  const [selectedLoan, setSelectedLoan] = useState('');
   const [amount, setAmount] = useState('');
   const [scheduleDate, setScheduleDate] = useState('');
-  const [frequency, setFrequency] = useState('once');
+  const [frequency, setFrequency] = useState('monthly');
 
   const handleSchedule = () => {
-    if (!selectedLoan || !amount || !scheduleDate) {
+    if (!amount || !scheduleDate) {
       alert('Please fill in all fields');
       return;
     }
-    
+
     onSchedulePayment({
-      loanId: selectedLoan,
       amount: parseFloat(amount),
       scheduleDate,
       frequency
     });
-    
-    // Reset form
+
     setAmount('');
     setScheduleDate('');
   };
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">
-      <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-        <Clock className="w-5 h-5" />
-        Schedule Payment
-      </h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <select
-          value={selectedLoan}
-          onChange={(e) => setSelectedLoan(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Select Loan</option>
-          {loans.map(loan => (
-            <option key={loan._id} value={loan._id}>
-              ${loan.amount.toLocaleString()} - {loan.purpose}
-            </option>
-          ))}
-        </select>
-        
-        <input
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        
-        <input
-          type="date"
-          value={scheduleDate}
-          onChange={(e) => setScheduleDate(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        
-        <select
-          value={frequency}
-          onChange={(e) => setFrequency(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="once">Once</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
-      </div>
-      
-      <button
-        onClick={handleSchedule}
-        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-      >
-        Schedule Payment
-      </button>
-    </div>
-  );
-};
-
-const RepaymentAnalytics = ({ loans }) => {
-  const totalBorrowed = loans.reduce((sum, loan) => sum + loan.amount, 0);
-  const totalRepaid = loans.reduce((sum, loan) => sum + loan.totalRepaid, 0);
-  const totalRemaining = totalBorrowed - totalRepaid;
-  const repaymentRate = totalBorrowed > 0 ? (totalRepaid / totalBorrowed) * 100 : 0;
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-600">Total Borrowed</p>
-            <p className="text-2xl font-bold text-slate-900">${totalBorrowed.toLocaleString()}</p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-lg">
-            <DollarSign className="w-6 h-6 text-blue-600" />
-          </div>
+      <h3 className="text-xl font-bold text-slate-900 mb-4">Schedule Payment</h3>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Amount</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
         </div>
-      </div>
-      
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-600">Total Repaid</p>
-            <p className="text-2xl font-bold text-emerald-600">${totalRepaid.toLocaleString()}</p>
-          </div>
-          <div className="p-3 bg-emerald-100 rounded-lg">
-            <CheckCircle className="w-6 h-6 text-emerald-600" />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Schedule Date</label>
+          <input
+            type="date"
+            value={scheduleDate}
+            onChange={(e) => setScheduleDate(e.target.value)}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
         </div>
-      </div>
-      
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-600">Remaining</p>
-            <p className="text-2xl font-bold text-amber-600">${totalRemaining.toLocaleString()}</p>
-          </div>
-          <div className="p-3 bg-amber-100 rounded-lg">
-            <TrendingUp className="w-6 h-6 text-amber-600" />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Frequency</label>
+          <select
+            value={frequency}
+            onChange={(e) => setFrequency(e.target.value)}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-weekly</option>
+          </select>
         </div>
-      </div>
-      
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-slate-600">Repayment Rate</p>
-            <p className="text-2xl font-bold text-blue-600">{repaymentRate.toFixed(1)}%</p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-lg">
-            <BarChart3 className="w-6 h-6 text-blue-600" />
-          </div>
+        <div className="flex items-end">
+          <button
+            onClick={handleSchedule}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Schedule
+          </button>
         </div>
       </div>
     </div>
@@ -354,13 +381,9 @@ const RepaymentTracker = ({ user }) => {
   const [showPassword, setShowPassword] = useState({});
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
   const [scheduledPayments, setScheduledPayments] = useState([]);
-  const [showPassword, setShowPassword] = useState({});
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [exportFormat, setExportFormat] = useState('pdf');
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
-  const [scheduledPayments, setScheduledPayments] = useState([]);
 
   useEffect(() => {
     fetchUserLoans();
@@ -452,8 +475,6 @@ const RepaymentTracker = ({ user }) => {
     return matchesSearch && loan.status === filter;
   });
 
-  const allRepayments = loans.flatMap(loan => loan.repayments || []);
-
   const exportData = () => {
     const data = {
       loans: loans.map(loan => ({
@@ -467,36 +488,131 @@ const RepaymentTracker = ({ user }) => {
         createdAt: loan.createdAt
       })),
       summary: {
-        totalBorrowed: loans.reduce((sum, loan) => sum + loan.amount, 0),
+        totalLoans: loans.length,
+        totalAmount: loans.reduce((sum, loan) => sum + loan.amount, 0),
         totalRepaid: loans.reduce((sum, loan) => sum + loan.totalRepaid, 0),
-        totalRemaining: loans.reduce((sum, loan) => sum + (loan.amount - loan.totalRepaid), 0)
+        exportDate: new Date().toISOString()
       }
     };
+
+    if (exportFormat === 'pdf') {
+      generatePDF(data);
+    } else if (exportFormat === 'csv') {
+      generateCSV(data);
+    } else if (exportFormat === 'json') {
+      generateJSON(data);
+    }
+  };
+
+  const generatePDF = (data) => {
+    const pdf = new jsPDF();
+    const margin = 20;
+    let yPosition = margin;
+
+    // Title
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(31, 41, 55);
+    pdf.text('Repayment Tracker Report', margin, yPosition);
+    yPosition += 15;
+
+    // Summary
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Summary', margin, yPosition);
+    yPosition += 10;
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(107, 114, 128);
+    pdf.text(`Total Loans: ${data.summary.totalLoans}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`Total Amount: $${data.summary.totalAmount.toLocaleString()}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`Total Repaid: $${data.summary.totalRepaid.toLocaleString()}`, margin, yPosition);
+    yPosition += 6;
+    pdf.text(`Remaining: $${(data.summary.totalAmount - data.summary.totalRepaid).toLocaleString()}`, margin, yPosition);
+    yPosition += 15;
+
+    // Loans
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(31, 41, 55);
+    pdf.text('Loan Details', margin, yPosition);
+    yPosition += 10;
+
+    const pageHeight = pdf.internal.pageSize.height;
+
+    data.loans.forEach((loan, index) => {
+      if (yPosition > pageHeight - 60) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(31, 41, 55);
+      pdf.text(`Loan ${index + 1}: $${loan.amount.toLocaleString()}`, margin, yPosition);
+      yPosition += 8;
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(107, 114, 128);
+      pdf.text(`Purpose: ${loan.purpose}`, margin + 10, yPosition);
+      yPosition += 6;
+      pdf.text(`Status: ${loan.status}`, margin + 10, yPosition);
+      yPosition += 6;
+      pdf.text(`Repaid: $${loan.totalRepaid.toLocaleString()}`, margin + 10, yPosition);
+      yPosition += 6;
+      pdf.text(`Remaining: $${loan.remaining.toLocaleString()}`, margin + 10, yPosition);
+      yPosition += 6;
+      
+      if (loan.dueDate) {
+        pdf.text(`Due Date: ${new Date(loan.dueDate).toLocaleDateString()}`, margin + 10, yPosition);
+        yPosition += 6;
+      }
+      
+      yPosition += 10;
+    });
     
+    // Save the PDF
+    pdf.save(`repayment-tracker-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const generateCSV = (data) => {
+    const headers = ['ID', 'Amount', 'Purpose', 'Status', 'Total Repaid', 'Remaining', 'Due Date', 'Created At'];
+    const csvContent = [
+      headers.join(','),
+      ...data.loans.map(loan => [
+        loan.id,
+        loan.amount,
+        `"${loan.purpose}"`,
+        loan.status,
+        loan.totalRepaid,
+        loan.remaining,
+        loan.dueDate ? new Date(loan.dueDate).toLocaleDateString() : '',
+        new Date(loan.createdAt).toLocaleDateString()
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `repayment-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const generateJSON = (data) => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `repayment-tracker-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(url);
   };
-
-  const filteredLoans = loans.filter(loan => {
-    const matchesSearch = loan.purpose.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         loan.amount.toString().includes(searchTerm);
-    
-    if (filter === 'all') return matchesSearch;
-    if (filter === 'overdue') {
-      const daysRemaining = loan.dueDate ? getDaysRemaining(loan.dueDate) : null;
-      return matchesSearch && daysRemaining !== null && daysRemaining < 0;
-    }
-    if (filter === 'upcoming') {
-      const daysRemaining = loan.dueDate ? getDaysRemaining(loan.dueDate) : null;
-      return matchesSearch && daysRemaining !== null && daysRemaining >= 0 && daysRemaining <= 7;
-    }
-    return matchesSearch && loan.status === filter;
-  });
 
   if (loading) {
     return (
@@ -520,18 +636,27 @@ const RepaymentTracker = ({ user }) => {
           </div>
           <div className="flex items-center gap-4 mt-4 md:mt-0">
             <button
-              onClick={exportData}
-              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Export Data
-            </button>
-            <button
               onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
               {viewMode === 'list' ? <Calendar className="w-4 h-4" /> : <BarChart3 className="w-4 h-4" />}
               {viewMode === 'list' ? 'Calendar View' : 'List View'}
+            </button>
+            <select
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value)}
+              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="pdf">PDF</option>
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+            </select>
+            <button
+              onClick={exportData}
+              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Export Data
             </button>
           </div>
         </div>
@@ -564,186 +689,190 @@ const RepaymentTracker = ({ user }) => {
                 />
               </div>
             </div>
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Loans</option>
-              <option value="overdue">Overdue</option>
-              <option value="upcoming">Upcoming (7 days)</option>
-              <option value="active">Active</option>
-              <option value="funded">Funded</option>
-            </select>
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-slate-400" />
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Loans</option>
+                <option value="overdue">Overdue</option>
+                <option value="upcoming">Upcoming (7 days)</option>
+                <option value="active">Active</option>
+                <option value="funded">Funded</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Calendar View */}
-        {viewMode === 'calendar' && (
-          <RepaymentCalendar 
-            repayments={allRepayments} 
-            onDateClick={(date, status) => {
-              console.log('Clicked date:', date, 'Status:', status);
-            }}
-          />
-        )}
 
-        {/* Loans List */}
-        {filteredLoans.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-8 h-8 text-slate-400" />
+
+        {viewMode === 'list' ? (
+          filteredLoans.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No loans found</h3>
+              <p className="text-slate-600">
+                {searchTerm || filter !== 'all' 
+                  ? 'Try adjusting your search or filter criteria.'
+                  : 'You don\'t have any active loans requiring repayment.'
+                }
+              </p>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No loans found</h3>
-            <p className="text-slate-600">
-              {searchTerm || filter !== 'all' 
-                ? 'Try adjusting your search or filter criteria.'
-                : 'You don\'t have any active loans requiring repayment.'
-              }
-            </p>
-          </div>
-        ) : (
-          <div className="grid gap-6">
-            {filteredLoans.map((loan) => {
-              const daysRemaining = loan.dueDate ? getDaysRemaining(loan.dueDate) : null;
-              const isOverdue = daysRemaining !== null && daysRemaining < 0;
-              const remainingAmount = loan.amount - loan.totalRepaid;
-              const repaymentPercentage = (loan.totalRepaid / loan.amount) * 100;
-              
-              return (
-                <div key={loan._id} className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-                  {/* Header */}
-                  <div className="p-6 border-b border-slate-200">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-slate-900">
-                            ${loan.amount.toLocaleString()} Loan
-                          </h3>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(loan.status, loan.dueDate)}`}>
-                            {getStatusText(loan.status, loan.dueDate)}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 mb-1">
-                          <strong>Purpose:</strong> {loan.purpose}
-                        </p>
-                        <p className="text-slate-600">
-                          <strong>Term:</strong> {loan.term} days • <strong>Created:</strong> {new Date(loan.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      
-                      {isOverdue && (
-                        <div className="flex items-center gap-2 text-red-600">
-                          <AlertTriangle className="w-5 h-5" />
-                          <span className="font-medium">Overdue by {Math.abs(daysRemaining)} days</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Progress and Stats */}
-                  <div className="p-6 border-b border-slate-200">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
-                        <p className="text-sm font-medium text-slate-600 mb-1">Repayment Progress</p>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${repaymentPercentage}%` }}
-                            ></div>
+          ) : (
+            <div className="grid gap-6">
+              {filteredLoans.map((loan) => {
+                const daysRemaining = loan.dueDate ? getDaysRemaining(loan.dueDate) : null;
+                const isOverdue = daysRemaining !== null && daysRemaining < 0;
+                const remainingAmount = loan.amount - loan.totalRepaid;
+                const repaymentPercentage = (loan.totalRepaid / loan.amount) * 100;
+                
+                return (
+                  <div key={loan._id} className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                    {/* Header */}
+                    <div className="p-6 border-b border-slate-200">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-xl font-bold text-slate-900">
+                              ${loan.amount.toLocaleString()} Loan
+                            </h3>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(loan.status, loan.dueDate)}`}>
+                              {getStatusText(loan.status, loan.dueDate)}
+                            </span>
                           </div>
-                          <span className="text-sm font-medium text-slate-700">{repaymentPercentage.toFixed(1)}%</span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">
-                          ${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm font-medium text-slate-600 mb-1">Remaining Amount</p>
-                        <p className="text-2xl font-bold text-amber-600">${remainingAmount.toLocaleString()}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm font-medium text-slate-600 mb-1">Due Date</p>
-                        <p className="text-lg font-semibold text-slate-900">
-                          {loan.dueDate ? new Date(loan.dueDate).toLocaleDateString() : 'Not set'}
-                        </p>
-                        {loan.dueDate && (
-                          <p className={`text-sm ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
-                            {isOverdue ? 'Overdue' : `${daysRemaining} days remaining`}
+                          <p className="text-slate-600 mb-1">
+                            <strong>Purpose:</strong> {loan.purpose}
                           </p>
+                          <p className="text-slate-600">
+                            <strong>Term:</strong> {loan.term} days • <strong>Created:</strong> {new Date(loan.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        
+                        {isOverdue && (
+                          <div className="flex items-center gap-2 text-red-600">
+                            <AlertTriangle className="w-5 h-5" />
+                            <span className="font-medium">Overdue by {Math.abs(daysRemaining)} days</span>
+                          </div>
                         )}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Repayment Form */}
-                  <div className="p-6 border-b border-slate-200">
-                    <h4 className="text-lg font-semibold text-slate-800 mb-4">Make a Payment</h4>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex-1 relative">
-                        <input
-                          type={showPassword[loan._id] ? "text" : "number"}
-                          placeholder="Enter repayment amount"
-                          value={repaymentAmounts[loan._id] || ''}
-                          onChange={(e) => handleAmountChange(loan._id, e.target.value)}
-                          min="1"
-                          max={remainingAmount}
-                          step="0.01"
-                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword({...showPassword, [loan._id]: !showPassword[loan._id]})}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    {/* Progress and Stats */}
+                    <div className="p-6 border-b border-slate-200">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                          <p className="text-sm font-medium text-slate-600 mb-1">Repayment Progress</p>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-slate-200 rounded-full h-2">
+                              <div 
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${repaymentPercentage}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium text-slate-700">{repaymentPercentage.toFixed(1)}%</span>
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            ${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-sm font-medium text-slate-600 mb-1">Remaining Amount</p>
+                          <p className="text-2xl font-bold text-amber-600">${remainingAmount.toLocaleString()}</p>
+                        </div>
+                        
+                        <div>
+                          <p className="text-sm font-medium text-slate-600 mb-1">Due Date</p>
+                          <p className="text-lg font-semibold text-slate-900">
+                            {loan.dueDate ? new Date(loan.dueDate).toLocaleDateString() : 'Not set'}
+                          </p>
+                          {loan.dueDate && (
+                            <p className={`text-sm ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
+                              {isOverdue 
+                                ? `Overdue by ${Math.abs(daysRemaining)} days`
+                                : `${daysRemaining} days remaining`
+                              }
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Repayment Form */}
+                    <div className="p-6 border-b border-slate-200">
+                      <h4 className="text-lg font-semibold text-slate-800 mb-4">Make a Payment</h4>
+                      <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex-1 relative">
+                          <input
+                            type={showPassword[loan._id] ? "text" : "number"}
+                            placeholder="Enter repayment amount"
+                            value={repaymentAmounts[loan._id] || ''}
+                            onChange={(e) => handleAmountChange(loan._id, e.target.value)}
+                            min="1"
+                            max={remainingAmount}
+                            step="0.01"
+                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword({...showPassword, [loan._id]: !showPassword[loan._id]})}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            {showPassword[loan._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => handleRepayment(loan._id)}
+                          disabled={!repaymentAmounts[loan._id] || parseFloat(repaymentAmounts[loan._id]) <= 0 || parseFloat(repaymentAmounts[loan._id]) > remainingAmount}
+                          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                            isOverdue 
+                              ? 'bg-red-600 hover:bg-red-700 text-white' 
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
-                          {showPassword[loan._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {isOverdue ? 'Pay Now' : 'Make Payment'}
                         </button>
                       </div>
-                      <button 
-                        onClick={() => handleRepayment(loan._id)}
-                        disabled={!repaymentAmounts[loan._id] || parseFloat(repaymentAmounts[loan._id]) <= 0 || parseFloat(repaymentAmounts[loan._id]) > remainingAmount}
-                        className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                          isOverdue 
-                            ? 'bg-red-600 hover:bg-red-700 text-white' 
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                      >
-                        {isOverdue ? 'Pay Now' : 'Make Payment'}
-                      </button>
                     </div>
-                  </div>
 
-                  {/* Recent Payments */}
-                  {loan.repayments && loan.repayments.length > 0 && (
-                    <div className="p-6">
-                      <h4 className="text-lg font-semibold text-slate-800 mb-4">Recent Payments</h4>
-                      <div className="space-y-3">
-                        {loan.repayments.slice(-5).reverse().map((repayment, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                                <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    {/* Recent Payments */}
+                    {loan.repayments && loan.repayments.length > 0 && (
+                      <div className="p-6">
+                        <h4 className="text-lg font-semibold text-slate-800 mb-4">Recent Payments</h4>
+                        <div className="space-y-3">
+                          {loan.repayments.slice(-5).reverse().map((repayment, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-slate-900">${repayment.amount.toLocaleString()}</p>
+                                  <p className="text-sm text-slate-500">{new Date(repayment.date).toLocaleDateString()}</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-medium text-slate-900">${repayment.amount.toLocaleString()}</p>
-                                <p className="text-sm text-slate-500">{new Date(repayment.date).toLocaleDateString()}</p>
-                              </div>
+                              <span className="text-sm text-slate-500">
+                                {new Date(repayment.date).toLocaleTimeString()}
+                              </span>
                             </div>
-                            <span className="text-sm text-slate-500">
-                              {new Date(repayment.date).toLocaleTimeString()}
-                            </span>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )
+        ) : (
+          <RepaymentCalendar loans={loans} onDateClick={(date, status) => {
+            // This function will be implemented in a future edit to show details for the clicked date
+            console.log('Clicked date:', date, 'Status:', status);
+          }} />
         )}
 
         {/* Scheduled Payments */}
