@@ -5,6 +5,10 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import ChatPage from './pages/ChatPage';
+import HelpCenter from './pages/HelpCenter';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import Security from './pages/Security';
 import { logout, getCurrentUser } from './api/auth';
 
 // Wrapper component to use useNavigate hook
@@ -48,6 +52,10 @@ function AppContent() {
         path="/chat" 
         element={user ? <ChatPage user={user} /> : <Navigate to="/" />} 
       />
+      <Route path="/help-center" element={<HelpCenter />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/security" element={<Security />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

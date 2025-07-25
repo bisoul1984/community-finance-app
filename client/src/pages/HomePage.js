@@ -428,10 +428,10 @@ const HomePage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
-                Building Financial <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">Bridges</span>
+                Fostering Financial <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">Connections</span>
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                MicroLoan is more than just a lending platform. We're creating a community where people can help each other achieve their dreams through trusted, transparent financial relationships.
+                At MicroLoan, we are dedicated to building a robust financial ecosystem where trust, transparency, and community empowerment drive success. Our platform enables individuals to achieve their financial goals and support one another through responsible, collaborative lending.
               </p>
               <div className="space-y-6">
                 {[
@@ -528,8 +528,8 @@ const HomePage = () => {
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                    </svg>
                  ),
-                 title: "Email Support",
-                 contact: "support@microloan.com",
+                                 title: "Email Support",
+                contact: "fikertetadesse1403@gmail.com",
                  description: "Get help via email within 24 hours"
                },
                                {
@@ -596,11 +596,11 @@ const HomePage = () => {
             <div>
               <h4 className="text-lg font-semibold mb-6">Support</h4>
               <ul className="space-y-3">
-                {['Help Center', 'Privacy Policy', 'Terms of Service', 'Security'].map((item) => (
-                  <li key={item}>
-                    <button className="text-gray-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform">
-                      {item}
-                    </button>
+                {[{label: 'Help Center', path: '/help-center'}, {label: 'Privacy Policy', path: '/privacy-policy'}, {label: 'Terms of Service', path: '/terms-of-service'}, {label: 'Security', path: '/security'}].map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.path} className="text-gray-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform">
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -659,7 +659,15 @@ const HomePage = () => {
                <svg className="w-4 h-4 text-red-500 mx-1" fill="currentColor" viewBox="0 0 24 24">
                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                </svg>
-               for communities worldwide.
+               for communities worldwide. | Built by{' '}
+               <a 
+                 href="https://www.bisrate-tadesse.com" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="text-blue-400 hover:text-blue-300 transition-colors duration-200 underline"
+               >
+                 Bisrate Tadesse
+               </a>
              </p>
            </div>
         </div>
