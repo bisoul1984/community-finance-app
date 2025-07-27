@@ -761,4 +761,170 @@ router.post('/process-scheduled', async (req, res) => {
   }
 });
 
+// Get available payment providers
+router.get('/providers', auth, async (req, res) => {
+  try {
+    const providers = PaymentService.getAvailableProviders();
+    res.json({ providers });
+  } catch (error) {
+    console.error('Get payment providers error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get payment provider fees
+router.post('/calculate-fees', auth, async (req, res) => {
+  try {
+    const { amount, provider = 'stripe', currency = 'usd' } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+
+    const fees = PaymentService.getProviderFees(amount, provider, currency);
+    res.json({ fees });
+  } catch (error) {
+    console.error('Calculate fees error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Create payment intent with specific provider
+router.post('/create-payment-intent/:provider', auth, async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const { amount, loanId, currency = 'usd' } = req.body;
+    const userId = req.user.id;
+
+    // Validate amount
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid amount' });
+    }
+
+    // Get user and loan details
+    const user = await User.findById(userId);
+    const loan = await Loan.findById(loanId);
+
+    if (!loan) {
+      return res.status(404).json({ message: 'Loan not found' });
+    }
+
+    // Check if user is the borrower of this loan
+    if (loan.borrower.toString() !== userId) {
+      return res.status(403).json({ message: 'Not authorized to repay this loan' });
+    }
+
+    // Create payment intent with specified provider
+    const paymentResult = await PaymentService.createPaymentIntent(amount, currency, {
+      userId: userId,
+      loanId: loanId,
+      paymentType: 'loan_repayment',
+      borrowerName: user.name,
+      loanTitle: loan.title
+    }, provider);
+
+    if (!paymentResult.success) {
+      return res.status(500).json({ message: paymentResult.error });
+    }
+
+    res.json({
+      ...paymentResult,
+      provider
+    });
+
+  } catch (error) {
+    console.error('Create payment intent error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Confirm payment with specific provider
+router.post('/confirm-payment/:provider', auth, async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const { paymentIntentId, loanId } = req.body;
+    const userId = req.user.id;
+
+    // Confirm payment with specified provider
+    const paymentResult = await PaymentService.confirmPayment(paymentIntentId, provider);
+    
+    if (!paymentResult.success) {
+      return res.status(400).json({ message: paymentResult.error });
+    }
+
+    // Get loan details
+    const loan = await Loan.findById(loanId);
+    if (!loan) {
+      return res.status(404).json({ message: 'Loan not found' });
+    }
+
+    // Create payment record
+    const payment = new Payment({
+      userId: userId,
+      loanId: loanId,
+      amount: paymentResult.amount,
+      currency: paymentResult.currency,
+      stripePaymentIntentId: paymentIntentId,
+      status: 'completed',
+      paymentType: 'repayment',
+      provider: provider,
+      metadata: {
+        provider: provider,
+        paymentMethod: paymentResult.provider || provider
+      }
+    });
+
+    await payment.save();
+
+    // Update loan repayment
+    const newRepaidAmount = (loan.repaidAmount || 0) + paymentResult.amount;
+    loan.repaidAmount = newRepaidAmount;
+    
+    // Check if loan is fully repaid
+    if (newRepaidAmount >= loan.amount) {
+      loan.status = 'repaid';
+      loan.repaidAt = new Date();
+    } else {
+      loan.status = 'active';
+    }
+
+    await loan.save();
+
+    // Update user's payment history
+    const user = await User.findById(userId);
+    if (user) {
+      if (!user.paymentHistory) user.paymentHistory = [];
+      user.paymentHistory.push({
+        paymentId: payment._id,
+        amount: paymentResult.amount,
+        date: new Date(),
+        type: 'repayment',
+        provider: provider
+      });
+      await user.save();
+    }
+
+    res.json({
+      success: true,
+      payment: {
+        id: payment._id,
+        amount: paymentResult.amount,
+        currency: paymentResult.currency,
+        status: 'completed',
+        provider: provider,
+        loanStatus: loan.status
+      },
+      loan: {
+        id: loan._id,
+        repaidAmount: loan.repaidAmount,
+        status: loan.status
+      }
+    });
+
+  } catch (error) {
+    console.error('Confirm payment error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router; 

@@ -22,8 +22,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
+    origin: [process.env.FRONTEND_URL || 'https://exquisite-bunny-a1795e.netlify.app', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
   }
 });
 
@@ -86,7 +87,10 @@ io.on('connection', (socket) => {
 });
 
 app.set('io', io); // Make io accessible in routes/services
-app.use(cors());
+app.use(cors({
+  origin: [process.env.FRONTEND_URL || 'https://exquisite-bunny-a1795e.netlify.app', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
 // MongoDB connection
