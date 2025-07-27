@@ -121,6 +121,28 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Microloan API is running.' });
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Microloan API Server',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      loans: '/api/loans',
+      payments: '/api/payments',
+      users: '/api/users',
+      admin: '/api/admin',
+      community: '/api/community',
+      documents: '/api/documents',
+      chat: '/api/chat',
+      notifications: '/api/notifications',
+      reports: '/api/reports'
+    }
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
