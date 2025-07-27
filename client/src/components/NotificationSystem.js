@@ -20,7 +20,8 @@ const NotificationSystem = ({ user }) => {
     fetchNotificationSettings();
 
     // Real-time notifications
-    const socket = io('http://localhost:5000', {
+    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+    const socket = io(socketUrl, {
       auth: { token: localStorage.getItem('token') },
       query: { userId: user.id }
     });

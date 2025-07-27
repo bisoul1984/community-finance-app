@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getLoanRequests, fundLoan } from '../api/loans';
 import UserProfile from '../components/UserProfile';
+import BorrowerReputation from '../components/BorrowerReputation';
 
 const BrowseLoans = ({ user }) => {
   const [loans, setLoans] = useState([]);
@@ -132,9 +133,16 @@ const BrowseLoans = ({ user }) => {
                   <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                     <strong>Term:</strong> {loan.term} days
                   </p>
-                  <p style={{ color: '#6b7280' }}>
-                    <strong>Reputation:</strong> {loan.borrower.reputation || 0}
-                  </p>
+                  <div className="mt-3">
+                    <BorrowerReputation 
+                      borrower={loan.borrower} 
+                      showDetails={false}
+                      onReputationClick={(borrower) => {
+                        setSelectedBorrower(borrower);
+                        setShowProfile(true);
+                      }}
+                    />
+                  </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ 

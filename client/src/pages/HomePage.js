@@ -1,6 +1,161 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+// Add custom CSS for animations and modern design
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  * {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.2); }
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .animate-fade-in-left {
+    animation: fadeInLeft 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .animate-fade-in-right {
+    animation: fadeInRight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .hover-lift {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  }
+  
+  .modern-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modern-button {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: none;
+    border-radius: 16px;
+    padding: 16px 32px;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  }
+  
+  .modern-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+  }
+  
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+    margin: 80px 0;
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
+
 const HomePage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -203,25 +358,27 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 overflow-x-hidden">
       {/* Navigation Bar */}
-      <nav className={`bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <nav className={`bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold text-gradient tracking-wide">
                   MicroLoan
                 </h1>
               </div>
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
-                {['hero', 'features', 'about', 'testimonials', 'contact'].map((section) => (
+                {['hero', 'features', 'about', 'testimonials', 'contact'].map((section, index) => (
                   <button
                     key={section}
                     onClick={() => scrollToSection(section)}
-                    className="text-gray-700 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                    className="text-gray-700 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover-lift relative group"
+                    style={{animationDelay: `${0.1 + index * 0.05}s`}}
                   >
                     {section.charAt(0).toUpperCase() + section.slice(1)}
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-slate-800 transition-all duration-300 group-hover:w-full"></span>
                   </button>
                 ))}
               </div>
@@ -229,13 +386,13 @@ const HomePage = () => {
             <div className="flex items-center space-x-4">
               <Link
                 to="/login"
-                className="text-slate-700 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                className="text-slate-700 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover-lift"
               >
                 Sign In
               </Link>
               <Link
                 to="/signup"
-                className="bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+                className="bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl hover-lift"
               >
                 Get Started
               </Link>
@@ -245,69 +402,137 @@ const HomePage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-600/5 to-gray-600/5"></div>
-        <div className="absolute inset-0 bg-dots opacity-30"></div>
+      <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Modern gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50"></div>
         
-        <div className="relative max-w-7xl mx-auto">
-          <div className="text-center">
-            <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 leading-tight">
-                Empowering Dreams Through
-                <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent"> MicroLoans</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
-                Connect with your community to access affordable loans or help others achieve their goals. 
-                Build trust, grow together, and create lasting financial relationships.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <Link
-                  to="/signup"
-                  className="group bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                  Start Your Journey
-                  <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-                </Link>
-                <button
-                  onClick={() => scrollToSection('features')}
-                  className="group border-2 border-slate-700 text-slate-700 hover:bg-slate-700 hover:text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105"
-                >
-                  Explore Features
-                  <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">↓</span>
-                </button>
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full animate-float blur-xl"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 left-20 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-60 left-1/4 w-16 h-16 bg-gradient-to-br from-yellow-400/10 to-orange-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '0.5s'}}></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto text-center">
+          <div className={`animate-fade-in-up ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{animationDelay: '0.2s'}}>
+            {/* Badge */}
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-8 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              Trusted by 10,000+ users worldwide
+            </div>
+            
+            {/* Main headline */}
+            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+              Empowering Dreams
+              <span className="block text-gradient-blue mt-2">Through MicroLoans</span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+              Connect with your community to access affordable loans or help others achieve their goals. 
+              <span className="block mt-2 font-medium text-slate-700">Build trust, grow together, and create lasting financial relationships.</span>
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+              <Link
+                to="/signup"
+                className="modern-button group animate-pulse-slow"
+              >
+                Start Your Journey
+                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              <button
+                onClick={() => scrollToSection('features')}
+                className="group px-10 py-4 border-2 border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 rounded-16px text-lg font-semibold transition-all duration-300 hover:scale-105 hover-lift bg-white/80 backdrop-blur-sm"
+              >
+                Explore Features
+                <svg className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Social proof */}
+            <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
+              <div className="flex items-center">
+                <div className="flex -space-x-2 mr-3">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 border-2 border-white"></div>
+                  ))}
+                </div>
+                <span>Join 1,500+ active users</span>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>98% success rate</span>
               </div>
             </div>
           </div>
         </div>
         
-        {/* Floating elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-slate-200 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-gray-200 rounded-full opacity-20 animate-bounce" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-20 w-12 h-12 bg-slate-300 rounded-full opacity-20 animate-bounce" style={{animationDelay: '2s'}}></div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Why Choose <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">MicroLoan</span>?
+      <section id="features" className="py-32 bg-gradient-to-br from-slate-50 to-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 right-20 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-48 h-48 bg-purple-100/30 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          {/* Section header */}
+          <div className="text-center mb-20 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-6">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
+              Why Choose MicroLoan?
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 tracking-tight">
+              Powerful Features for
+              <span className="block text-gradient-blue"> Modern Lending</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
               Our platform offers cutting-edge features that make borrowing and lending simple, secure, and community-driven.
             </p>
           </div>
+          
+          {/* Features grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="group p-8 rounded-2xl bg-gradient-to-br from-white to-slate-50 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100 hover:border-slate-300"
+                className={`modern-card group p-8 hover-lift animate-fade-in-up`}
+                style={{animationDelay: `${0.2 + index * 0.1}s`}}
               >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
+                {/* Icon container */}
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-2xl text-blue-600">
+                    {feature.icon}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                
+                {/* Content */}
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed font-light text-lg">{feature.description}</p>
+                
+                {/* Hover effect line */}
+                <div className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mt-6 transition-all duration-300 group-hover:w-full"></div>
               </div>
             ))}
           </div>
@@ -317,11 +542,11 @@ const HomePage = () => {
       {/* Loan Categories Section */}
       <section className="py-24 bg-gradient-to-br from-slate-50 to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              Loan <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">Categories</span>
+          <div className="text-center mb-16 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+              Loan <span className="text-gradient">Categories</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
               Choose from our diverse range of loan categories designed to meet your specific needs.
             </p>
           </div>
@@ -329,14 +554,15 @@ const HomePage = () => {
             {loanCategories.map((category, index) => (
               <div 
                 key={index}
-                className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100"
+                className={`group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 border border-gray-100 hover-lift animate-fade-in-up`}
+                style={{animationDelay: `${0.2 + index * 0.1}s`}}
               >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 group-hover:rotate-6">
                   {category.icon}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{category.name}</h3>
-                <p className="text-gray-600 mb-2">Amount: {category.amount}</p>
-                <p className="text-slate-700 font-semibold">Rate: {category.rate}</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-2 tracking-wide">{category.name}</h3>
+                <p className="text-gray-600 mb-2 font-light">Amount: {category.amount}</p>
+                <p className="text-slate-700 font-semibold text-lg">Rate: {category.rate}</p>
               </div>
             ))}
           </div>
@@ -344,33 +570,38 @@ const HomePage = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-24 bg-gradient-to-r from-slate-800 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Our <span className="text-amber-400">Impact</span> in Numbers
+      <section className="py-24 bg-gradient-to-r from-slate-800 to-gray-900 text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-amber-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-24 h-24 bg-blue-400 rounded-full blur-2xl"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+              Our <span className="text-gradient-gold">Impact</span> in Numbers
             </h2>
-            <p className="text-xl opacity-90 max-w-3xl mx-auto">
+            <p className="text-xl opacity-90 max-w-3xl mx-auto font-light">
               See how we're making a difference in communities around the world.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold mb-2 text-amber-400">{stats.users}+</div>
-              <div className="text-lg opacity-90">Active Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold mb-2 text-amber-400">${stats.loans}K+</div>
-              <div className="text-lg opacity-90">Loans Funded</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold mb-2 text-amber-400">{stats.success}%</div>
-              <div className="text-lg opacity-90">Success Rate</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold mb-2 text-amber-400">{stats.support}/7</div>
-              <div className="text-lg opacity-90">Support Hours</div>
-            </div>
+            {[
+              { value: `${stats.users}+`, label: 'Active Users' },
+              { value: `$${stats.loans}K+`, label: 'Loans Funded' },
+              { value: `${stats.success}%`, label: 'Success Rate' },
+              { value: `${stats.support}/7`, label: 'Support Hours' }
+            ].map((stat, index) => (
+              <div 
+                key={index} 
+                className="text-center animate-fade-in-up hover-lift"
+                style={{animationDelay: `${0.3 + index * 0.1}s`}}
+              >
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-gradient-gold animate-pulse-slow">{stat.value}</div>
+                <div className="text-lg opacity-90 font-light">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -378,27 +609,27 @@ const HomePage = () => {
       {/* Testimonials Section */}
       <section id="testimonials" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              What Our <span className="bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">Community</span> Says
+          <div className="text-center mb-16 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+              What Our <span className="text-gradient">Community</span> Says
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
               Real stories from real people who have transformed their lives with MicroLoan.
             </p>
           </div>
-          <div className="relative">
+          <div className="relative animate-fade-in-up" style={{animationDelay: '0.2s'}}>
             <div className="flex justify-center">
               <div className="max-w-4xl mx-auto">
-                <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-12 rounded-3xl shadow-xl border border-gray-100">
+                <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-12 rounded-3xl shadow-xl border border-gray-100 hover-lift transition-all duration-500">
                   <div className="text-center">
-                    <div className="text-6xl mb-6">{testimonials[activeTestimonial].avatar}</div>
-                    <blockquote className="text-2xl md:text-3xl font-medium text-slate-900 mb-8 leading-relaxed">
+                    <div className="text-6xl mb-6 animate-float">{testimonials[activeTestimonial].avatar}</div>
+                    <blockquote className="text-2xl md:text-3xl font-medium text-slate-900 mb-8 leading-relaxed italic">
                       "{testimonials[activeTestimonial].content}"
                     </blockquote>
-                    <div className="text-lg font-semibold text-slate-900 mb-2">
+                    <div className="text-lg font-semibold text-slate-900 mb-2 tracking-wide">
                       {testimonials[activeTestimonial].name}
                     </div>
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 font-light">
                       {testimonials[activeTestimonial].role}
                     </div>
                   </div>
@@ -410,7 +641,7 @@ const HomePage = () => {
                 <button
                   key={index}
                   onClick={() => setActiveTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  className={`w-3 h-3 rounded-full transition-all duration-300 hover:scale-125 ${
                     index === activeTestimonial 
                       ? 'bg-slate-700 scale-125' 
                       : 'bg-gray-300 hover:bg-gray-400'
@@ -483,28 +714,36 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-slate-800 to-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Ready to Start Your <span className="text-amber-400">Journey</span>?
-          </h2>
-          <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-            Join thousands of people who are already building their dreams with MicroLoan.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link
-              to="/signup"
-              className="group bg-white text-slate-800 hover:bg-gray-100 px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Get Started Now
-              <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
-            <Link
-              to="/login"
-              className="group border-2 border-white text-white hover:bg-white hover:text-slate-800 px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105"
-            >
-              Sign In
-            </Link>
+      <section className="py-24 bg-gradient-to-r from-slate-800 to-gray-900 text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 right-20 w-40 h-40 bg-amber-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-32 h-32 bg-blue-400 rounded-full blur-2xl"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+          <div className="animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+              Ready to Start Your <span className="text-gradient-gold">Journey</span>?
+            </h2>
+            <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90 font-light">
+              Join thousands of people who are already building their dreams with MicroLoan.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link
+                to="/signup"
+                className="group bg-white text-slate-800 hover:bg-gray-100 px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl hover-lift animate-pulse-slow"
+              >
+                Get Started Now
+                <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </Link>
+              <Link
+                to="/login"
+                className="group border-2 border-white text-white hover:bg-white hover:text-slate-800 px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover-lift"
+              >
+                Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -528,7 +767,7 @@ const HomePage = () => {
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                    </svg>
                  ),
-                                 title: "Email Support",
+                 title: "Email Support",
                 contact: "fikertetadesse1403@gmail.com",
                  description: "Get help via email within 24 hours"
                },
@@ -607,49 +846,56 @@ const HomePage = () => {
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-6">Connect</h4>
-                             <div className="flex space-x-4">
-                 {[
-                   { 
-                     icon: (
-                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                       </svg>
-                     ), 
-                     label: "Twitter" 
-                   },
-                   { 
-                     icon: (
-                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                       </svg>
-                     ), 
-                     label: "Facebook" 
-                   },
-                   { 
-                     icon: (
-                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                       </svg>
-                     ), 
-                     label: "LinkedIn" 
-                   },
-                   { 
-                     icon: (
-                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
-                       </svg>
-                     ), 
-                     label: "Instagram" 
-                   }
-                 ].map((social, index) => (
-                   <button 
-                     key={index}
-                     className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 transform"
-                     title={social.label}
-                   >
-                     {social.icon}
-                   </button>
-                 ))}
+              <div className="flex space-x-4">
+                {[
+                  { 
+                    icon: (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                      </svg>
+                    ), 
+                    label: "X (Twitter)",
+                    url: "https://x.com/BisratTadesse18"
+                  },
+                  { 
+                    icon: (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    ), 
+                    label: "Facebook",
+                    url: "https://www.facebook.com/bisrate.tadesse"
+                  },
+                  { 
+                    icon: (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    ), 
+                    label: "LinkedIn",
+                    url: "https://www.linkedin.com/in/bisrate-tadesse"
+                  },
+                  { 
+                    icon: (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.746-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z"/>
+                      </svg>
+                    ), 
+                    label: "Instagram",
+                    url: "https://www.instagram.com/bisrate.tadesse"
+                  }
+                ].map((social, index) => (
+                  <a 
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-white transition-all duration-200 hover:scale-110 transform"
+                    title={social.label}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
               </div>
             </div>
           </div>

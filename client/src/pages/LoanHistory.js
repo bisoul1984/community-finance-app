@@ -240,13 +240,271 @@ const LoanHistory = ({ user }) => {
 
   const renderLoanContent = () => {
     if (isLender) {
+  return (
+                <div>
+                  <div className="mb-10">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-4">Active Investments</h3>
+                    {activeInvestments.length === 0 ? <div className="text-slate-400">No active investments.</div> : (
+                      <div className="space-y-6">
+                        {activeInvestments.map((loan) => {
+                          const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
+                          return (
+                            <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
+                              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
+                                <div>
+                                  <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
+                                  <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Purpose:</span> {loan.purpose}</div>
+                                  <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Term:</span> {loan.term} days</div>
+                                  <div className="text-slate-400 text-xs">Created: {formatDate(loan.createdAt)}</div>
+                                  {isLender && (
+                                    <div className="text-slate-500 text-xs mb-1"><span className="font-medium">Expected Returns:</span> ${(loan.amount * (loan.interestRate || 0.1)).toLocaleString()} ({((loan.interestRate || 0.1) * 100).toFixed(1)}%)</div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
+                                  <button
+                                    onClick={() => setSelectedLoan(selectedLoan === loan._id ? null : loan._id)}
+                                    className="p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                                    title={selectedLoan === loan._id ? 'Hide Details' : 'Show Details'}
+                                  >
+                                    {selectedLoan === loan._id ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                              </div>
+                              {loan.lenders && loan.lenders.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Lenders</span>
+                                    <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                                    <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                  </div>
+                                  <ul className="text-xs text-blue-700 space-y-1">
+                                    {loan.lenders.map((l, idx) => (
+                                      <li key={idx} className="flex items-center gap-2">
+                                        <span>{l.lender?.name || 'Anonymous'}:</span>
+                                        <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {/* Funding Progress */}
+                              {user.role === 'borrower' && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Funding Progress</span>
+                                    <span>${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                              {/* Repayment Progress */}
+                              {(loan.status === 'funded' || loan.status === 'active' || loan.status === 'completed') && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Repayment Progress</span>
+                                    <span>${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-blue-600 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.totalRepaid, loan.amount)}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                              {/* Recent Repayments */}
+                              {loan.repayments && loan.repayments.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="text-slate-700 font-medium mb-1 text-sm">Recent Repayments</div>
+                                  <div className="space-y-1">
+                                    {loan.repayments.slice(-3).map((repayment, index) => (
+                                      <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-1 text-xs">
+                                        <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
+                                        <span className={repayment.status === 'completed' ? 'text-emerald-600 font-semibold' : 'text-amber-500 font-semibold'}>{repayment.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {/* Due Date */}
+                              {loan.dueDate && (
+                                <div className="mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-amber-700 text-xs">
+                                  <span className="font-medium">Due Date:</span> {formatDate(loan.dueDate)}
+                                </div>
+                              )}
+                              
+                              {/* Expandable Details */}
+                              {selectedLoan === loan._id && (
+                                <div className="mt-4 pt-4 border-t border-slate-200">
+                                  <h4 className="text-sm font-semibold text-slate-700 mb-3">Detailed Information</h4>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Interest Rate:</span>
+                                        <span className="ml-2 text-slate-800">{((loan.interestRate || 0.1) * 100).toFixed(1)}%</span>
+                                      </div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Monthly Payment:</span>
+                                        <span className="ml-2 text-slate-800">${((loan.amount || 0) / (loan.term || 30)).toFixed(2)}</span>
+                                      </div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Total Interest:</span>
+                                        <span className="ml-2 text-slate-800">${((loan.amount || 0) * (loan.interestRate || 0.1)).toFixed(2)}</span>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Days Remaining:</span>
+                                        <span className="ml-2 text-slate-800">
+                                          {loan.dueDate ? Math.max(0, Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24))) : 'N/A'}
+                                        </span>
+                                      </div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Last Payment:</span>
+                                        <span className="ml-2 text-slate-800">
+                                          {loan.repayments && loan.repayments.length > 0 
+                                            ? formatDate(loan.repayments[loan.repayments.length - 1].date)
+                                            : 'No payments yet'
+                                          }
+                                        </span>
+                                      </div>
+                                      <div className="mb-2">
+                                        <span className="font-medium text-slate-600">Payment Count:</span>
+                                        <span className="ml-2 text-slate-800">{loan.repayments ? loan.repayments.length : 0}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Full Repayment History */}
+                                  {loan.repayments && loan.repayments.length > 0 && (
+                                    <div className="mt-4">
+                                      <h5 className="text-sm font-semibold text-slate-700 mb-2">Complete Repayment History</h5>
+                                      <div className="max-h-40 overflow-y-auto space-y-1">
+                                        {loan.repayments.map((repayment, index) => (
+                                          <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-2 text-xs">
+                                            <div className="flex items-center gap-3">
+                                              <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
+                                              <span className="text-slate-500">{formatDate(repayment.date)}</span>
+                                            </div>
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                              repayment.status === 'completed' 
+                                                ? 'bg-emerald-100 text-emerald-700' 
+                                                : 'bg-amber-100 text-amber-700'
+                                            }`}>
+                                              {repayment.status}
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-4">Past Investments</h3>
+                    {pastInvestments.length === 0 ? <div className="text-slate-400">No past investments.</div> : (
+                      <div className="space-y-6">
+                        {pastInvestments.map((loan) => {
+                          const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
+                          return (
+                            <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
+                              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
+                                <div>
+                                  <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
+                                  <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Purpose:</span> {loan.purpose}</div>
+                                  <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Term:</span> {loan.term} days</div>
+                                  <div className="text-slate-400 text-xs">Created: {formatDate(loan.createdAt)}</div>
+                                  {isLender && (
+                                    <div className="text-slate-500 text-xs mb-1"><span className="font-medium">Expected Returns:</span> ${(loan.amount * (loan.interestRate || 0.1)).toLocaleString()} ({((loan.interestRate || 0.1) * 100).toFixed(1)}%)</div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
+                                </div>
+                              </div>
+                              {loan.lenders && loan.lenders.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Lenders</span>
+                                    <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+                                    <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                  </div>
+                                  <ul className="text-xs text-blue-700 space-y-1">
+                                    {loan.lenders.map((l, idx) => (
+                                      <li key={idx} className="flex items-center gap-2">
+                                        <span>{l.lender?.name || 'Anonymous'}:</span>
+                                        <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {/* Funding Progress */}
+                              {user.role === 'borrower' && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Funding Progress</span>
+                                    <span>${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                              {/* Repayment Progress */}
+                              {(loan.status === 'funded' || loan.status === 'active' || loan.status === 'completed') && (
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>Repayment Progress</span>
+                                    <span>${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-2 bg-blue-600 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.totalRepaid, loan.amount)}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                              {/* Recent Repayments */}
+                              {loan.repayments && loan.repayments.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="text-slate-700 font-medium mb-1 text-sm">Recent Repayments</div>
+                                  <div className="space-y-1">
+                                    {loan.repayments.slice(-3).map((repayment, index) => (
+                                      <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-1 text-xs">
+                                        <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
+                                        <span className={repayment.status === 'completed' ? 'text-emerald-600 font-semibold' : 'text-amber-500 font-semibold'}>{repayment.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {/* Due Date */}
+                              {loan.dueDate && (
+                                <div className="mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-amber-700 text-xs">
+                                  <span className="font-medium">Due Date:</span> {formatDate(loan.dueDate)}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+      );
+    } else {
       return (
-        <div>
-          <div className="mb-10">
-            <h3 className="text-lg font-semibold text-blue-800 mb-4">Active Investments</h3>
-            {activeInvestments.length === 0 ? <div className="text-slate-400">No active investments.</div> : (
-              <div className="space-y-6">
-                {activeInvestments.map((loan) => {
+                <div>
+                  {filteredLoans.map((loan) => {
                   const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
                   return (
                     <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
@@ -256,9 +514,6 @@ const LoanHistory = ({ user }) => {
                           <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Purpose:</span> {loan.purpose}</div>
                           <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Term:</span> {loan.term} days</div>
                           <div className="text-slate-400 text-xs">Created: {formatDate(loan.createdAt)}</div>
-                          {isLender && (
-                            <div className="text-slate-500 text-xs mb-1"><span className="font-medium">Expected Returns:</span> ${(loan.amount * (loan.interestRate || 0.1)).toLocaleString()} ({((loan.interestRate || 0.1) * 100).toFixed(1)}%)</div>
-                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
@@ -405,261 +660,6 @@ const LoanHistory = ({ user }) => {
                     </div>
                   );
                 })}
-              </div>
-            )}
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-slate-700 mb-4">Past Investments</h3>
-            {pastInvestments.length === 0 ? <div className="text-slate-400">No past investments.</div> : (
-              <div className="space-y-6">
-                {pastInvestments.map((loan) => {
-                  const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
-                  return (
-                    <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
-                        <div>
-                          <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
-                          <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Purpose:</span> {loan.purpose}</div>
-                          <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Term:</span> {loan.term} days</div>
-                          <div className="text-slate-400 text-xs">Created: {formatDate(loan.createdAt)}</div>
-                          {isLender && (
-                            <div className="text-slate-500 text-xs mb-1"><span className="font-medium">Expected Returns:</span> ${(loan.amount * (loan.interestRate || 0.1)).toLocaleString()} ({((loan.interestRate || 0.1) * 100).toFixed(1)}%)</div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
-                        </div>
-                      </div>
-                      {loan.lenders && loan.lenders.length > 0 && (
-                        <div className="mb-3">
-                          <div className="flex justify-between text-xs text-slate-500 mb-1">
-                            <span>Lenders</span>
-                            <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
-                            <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
-                          </div>
-                          <ul className="text-xs text-blue-700 space-y-1">
-                            {loan.lenders.map((l, idx) => (
-                              <li key={idx} className="flex items-center gap-2">
-                                <span>{l.lender?.name || 'Anonymous'}:</span>
-                                <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {/* Funding Progress */}
-                      {user.role === 'borrower' && (
-                        <div className="mb-3">
-                          <div className="flex justify-between text-xs text-slate-500 mb-1">
-                            <span>Funding Progress</span>
-                            <span>${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
-                          </div>
-                        </div>
-                      )}
-                      {/* Repayment Progress */}
-                      {(loan.status === 'funded' || loan.status === 'active' || loan.status === 'completed') && (
-                        <div className="mb-3">
-                          <div className="flex justify-between text-xs text-slate-500 mb-1">
-                            <span>Repayment Progress</span>
-                            <span>${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-2 bg-blue-600 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.totalRepaid, loan.amount)}%` }} />
-                          </div>
-                        </div>
-                      )}
-                      {/* Recent Repayments */}
-                      {loan.repayments && loan.repayments.length > 0 && (
-                        <div className="mb-3">
-                          <div className="text-slate-700 font-medium mb-1 text-sm">Recent Repayments</div>
-                          <div className="space-y-1">
-                            {loan.repayments.slice(-3).map((repayment, index) => (
-                              <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-1 text-xs">
-                                <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
-                                <span className={repayment.status === 'completed' ? 'text-emerald-600 font-semibold' : 'text-amber-500 font-semibold'}>{repayment.status}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      {/* Due Date */}
-                      {loan.dueDate && (
-                        <div className="mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-amber-700 text-xs">
-                          <span className="font-medium">Due Date:</span> {formatDate(loan.dueDate)}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          {filteredLoans.map((loan) => {
-            const statusInfo = STATUS_MAP[loan.status] || { label: loan.status, color: 'bg-slate-300 text-slate-700', icon: AlertTriangle };
-            return (
-              <div key={loan._id} className="bg-white rounded-xl shadow border border-slate-100 p-6" tabIndex={0} title={`Loan: $${loan.amount.toLocaleString()} - ${loan.purpose}`}>
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-800 mb-1">${loan.amount.toLocaleString()} Loan</h3>
-                    <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Purpose:</span> {loan.purpose}</div>
-                    <div className="text-slate-500 text-sm mb-1"><span className="font-medium">Term:</span> {loan.term} days</div>
-                    <div className="text-slate-400 text-xs">Created: {formatDate(loan.createdAt)}</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusInfo.color}`}> <statusInfo.icon className="w-4 h-4" /> {statusInfo.label} </span>
-                    <button
-                      onClick={() => setSelectedLoan(selectedLoan === loan._id ? null : loan._id)}
-                      className="p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
-                      title={selectedLoan === loan._id ? 'Hide Details' : 'Show Details'}
-                    >
-                      {selectedLoan === loan._id ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-                {loan.lenders && loan.lenders.length > 0 && (
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-slate-500 mb-1">
-                      <span>Lenders</span>
-                      <span>Funding Progress: ${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
-                      <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
-                    </div>
-                    <ul className="text-xs text-blue-700 space-y-1">
-                      {loan.lenders.map((l, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <span>{l.lender?.name || 'Anonymous'}:</span>
-                          <span className="text-emerald-700 font-semibold">${l.amount.toLocaleString()}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {/* Funding Progress */}
-                {user.role === 'borrower' && (
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-slate-500 mb-1">
-                      <span>Funding Progress</span>
-                      <span>${loan.fundedAmount.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-2 bg-emerald-500 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.fundedAmount, loan.amount)}%` }} />
-                    </div>
-                  </div>
-                )}
-                {/* Repayment Progress */}
-                {(loan.status === 'funded' || loan.status === 'active' || loan.status === 'completed') && (
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-slate-500 mb-1">
-                      <span>Repayment Progress</span>
-                      <span>${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-2 bg-blue-600 rounded-full transition-all" style={{ width: `${getProgressPercentage(loan.totalRepaid, loan.amount)}%` }} />
-                    </div>
-                  </div>
-                )}
-                {/* Recent Repayments */}
-                {loan.repayments && loan.repayments.length > 0 && (
-                  <div className="mb-3">
-                    <div className="text-slate-700 font-medium mb-1 text-sm">Recent Repayments</div>
-                    <div className="space-y-1">
-                      {loan.repayments.slice(-3).map((repayment, index) => (
-                        <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-1 text-xs">
-                          <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
-                          <span className={repayment.status === 'completed' ? 'text-emerald-600 font-semibold' : 'text-amber-500 font-semibold'}>{repayment.status}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {/* Due Date */}
-                {loan.dueDate && (
-                  <div className="mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-amber-700 text-xs">
-                    <span className="font-medium">Due Date:</span> {formatDate(loan.dueDate)}
-                  </div>
-                )}
-                
-                {/* Expandable Details */}
-                {selectedLoan === loan._id && (
-                  <div className="mt-4 pt-4 border-t border-slate-200">
-                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Detailed Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Interest Rate:</span>
-                          <span className="ml-2 text-slate-800">{((loan.interestRate || 0.1) * 100).toFixed(1)}%</span>
-                        </div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Monthly Payment:</span>
-                          <span className="ml-2 text-slate-800">${((loan.amount || 0) / (loan.term || 30)).toFixed(2)}</span>
-                        </div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Total Interest:</span>
-                          <span className="ml-2 text-slate-800">${((loan.amount || 0) * (loan.interestRate || 0.1)).toFixed(2)}</span>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Days Remaining:</span>
-                          <span className="ml-2 text-slate-800">
-                            {loan.dueDate ? Math.max(0, Math.ceil((new Date(loan.dueDate) - new Date()) / (1000 * 60 * 60 * 24))) : 'N/A'}
-                          </span>
-                        </div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Last Payment:</span>
-                          <span className="ml-2 text-slate-800">
-                            {loan.repayments && loan.repayments.length > 0 
-                              ? formatDate(loan.repayments[loan.repayments.length - 1].date)
-                              : 'No payments yet'
-                            }
-                          </span>
-                        </div>
-                        <div className="mb-2">
-                          <span className="font-medium text-slate-600">Payment Count:</span>
-                          <span className="ml-2 text-slate-800">{loan.repayments ? loan.repayments.length : 0}</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Full Repayment History */}
-                    {loan.repayments && loan.repayments.length > 0 && (
-                      <div className="mt-4">
-                        <h5 className="text-sm font-semibold text-slate-700 mb-2">Complete Repayment History</h5>
-                        <div className="max-h-40 overflow-y-auto space-y-1">
-                          {loan.repayments.map((repayment, index) => (
-                            <div key={index} className="flex justify-between items-center bg-slate-50 rounded px-3 py-2 text-xs">
-                              <div className="flex items-center gap-3">
-                                <span className="text-slate-700">${repayment.amount.toLocaleString()}</span>
-                                <span className="text-slate-500">{formatDate(repayment.date)}</span>
-                              </div>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                repayment.status === 'completed' 
-                                  ? 'bg-emerald-100 text-emerald-700' 
-                                  : 'bg-amber-100 text-amber-700'
-                              }`}>
-                                {repayment.status}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
         </div>
       );
     }
@@ -741,8 +741,8 @@ const LoanHistory = ({ user }) => {
                 <span className="text-xs text-slate-500 mb-1">Past Investments</span>
                 <span className="text-2xl font-bold text-slate-800">{pastInvestments.length}</span>
               </div>
-            </div>
-          )}
+                </div>
+              )}
           {isLender && (
             <div className="mb-8 flex flex-col items-center">
               <span className="text-xs text-slate-500 mb-2">Portfolio Overview</span>
@@ -750,9 +750,9 @@ const LoanHistory = ({ user }) => {
                 <div className="flex-1 flex flex-col items-center">
                   <div className="h-full flex items-end" style={{height: '100%'}}>
                     <div style={{height: `${Math.max(20, (activeInvestments.length / (activeInvestments.length + pastInvestments.length || 1)) * 100)}%`, width: '32px', background: '#2563eb', borderRadius: '8px 8px 0 0'}}></div>
-                  </div>
+            </div>
                   <span className="text-xs mt-2 text-blue-700">Active</span>
-                </div>
+          </div>
                 <div className="flex-1 flex flex-col items-center">
                   <div className="h-full flex items-end" style={{height: '100%'}}>
                     <div style={{height: `${Math.max(20, (pastInvestments.length / (activeInvestments.length + pastInvestments.length || 1)) * 100)}%`, width: '32px', background: '#64748b', borderRadius: '8px 8px 0 0'}}></div>

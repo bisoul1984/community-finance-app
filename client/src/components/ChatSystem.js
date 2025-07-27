@@ -69,7 +69,8 @@ const ChatSystem = ({ user }) => {
   }, [messages]);
 
   const initializeSocket = () => {
-    const newSocket = io('http://localhost:5000', {
+    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+    const newSocket = io(socketUrl, {
       auth: { token: localStorage.getItem('token') },
       query: { userId: user._id || user.id }
     });
