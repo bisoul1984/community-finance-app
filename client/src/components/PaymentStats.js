@@ -23,7 +23,7 @@ const PaymentStats = () => {
       }
 
       const API_URL = API_ENDPOINTS.PAYMENTS;
-      const response = await axios.get(`${API_URL}/payments/statistics`, {
+      const response = await axios.get(`${API_URL}/statistics`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

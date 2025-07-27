@@ -54,7 +54,7 @@ const UserProfile = ({ user, onProfileUpdate }) => {
   const loadUserProfile = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/profile/${user.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/profile/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ const UserProfile = ({ user, onProfileUpdate }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/profile/${user.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/profile/${user.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -107,7 +107,7 @@ const UserProfile = ({ user, onProfileUpdate }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/users/preferences/${user.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/preferences/${user.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
