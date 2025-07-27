@@ -17,7 +17,7 @@ const EnhancedDashboard = ({ user }) => {
       const token = localStorage.getItem('token');
       
       // Fetch loans
-      const loansResponse = await fetch(`http://localhost:5000/api/loans/user/${user.id}`, {
+      const loansResponse = await fetch(`${process.env.REACT_APP_API_URL}/loans/user/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ const EnhancedDashboard = ({ user }) => {
       }
 
       // Fetch payments
-      const paymentsResponse = await fetch(`http://localhost:5000/api/payments/user/${user.id}`, {
+      const paymentsResponse = await fetch(`${process.env.REACT_APP_API_URL}/payments/user/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

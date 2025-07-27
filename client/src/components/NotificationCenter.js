@@ -19,7 +19,7 @@ const NotificationCenter = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/notifications', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notifications`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -38,7 +38,7 @@ const NotificationCenter = () => {
 
   const fetchUnreadCount = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications/unread-count', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notifications/unread-count`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -55,7 +55,7 @@ const NotificationCenter = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -79,7 +79,7 @@ const NotificationCenter = () => {
 
   const markAllAsRead = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications/read-all', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notifications/read-all`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -97,7 +97,7 @@ const NotificationCenter = () => {
 
   const deleteNotification = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notifications/${notificationId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
