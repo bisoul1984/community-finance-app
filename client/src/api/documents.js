@@ -25,7 +25,7 @@ export const getDocuments = async () => {
   try {
     console.log('Fetching documents from:', API_URL);
     console.log('Auth token exists:', !!localStorage.getItem('token'));
-    const response = await api.get('/documents');
+    const response = await api.get('/');
     console.log('Documents response:', response.data);
     return response.data;
   } catch (error) {
@@ -43,7 +43,7 @@ export const uploadDocument = async (file, documentType) => {
     formData.append('document', file);
     formData.append('documentType', documentType);
     
-    const response = await api.post('/documents/upload', formData, {
+    const response = await api.post('/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -57,7 +57,7 @@ export const uploadDocument = async (file, documentType) => {
 
 export const deleteDocument = async (documentId) => {
   try {
-    const response = await api.delete(`/documents/${documentId}`);
+    const response = await api.delete(`/${documentId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting document:', error);
@@ -69,7 +69,7 @@ export const getDocumentStats = async () => {
   try {
     console.log('Fetching document stats from:', API_URL);
     console.log('Auth token exists:', !!localStorage.getItem('token'));
-    const response = await api.get('/documents/stats/summary');
+    const response = await api.get('/stats/summary');
     console.log('Document stats response:', response.data);
     return response.data;
   } catch (error) {
