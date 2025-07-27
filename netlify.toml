@@ -5,6 +5,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  REACT_APP_API_URL = "https://community-finance-app-1.onrender.com/api"
+  REACT_APP_SOCKET_URL = "https://community-finance-app-1.onrender.com"
 
 [[redirects]]
   from = "/*"
