@@ -20,15 +20,24 @@ export const signup = async (userData) => {
 
 export const login = async (credentials) => {
   try {
+    console.log('Login attempt with credentials:', { email: credentials.email });
+    console.log('Login API URL:', API_URL);
     const res = await axios.post(`${API_URL}/login`, credentials);
+    console.log('Login response:', res.data);
     // Store token in localStorage
     if (res.data.token) {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      console.log('Token and user stored in localStorage');
+    } else {
+      console.error('No token in response:', res.data);
     }
     return res.data;
   } catch (error) {
     console.error('Login error:', error);
+    console.error('Error response:', error.response);
+    console.error('Error status:', error.response?.status);
+    console.error('Error data:', error.response?.data);
     throw error;
   }
 };
