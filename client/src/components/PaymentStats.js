@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 const PaymentStats = () => {
   const [stats, setStats] = useState(null);
@@ -21,9 +22,7 @@ const PaymentStats = () => {
         return;
       }
 
-      import { API_ENDPOINTS } from '../config/api';
-
-const API_URL = API_ENDPOINTS.PAYMENTS;
+      const API_URL = API_ENDPOINTS.PAYMENTS;
       const response = await axios.get(`${API_URL}/payments/statistics`, {
         headers: {
           'Authorization': `Bearer ${token}`
