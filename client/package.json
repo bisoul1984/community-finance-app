@@ -17,7 +17,8 @@
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^3.4.17",
-    "twilio": "^5.8.0"
+    "twilio": "^5.8.0",
+    "web-vitals": "^3.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
