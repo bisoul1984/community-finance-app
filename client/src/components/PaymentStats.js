@@ -21,7 +21,9 @@ const PaymentStats = () => {
         return;
       }
 
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      import { API_ENDPOINTS } from '../config/api';
+
+const API_URL = API_ENDPOINTS.PAYMENTS;
       const response = await axios.get(`${API_URL}/payments/statistics`, {
         headers: {
           'Authorization': `Bearer ${token}`
