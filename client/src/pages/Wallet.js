@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 const Wallet = ({ user }) => {
   const [balance, setBalance] = useState(0);
@@ -30,7 +31,7 @@ const Wallet = ({ user }) => {
       console.log('API URL:', `/api/users/${user.id}/wallet`);
       console.log('Token:', token ? 'Present' : 'Missing');
       
-      const res = await axios.get(`/api/users/${user.id}/wallet`, {
+      const res = await axios.get(`${API_ENDPOINTS.USERS}/${user.id}/wallet`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Wallet response:', res.data);
@@ -56,7 +57,7 @@ const Wallet = ({ user }) => {
     setSuccess('');
     try {
       const token = localStorage.getItem('token');
-      const url = `/api/users/${user.id}/wallet/${type}`;
+      const url = `${API_ENDPOINTS.USERS}/${user.id}/wallet/${type}`;
       const res = await axios.post(url, { amount: Number(amount) }, {
         headers: { Authorization: `Bearer ${token}` }
       });
