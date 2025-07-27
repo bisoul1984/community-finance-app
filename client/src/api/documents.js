@@ -23,10 +23,16 @@ api.interceptors.request.use((config) => {
 
 export const getDocuments = async () => {
   try {
+    console.log('Fetching documents from:', API_URL);
+    console.log('Auth token exists:', !!localStorage.getItem('token'));
     const response = await api.get('/documents');
+    console.log('Documents response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching documents:', error);
+    console.error('Error response:', error.response);
+    console.error('Error status:', error.response?.status);
+    console.error('Error data:', error.response?.data);
     throw error;
   }
 };
@@ -61,10 +67,16 @@ export const deleteDocument = async (documentId) => {
 
 export const getDocumentStats = async () => {
   try {
+    console.log('Fetching document stats from:', API_URL);
+    console.log('Auth token exists:', !!localStorage.getItem('token'));
     const response = await api.get('/documents/stats/summary');
+    console.log('Document stats response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching document stats:', error);
+    console.error('Error response:', error.response);
+    console.error('Error status:', error.response?.status);
+    console.error('Error data:', error.response?.data);
     throw error;
   }
 }; 
