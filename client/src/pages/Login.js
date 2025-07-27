@@ -20,8 +20,11 @@ const Login = ({ onLogin }) => {
     setError('');
     setSuccess('');
     setLoading(true);
+    console.log('Login attempt with:', form);
+    console.log('Environment API URL:', process.env.REACT_APP_API_URL);
     try {
       const response = await login(form);
+      console.log('Login response:', response);
       setSuccess('Login successful!');
       if (remember) {
         localStorage.setItem('rememberedEmail', form.email);
@@ -34,6 +37,10 @@ const Login = ({ onLogin }) => {
         navigate('/dashboard');
       }, 1000);
     } catch (err) {
+      console.error('Login error details:', err);
+      console.error('Error response:', err.response);
+      console.error('Error status:', err.response?.status);
+      console.error('Error data:', err.response?.data);
       setLoading(false);
       setError(err.response?.data?.message || 'Login failed.');
     }
