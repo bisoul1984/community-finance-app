@@ -34,8 +34,8 @@ const Wallet = ({ user }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('Wallet response:', res.data);
-      setBalance(res.data.walletBalance);
-      setTransactions(res.data.walletTransactions.reverse());
+      setBalance(res.data.walletBalance || 0);
+      setTransactions((res.data.walletTransactions || []).reverse());
     } catch (err) {
       console.error('Wallet fetch error:', err);
       console.error('Error response:', err.response?.data);
@@ -75,7 +75,7 @@ const Wallet = ({ user }) => {
       <h2 className="text-2xl font-bold mb-6 text-slate-900">My Wallet</h2>
       <div className="bg-white rounded-lg shadow p-6 mb-8 flex flex-col items-center">
         <span className="text-slate-500 text-sm mb-1">Wallet Balance</span>
-        <span className="text-3xl font-bold text-blue-700 mb-2">${balance.toLocaleString()}</span>
+        <span className="text-3xl font-bold text-blue-700 mb-2">${(balance || 0).toLocaleString()}</span>
         <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3 items-center mt-4 w-full max-w-md">
           <select value={type} onChange={e => setType(e.target.value)} className="border rounded px-3 py-2">
             <option value="fund">Fund Wallet</option>
@@ -114,7 +114,7 @@ const Wallet = ({ user }) => {
               {transactions.map((tx, i) => (
                 <tr key={i} className="border-b">
                   <td className="px-4 py-2 capitalize">{tx.type}</td>
-                  <td className="px-4 py-2">${tx.amount.toLocaleString()}</td>
+                  <td className="px-4 py-2">${(tx.amount || 0).toLocaleString()}</td>
                   <td className="px-4 py-2">{new Date(tx.date).toLocaleString()}</td>
                   <td className="px-4 py-2">{tx.description || '-'}</td>
                 </tr>
