@@ -9,8 +9,7 @@ const apiClient = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-  },
-  withCredentials: true
+  }
 });
 
 // Add request interceptor for debugging
@@ -56,8 +55,14 @@ export const signup = async (userData) => {
 export const login = async (credentials) => {
   try {
     console.log('Login attempt with credentials:', { email: credentials.email });
+    console.log('API URL:', `${API_URL}/login`);
     
-    const res = await apiClient.post('/login', credentials);
+    const res = await axios.post(`${API_URL}/login`, credentials, {
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
     
     console.log('Login response:', res.data);
     
