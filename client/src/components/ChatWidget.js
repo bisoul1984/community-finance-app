@@ -32,9 +32,9 @@ const ChatWidget = ({ user }) => {
       <div className="fixed bottom-4 right-4 z-50">
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
         >
-          <MessageCircle size={24} />
+          <MessageCircle size={20} className="sm:size-24" />
         </button>
       </div>
     );
@@ -42,31 +42,31 @@ const ChatWidget = ({ user }) => {
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 w-80 h-96">
+      <div className="bg-white rounded-lg shadow-xl border border-gray-200 w-72 sm:w-80 h-80 sm:h-96">
         {/* Header */}
-        <div className="bg-blue-500 text-white p-3 rounded-t-lg flex items-center justify-between">
+        <div className="bg-blue-500 text-white p-2 sm:p-3 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center">
-            <MessageCircle size={20} className="mr-2" />
-            <span className="font-medium">Chat</span>
+            <MessageCircle size={16} className="sm:size-20 mr-2" />
+            <span className="font-medium text-sm sm:text-base">Chat</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
             className="p-1 hover:bg-blue-600 rounded"
           >
-            <X size={16} />
+            <X size={14} className="sm:size-16" />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{ height: '250px' }}>
+        <div className="flex-1 overflow-y-auto p-2 sm:p-3 space-y-2" style={{ height: '200px' }}>
           {messages.length === 0 ? (
-            <div className="text-center text-gray-500 text-sm">
+            <div className="text-center text-gray-500 text-xs sm:text-sm">
               No messages yet. Start the conversation!
             </div>
           ) : (
             messages.map((msg) => (
               <div key={msg.id} className="flex justify-end">
-                <div className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm max-w-xs">
+                <div className="bg-blue-500 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-xs sm:text-sm max-w-xs">
                   <div className="font-medium text-xs mb-1">{msg.sender}</div>
                   <div>{msg.text}</div>
                   <div className="text-xs opacity-75 mt-1">{msg.timestamp}</div>
@@ -77,7 +77,7 @@ const ChatWidget = ({ user }) => {
         </div>
 
         {/* Message Input */}
-        <div className="p-3 border-t border-gray-200">
+        <div className="p-2 sm:p-3 border-t border-gray-200">
           <div className="flex items-center space-x-2">
             <input
               type="text"
@@ -85,14 +85,14 @@ const ChatWidget = ({ user }) => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type a message..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
               onClick={handleSendMessage}
               disabled={!message.trim()}
-              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1 sm:p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send size={16} />
+              <Send size={14} className="sm:size-16" />
             </button>
           </div>
         </div>

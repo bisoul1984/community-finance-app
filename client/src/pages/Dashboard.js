@@ -86,20 +86,20 @@ const Dashboard = ({ user, onLogout }) => {
   // Top Navbar Component
   const TopNavbar = () => (
     <nav className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         {/* Left side - Logo and Search */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 w-full sm:w-auto">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">ML</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">
+            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">
               MicroLoan
             </span>
           </div>
           
           {/* Search Bar */}
-          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2">
+          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2 flex-1 sm:flex-none">
             <Search className="w-4 h-4 text-slate-500" />
             <input
               type="text"
@@ -110,21 +110,22 @@ const Dashboard = ({ user, onLogout }) => {
         </div>
 
         {/* Right side - Notifications, Profile, etc. */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-center sm:justify-end">
           {/* Quick Actions Dropdown */}
           <div className="relative">
             <button
               onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
-              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors"
+              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors"
             >
-              <span>Quick Actions</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="hidden sm:block">Quick Actions</span>
+              <span className="sm:hidden">Actions</span>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             
             {navbarDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
                 {quickActions.map((action, index) => (
                   <button
                     key={index}
@@ -148,11 +149,11 @@ const Dashboard = ({ user, onLogout }) => {
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               className="relative p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
             >
-              <Bell className="w-5 h-5" />
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             
             {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
                 <div className="px-4 py-2 border-b border-slate-200">
                   <h3 className="font-semibold text-slate-800">Notifications</h3>
                 </div>
@@ -193,10 +194,10 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setCurrentView('user-profile')}
-              className="flex items-center space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-3 py-2 transition-colors"
+              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors"
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-medium text-sm">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-medium text-xs sm:text-sm">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </span>
               </div>
@@ -210,9 +211,9 @@ const Dashboard = ({ user, onLogout }) => {
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden md:block">Logout</span>
           </button>
         </div>
@@ -222,53 +223,53 @@ const Dashboard = ({ user, onLogout }) => {
 
   // Main dashboard content
   const renderOverview = () => (
-    <div className="flex-1 p-6 md:p-10 bg-slate-50 min-h-screen">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+    <div className="flex-1 p-4 sm:p-6 md:p-10 bg-slate-50 min-h-screen">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome back, {user.name}!</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome back, {user.name}!</h2>
           <div className="text-slate-500 text-sm md:text-base">Role: <span className="font-semibold text-slate-700 capitalize">{user.role}</span></div>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={() => setCurrentView('wallet')} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium shadow transition-colors">
-            <WalletIcon className="w-5 h-5" /> My Wallet
+          <button onClick={() => setCurrentView('wallet')} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium shadow transition-colors text-sm sm:text-base">
+            <WalletIcon className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">My Wallet</span><span className="sm:hidden">Wallet</span>
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
         {stats.map((stat, i) => (
-          <div key={i} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white border border-slate-100 hover:shadow-lg transition-all ${stat.bg}`}
+          <div key={i} className={`flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow bg-white border border-slate-100 hover:shadow-lg transition-all ${stat.bg}`}
             title={stat.label}
             aria-label={stat.label}
             tabIndex={0}
           >
-            <span className={`p-3 rounded-full bg-white shadow ${stat.color} text-xl`}><stat.icon className="w-7 h-7" /></span>
+            <span className={`p-2 sm:p-3 rounded-full bg-white shadow ${stat.color} text-lg sm:text-xl`}><stat.icon className="w-5 h-5 sm:w-7 sm:h-7" /></span>
             <div>
-              <div className="text-2xl font-bold {stat.color}">{stat.value}</div>
-              <div className="text-slate-600 text-sm font-medium">{stat.label}</div>
+              <div className="text-lg sm:text-xl md:text-2xl font-bold {stat.color}">{stat.value}</div>
+              <div className="text-slate-600 text-xs sm:text-sm font-medium">{stat.label}</div>
             </div>
           </div>
         ))}
       </div>
-      <div className="bg-white rounded-2xl shadow p-6 border border-slate-100 mb-8">
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">Quick Tips</h3>
-        <ul className="list-disc pl-5 text-slate-600 space-y-1 text-sm">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow p-4 sm:p-6 border border-slate-100 mb-6 sm:mb-8">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-2">Quick Tips</h3>
+        <ul className="list-disc pl-4 sm:pl-5 text-slate-600 space-y-1 text-xs sm:text-sm">
           <li>Use the sidebar to quickly access all dashboard features.</li>
           <li>Check your notifications for important updates.</li>
           <li>Keep your profile up to date for a better experience.</li>
         </ul>
       </div>
-      <div className="bg-white rounded-2xl shadow p-6 border border-slate-100">
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">Get Started</h3>
-        <div className="flex flex-wrap gap-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow p-4 sm:p-6 border border-slate-100">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-800 mb-2">Get Started</h3>
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           {filteredNav.filter(item => item.key !== 'main').map(item => (
             <button
               key={item.key}
               onClick={() => setCurrentView(item.key)}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-medium shadow transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-medium shadow transition-colors text-xs sm:text-sm"
               title={item.label}
               aria-label={item.label}
             >
-              <item.icon className="w-5 h-5" /> {item.label}
+              <item.icon className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{item.label}</span><span className="sm:hidden">{item.label.split(' ')[0]}</span>
             </button>
           ))}
         </div>
@@ -279,28 +280,28 @@ const Dashboard = ({ user, onLogout }) => {
   // Sidebar
   const Sidebar = () => (
     <aside className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-white border-r border-slate-100 shadow-lg md:shadow-none transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-        <span className="text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">MicroLoan</span>
-        <button className="md:hidden text-slate-400 hover:text-slate-700" onClick={() => setSidebarOpen(false)}>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100">
+        <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">MicroLoan</span>
+        <button className="md:hidden text-slate-400 hover:text-slate-700 p-1" onClick={() => setSidebarOpen(false)}>
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
-      <nav className="mt-6 flex flex-col gap-1 px-4" aria-label="Sidebar Navigation">
+      <nav className="mt-4 sm:mt-6 flex flex-col gap-1 px-3 sm:px-4" aria-label="Sidebar Navigation">
         {filteredNav.map(item => (
           <button
             key={item.key}
             onClick={() => { setCurrentView(item.key); setSidebarOpen(false); }}
-            className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium text-slate-700 hover:bg-slate-100 transition-colors ${currentView === item.key ? 'bg-slate-100 font-bold' : ''}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-lg font-medium text-slate-700 hover:bg-slate-100 transition-colors text-sm sm:text-base ${currentView === item.key ? 'bg-slate-100 font-bold' : ''}`}
             title={item.label}
             aria-label={item.label}
           >
-            <item.icon className="w-5 h-5" /> {item.label}
+            <item.icon className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{item.label}</span><span className="sm:hidden">{item.label.split(' ')[0]}</span>
           </button>
         ))}
       </nav>
-      <div className="mt-auto px-4 py-6">
-        <button onClick={onLogout} className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md font-medium shadow transition-colors w-full" title="Logout" aria-label="Logout">
-          <LogOut className="w-5 h-5" /> Logout
+      <div className="mt-auto px-3 sm:px-4 py-4 sm:py-6">
+        <button onClick={onLogout} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md font-medium shadow transition-colors w-full text-sm sm:text-base" title="Logout" aria-label="Logout">
+          <LogOut className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Logout</span><span className="sm:hidden">Exit</span>
         </button>
       </div>
     </aside>
@@ -329,11 +330,19 @@ const Dashboard = ({ user, onLogout }) => {
         
         {/* Mobile sidebar toggle */}
         <button className="fixed top-4 left-4 z-50 md:hidden bg-white border border-slate-200 p-2 rounded-full shadow-lg text-slate-700 hover:bg-slate-100" onClick={() => setSidebarOpen(true)}>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
         
+        {/* Mobile overlay for sidebar */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
         {/* Main content */}
-        <main className="flex-1">
+        <main className="flex-1 overflow-x-hidden">
           {(() => {
             switch (currentView) {
               case 'main': return renderOverview();

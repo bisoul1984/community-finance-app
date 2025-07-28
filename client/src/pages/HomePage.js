@@ -360,10 +360,10 @@ const HomePage = () => {
       {/* Navigation Bar */}
       <nav className={`bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 transition-all duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-4 sm:py-0">
+            <div className="flex items-center mb-4 sm:mb-0">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-gradient tracking-wide">
+                <h1 className="text-xl sm:text-2xl font-bold text-gradient tracking-wide">
                   MicroLoan
                 </h1>
               </div>
@@ -383,16 +383,16 @@ const HomePage = () => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <Link
                 to="/login"
-                className="text-slate-700 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover-lift"
+                className="text-slate-700 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:scale-105 hover-lift w-full sm:w-auto text-center"
               >
                 Sign In
               </Link>
               <Link
                 to="/signup"
-                className="bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl hover-lift"
+                className="bg-gradient-to-r from-slate-700 to-gray-800 hover:from-slate-800 hover:to-gray-900 text-white px-4 sm:px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl hover-lift w-full sm:w-auto text-center"
               >
                 Get Started
               </Link>
@@ -402,74 +402,74 @@ const HomePage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden py-8 sm:py-0">
         {/* Modern gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50"></div>
         
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full animate-float blur-xl"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-20 left-20 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-60 left-1/4 w-16 h-16 bg-gradient-to-br from-yellow-400/10 to-orange-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '0.5s'}}></div>
+          <div className="absolute top-20 left-10 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full animate-float blur-xl"></div>
+          <div className="absolute top-40 right-20 w-12 sm:w-24 h-12 sm:h-24 bg-gradient-to-br from-green-400/10 to-blue-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 left-20 w-10 sm:w-20 h-10 sm:h-20 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-60 left-1/4 w-8 sm:w-16 h-8 sm:h-16 bg-gradient-to-br from-yellow-400/10 to-orange-400/10 rounded-full animate-float blur-xl" style={{animationDelay: '0.5s'}}></div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto text-center">
+        <div className="relative max-w-7xl mx-auto text-center px-4">
           <div className={`animate-fade-in-up ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{animationDelay: '0.2s'}}>
             {/* Badge */}
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-8 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs sm:text-sm font-medium mb-6 sm:mb-8 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               Trusted by 10,000+ users worldwide
             </div>
             
             {/* Main headline */}
-            <h1 className="text-6xl md:text-8xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-slate-900 mb-6 sm:mb-8 leading-tight tracking-tight">
               Empowering Dreams
               <span className="block text-gradient-blue mt-2">Through MicroLoans</span>
             </h1>
             
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-light px-4">
               Connect with your community to access affordable loans or help others achieve their goals. 
               <span className="block mt-2 font-medium text-slate-700">Build trust, grow together, and create lasting financial relationships.</span>
             </p>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 px-4">
               <Link
                 to="/signup"
-                className="modern-button group animate-pulse-slow"
+                className="modern-button group animate-pulse-slow w-full sm:w-auto text-center"
               >
                 Start Your Journey
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </Link>
               <button
                 onClick={() => scrollToSection('features')}
-                className="group px-10 py-4 border-2 border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 rounded-16px text-lg font-semibold transition-all duration-300 hover:scale-105 hover-lift bg-white/80 backdrop-blur-sm"
+                className="group px-6 sm:px-10 py-3 sm:py-4 border-2 border-slate-300 text-slate-700 hover:border-blue-500 hover:text-blue-600 rounded-16px text-base sm:text-lg font-semibold transition-all duration-300 hover:scale-105 hover-lift bg-white/80 backdrop-blur-sm w-full sm:w-auto"
               >
                 Explore Features
-                <svg className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
               </button>
             </div>
             
             {/* Social proof */}
-            <div className="flex items-center justify-center space-x-8 text-sm text-gray-500 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-xs sm:text-sm text-gray-500 animate-fade-in-up px-4" style={{animationDelay: '0.6s'}}>
               <div className="flex items-center">
                 <div className="flex -space-x-2 mr-3">
                   {[1,2,3,4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 border-2 border-white"></div>
+                    <div key={i} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 border-2 border-white"></div>
                   ))}
                 </div>
                 <span>Join 1,500+ active users</span>
               </div>
               <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
                 <span>98% success rate</span>
@@ -479,60 +479,60 @@ const HomePage = () => {
         </div>
         
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-32 bg-gradient-to-br from-slate-50 to-white relative overflow-hidden">
+      <section id="features" className="py-16 sm:py-24 md:py-32 bg-gradient-to-br from-slate-50 to-white relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 right-20 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-48 h-48 bg-purple-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 right-20 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-blue-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-24 sm:w-36 md:w-48 h-24 sm:h-36 md:h-48 bg-purple-100/30 rounded-full blur-3xl"></div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Section header */}
-          <div className="text-center mb-20 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium mb-6">
-              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
               </svg>
               Why Choose MicroLoan?
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 sm:mb-8 tracking-tight">
               Powerful Features for
               <span className="block text-gradient-blue"> Modern Lending</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light px-4">
               Our platform offers cutting-edge features that make borrowing and lending simple, secure, and community-driven.
             </p>
           </div>
           
           {/* Features grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className={`modern-card group p-8 hover-lift animate-fade-in-up`}
+                className={`modern-card group p-6 sm:p-8 hover-lift animate-fade-in-up`}
                 style={{animationDelay: `${0.2 + index * 0.1}s`}}
               >
                 {/* Icon container */}
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <div className="text-2xl text-blue-600">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-lg sm:text-2xl text-blue-600">
                     {feature.icon}
                   </div>
                 </div>
                 
                 {/* Content */}
-                <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed font-light text-lg">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 tracking-tight">{feature.title}</h3>
+                <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed font-light">{feature.description}</p>
                 
                 {/* Hover effect line */}
-                <div className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mt-6 transition-all duration-300 group-hover:w-full"></div>
+                <div className="w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mt-4 sm:mt-6 transition-all duration-300 group-hover:w-full"></div>
               </div>
             ))}
           </div>
