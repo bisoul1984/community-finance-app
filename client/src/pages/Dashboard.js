@@ -81,6 +81,11 @@ const navItems = [
       };
     }, [navbarDropdownOpen, notificationsOpen]);
 
+    // Debug: Track currentView changes
+    useEffect(() => {
+      console.log('Current view changed to:', currentView);
+    }, [currentView]);
+
     // Dummy stats for demonstration
   const stats = user.role === 'borrower' ? [
     { label: 'Active Loans', value: 0, icon: CreditCard, color: 'text-emerald-600', bg: 'bg-emerald-50' },
@@ -101,6 +106,14 @@ const navItems = [
 
   // Quick actions based on user role
   const quickActions = user.role === 'borrower' ? [
+    {
+      label: 'Test Action',
+      icon: CheckCircle,
+      action: () => {
+        console.log('Test action clicked!');
+        alert('Test action works!');
+      }
+    },
     {
       label: 'Request New Loan',
       icon: FilePlus,
@@ -143,6 +156,14 @@ const navItems = [
     }
   ] : user.role === 'lender' ? [
     {
+      label: 'Test Action',
+      icon: CheckCircle,
+      action: () => {
+        console.log('Test action clicked!');
+        alert('Test action works!');
+      }
+    },
+    {
       label: 'Browse Loans',
       icon: ClipboardList,
       action: () => {
@@ -183,6 +204,14 @@ const navItems = [
       }
     }
   ] : [
+    {
+      label: 'Test Action',
+      icon: CheckCircle,
+      action: () => {
+        console.log('Test action clicked!');
+        alert('Test action works!');
+      }
+    },
     {
       label: 'Admin Panel',
       icon: Shield,
@@ -228,6 +257,7 @@ const navItems = [
   // Debug: Log quickActions for troubleshooting
   console.log('User role:', user.role);
   console.log('Quick actions:', quickActions);
+  console.log('Current view:', currentView);
 
   // Top Navbar Component
   const TopNavbar = () => (
