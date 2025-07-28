@@ -38,11 +38,12 @@ const Login = ({ onLogin }) => {
       }, 1000);
     } catch (err) {
       console.error('Login error details:', err);
+      console.error('Error message:', err.message);
       console.error('Error response:', err.response);
       console.error('Error status:', err.response?.status);
       console.error('Error data:', err.response?.data);
       setLoading(false);
-      setError(err.response?.data?.message || 'Login failed.');
+      setError(err.message || 'Login failed. Please try again.');
     }
   };
 
