@@ -109,27 +109,27 @@ const Wallet = ({ user }) => {
   };
 
   return (
-    <div className="w-full max-w-full mx-auto py-0 sm:py-1 lg:py-2 px-0 sm:px-1 lg:px-2 mt-16 sm:mt-0">
-      <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-1 sm:mb-2 lg:mb-3 text-slate-900 px-1">My Wallet</h2>
+    <div className="w-full mx-auto py-0 px-0 mt-20 sm:mt-0">
+      <h2 className="text-sm sm:text-base lg:text-lg font-bold mb-1 text-slate-900 px-1">My Wallet</h2>
       
       {/* Wallet Balance Card */}
-      <div className="bg-white rounded-lg shadow p-1 sm:p-2 lg:p-3 mb-2 sm:mb-3 lg:mb-4 flex flex-col items-center w-full">
+      <div className="bg-white rounded-lg shadow p-1 mb-1 flex flex-col items-center w-full">
         <span className="text-slate-500 text-xs mb-1">Wallet Balance</span>
         {loading ? (
-          <div className="flex items-center gap-2 mb-1 sm:mb-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-700">Loading...</span>
+          <div className="flex items-center gap-1 mb-1">
+            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+            <span className="text-sm sm:text-lg lg:text-xl font-bold text-blue-700">Loading...</span>
           </div>
         ) : (
-          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-700 mb-1 sm:mb-2">${(balance || 0).toLocaleString()}</span>
+          <span className="text-sm sm:text-lg lg:text-xl font-bold text-blue-700 mb-1">${(balance || 0).toLocaleString()}</span>
         )}
         
         {/* Fund/Withdraw Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-1 sm:gap-2 items-center mt-2 w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-1 items-center mt-1 w-full max-w-xs">
           <select 
             value={type} 
             onChange={e => setType(e.target.value)} 
-            className="w-full border rounded px-2 py-1 text-xs sm:text-sm"
+            className="w-full border rounded px-1 py-1 text-xs"
           >
             <option value="fund">Fund Wallet</option>
             <option value="withdraw">Withdraw</option>
@@ -140,11 +140,11 @@ const Wallet = ({ user }) => {
             value={amount}
             onChange={e => setAmount(e.target.value)}
             placeholder="Amount"
-            className="w-full border rounded px-2 py-1 text-xs sm:text-sm"
+            className="w-full border rounded px-1 py-1 text-xs"
           />
           <button 
             type="submit" 
-            className="w-full bg-blue-600 text-white px-2 py-1 rounded font-semibold text-xs sm:text-sm hover:bg-blue-700 transition-colors" 
+            className="w-full bg-blue-600 text-white px-1 py-1 rounded font-semibold text-xs hover:bg-blue-700 transition-colors" 
             disabled={loading}
           >
             {loading ? 'Processing...' : type === 'fund' ? 'Fund' : 'Withdraw'}
@@ -153,24 +153,24 @@ const Wallet = ({ user }) => {
         
         {/* Messages */}
         {error && (
-          <div className="text-red-600 mt-1 sm:mt-2 text-xs text-center">
+          <div className="text-red-600 mt-1 text-xs text-center">
             <div>{error}</div>
             <button 
               onClick={fetchWallet}
-              className="mt-1 px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+              className="mt-1 px-1 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
             >
               Retry
             </button>
           </div>
         )}
-        {success && <div className="text-green-600 mt-1 sm:mt-2 text-xs text-center">{success}</div>}
+        {success && <div className="text-green-600 mt-1 text-xs text-center">{success}</div>}
       </div>
       
       {/* Transaction History */}
-      <div className="bg-white rounded-lg shadow p-1 sm:p-2 lg:p-3 w-full">
-        <h3 className="text-xs sm:text-sm lg:text-base font-semibold mb-1 sm:mb-2 lg:mb-3 text-slate-800">Transaction History</h3>
+      <div className="bg-white rounded-lg shadow p-1 w-full">
+        <h3 className="text-xs sm:text-sm lg:text-base font-semibold mb-1 text-slate-800">Transaction History</h3>
         {transactions.length === 0 ? (
-          <div className="text-slate-400 text-center py-2 sm:py-3 lg:py-4 text-xs">No transactions yet.</div>
+          <div className="text-slate-400 text-center py-1 text-xs">No transactions yet.</div>
         ) : (
           <div className="overflow-x-auto">
             {/* Desktop Table */}
@@ -198,7 +198,7 @@ const Wallet = ({ user }) => {
             {/* Mobile Cards */}
             <div className="space-y-1 sm:hidden">
               {transactions.map((tx, i) => (
-                <div key={i} className="border border-gray-200 rounded-lg p-1 sm:p-2 bg-gray-50">
+                <div key={i} className="border border-gray-200 rounded-lg p-1 bg-gray-50">
                   <div className="flex justify-between items-start mb-1">
                     <span className="font-medium text-xs capitalize text-blue-600">{tx.type}</span>
                     <span className="font-bold text-xs text-green-600">${(tx.amount || 0).toLocaleString()}</span>
