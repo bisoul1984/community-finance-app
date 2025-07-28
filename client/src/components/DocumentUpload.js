@@ -153,22 +153,22 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
         Document Upload
       </h2>
 
       {/* Upload Progress */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-3 sm:mb-4">
           Required Documents ({getUploadedRequiredDocuments().length}/{getRequiredDocuments().length})
         </h3>
         
         {stats && (
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-800">Document Completion</span>
-              <span className="text-sm font-bold text-blue-900">{stats.required.percentage}%</span>
+              <span className="text-xs sm:text-sm font-medium text-blue-800">Document Completion</span>
+              <span className="text-xs sm:text-sm font-bold text-blue-900">{stats.required.percentage}%</span>
             </div>
             <div className="w-full bg-blue-200 rounded-full h-2">
               <div 
@@ -182,7 +182,7 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
             </div>
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {getRequiredDocuments().map(type => {
             const isUploaded = documents.some(doc => doc.documentType === type.value);
             return (
@@ -195,8 +195,8 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">{type.label}</span>
-                  <span className={`text-sm font-medium ${
+                  <span className="text-sm sm:text-base font-medium text-gray-700">{type.label}</span>
+                  <span className={`text-xs sm:text-sm font-medium ${
                     isUploaded ? 'text-green-600' : 'text-red-600'
                   }`}>
                     {isUploaded ? '✓ Uploaded' : 'Required'}
@@ -209,20 +209,20 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
       </div>
 
       {/* Upload Form */}
-      <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+      <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50 rounded-lg">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-3 sm:mb-4">
           Upload New Document
         </h3>
         
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               Document Type
             </label>
             <select
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               {documentTypes.map(type => (
                 <option key={type.value} value={type.value}>
@@ -233,14 +233,14 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               Select File
             </label>
             <input
               type="file"
               onChange={handleFileSelect}
               accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             />
             <p className="text-xs text-gray-500 mt-1">
               Max size: 10MB. Supported formats: JPEG, PNG, GIF, PDF, DOC, DOCX
@@ -250,7 +250,7 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
 
         {selectedFile && (
           <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700">
+            <p className="text-xs sm:text-sm text-blue-700">
               <strong>Selected file:</strong> {selectedFile.name} ({formatFileSize(selectedFile.size)})
             </p>
           </div>
@@ -258,14 +258,14 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 rounded-lg">
-            <p className="text-sm text-red-700">{error}</p>
+            <p className="text-xs sm:text-sm text-red-700">{error}</p>
           </div>
         )}
 
         <button
           onClick={handleUpload}
           disabled={!selectedFile || uploading}
-          className={`w-full px-4 py-2 rounded-md text-white font-medium ${
+          className={`w-full px-4 py-2 rounded-md text-white font-medium text-sm sm:text-base ${
             !selectedFile || uploading
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-700'
@@ -277,7 +277,7 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
 
       {/* Uploaded Documents */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-3 sm:mb-4">
           Uploaded Documents ({documents.length})
         </h3>
         
@@ -293,16 +293,16 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
         ) : (
           <div className="space-y-3">
             {documents.map(doc => (
-              <div key={doc._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 font-bold">
+              <div key={doc._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg gap-3">
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-blue-600 font-bold text-xs sm:text-sm">
                       {doc.originalName.split('.').pop().toUpperCase()}
                     </span>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-800">{doc.originalName}</p>
-                    <p className="text-sm text-gray-600">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm sm:text-base font-medium text-gray-800 truncate">{doc.originalName}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">
                       {getDocumentTypeLabel(doc.documentType)} • {formatFileSize(doc.fileSize)}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -321,13 +321,13 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
                   </span>
                   <button
                     onClick={() => handleDownload(doc._id, doc.originalName)}
-                    className="px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 text-sm"
+                    className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 text-xs sm:text-sm"
                   >
                     Download
                   </button>
                   <button
                     onClick={() => handleDelete(doc._id)}
-                    className="px-3 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-sm"
+                    className="px-2 sm:px-3 py-1 bg-red-100 text-red-600 rounded-md hover:bg-red-200 text-xs sm:text-sm"
                   >
                     Delete
                   </button>
@@ -339,11 +339,11 @@ const DocumentUpload = ({ user, onDocumentUploaded }) => {
       </div>
 
       {/* Tips */}
-      <div className="mt-8 p-4 bg-yellow-50 rounded-lg">
-        <h4 className="text-lg font-semibold text-yellow-800 mb-2">
+      <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-yellow-50 rounded-lg">
+        <h4 className="text-base sm:text-lg font-semibold text-yellow-800 mb-2">
           📋 Document Upload Tips
         </h4>
-        <ul className="text-sm text-yellow-700 space-y-1">
+        <ul className="text-xs sm:text-sm text-yellow-700 space-y-1">
           <li>• Ensure all required documents are uploaded before applying for loans</li>
           <li>• Use clear, high-quality scans or photos of your documents</li>
           <li>• Make sure documents are not expired and are clearly readable</li>
