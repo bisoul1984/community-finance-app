@@ -101,6 +101,85 @@ const navItems = [
 
   // Quick actions based on user role
   const quickActions = user.role === 'borrower' ? [
+    {
+      label: 'Request New Loan',
+      icon: FilePlus,
+      action: () => setCurrentView('create-loan')
+    },
+    {
+      label: 'View Wallet',
+      icon: WalletIcon,
+      action: () => setCurrentView('wallet')
+    },
+    {
+      label: 'Check Repayments',
+      icon: CreditCard,
+      action: () => setCurrentView('repayment-tracker')
+    },
+    {
+      label: 'Upload Documents',
+      icon: FileText,
+      action: () => setCurrentView('document-upload')
+    },
+    {
+      label: 'Loan Calculator',
+      icon: TrendingUp,
+      action: () => setCurrentView('loan-calculator')
+    }
+  ] : user.role === 'lender' ? [
+    {
+      label: 'Browse Loans',
+      icon: ClipboardList,
+      action: () => setCurrentView('browse-loans')
+    },
+    {
+      label: 'View Wallet',
+      icon: WalletIcon,
+      action: () => setCurrentView('wallet')
+    },
+    {
+      label: 'Track Returns',
+      icon: BarChart2,
+      action: () => setCurrentView('returns-tracker')
+    },
+    {
+      label: 'Investment History',
+      icon: TrendingUp,
+      action: () => setCurrentView('investment-history')
+    },
+    {
+      label: 'Loan Calculator',
+      icon: TrendingUp,
+      action: () => setCurrentView('loan-calculator')
+    }
+  ] : [
+    {
+      label: 'Admin Panel',
+      icon: Shield,
+      action: () => setCurrentView('admin-panel')
+    },
+    {
+      label: 'System Reports',
+      icon: FileText,
+      action: () => setCurrentView('reporting')
+    },
+    {
+      label: 'User Management',
+      icon: Users,
+      action: () => setCurrentView('admin-panel')
+    },
+    {
+      label: 'View Wallet',
+      icon: WalletIcon,
+      action: () => setCurrentView('wallet')
+    },
+    {
+      label: 'System Settings',
+      icon: Settings,
+      action: () => setCurrentView('admin-panel')
+    }
+  ];
+  const quickActions = user.role === 'borrower' ? [
     { label: 'Request Loan', icon: FilePlus, action: () => setCurrentView('create-loan') },
     { label: 'View Repayments', icon: CreditCard, action: () => setCurrentView('repayment-tracker') },
     { label: 'My Wallet', icon: WalletIcon, action: () => setCurrentView('wallet') },
