@@ -179,19 +179,6 @@ const navItems = [
       action: () => setCurrentView('admin-panel')
     }
   ];
-  const quickActions = user.role === 'borrower' ? [
-    { label: 'Request Loan', icon: FilePlus, action: () => setCurrentView('create-loan') },
-    { label: 'View Repayments', icon: CreditCard, action: () => setCurrentView('repayment-tracker') },
-    { label: 'My Wallet', icon: WalletIcon, action: () => setCurrentView('wallet') },
-  ] : user.role === 'lender' ? [
-    { label: 'Browse Loans', icon: Search, action: () => setCurrentView('browse-loans') },
-    { label: 'My Investments', icon: TrendingUp, action: () => setCurrentView('investment-history') },
-    { label: 'My Wallet', icon: WalletIcon, action: () => setCurrentView('wallet') },
-  ] : [
-    { label: 'Admin Panel', icon: Shield, action: () => setCurrentView('admin-panel') },
-    { label: 'Reports', icon: FileText, action: () => setCurrentView('reporting') },
-    { label: 'User Management', icon: Users, action: () => setCurrentView('admin-panel') },
-  ];
 
   // Top Navbar Component
   const TopNavbar = () => (
