@@ -179,9 +179,28 @@ const PaymentScheduler = ({ user, loans }) => {
                   <option value="" disabled>No active loans available</option>
                 )}
               </select>
-              {loans && loans.length === 0 && (
-                <p className="text-sm text-red-600 mt-1">No active loans found. Please create a loan first.</p>
-              )}
+                             {loans && loans.length === 0 && (
+                 <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                   <p className="text-sm text-blue-800 mb-2">
+                     <strong>No active loans found.</strong> This could be because:
+                   </p>
+                   <ul className="text-xs text-blue-700 space-y-1">
+                     <li>• You haven't created any loans yet</li>
+                     <li>• Your loans are still pending approval</li>
+                     <li>• Your loans have been completed or defaulted</li>
+                     <li>• There's a temporary issue loading your loans</li>
+                   </ul>
+                   <p className="text-xs text-blue-600 mt-2">
+                     For testing purposes, mock loans are being used. In production, you would need to create a loan first.
+                   </p>
+                   <button 
+                     onClick={() => window.location.href = '/create-loan'}
+                     className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                   >
+                     Create New Loan
+                   </button>
+                 </div>
+               )}
             </div>
 
             <div>

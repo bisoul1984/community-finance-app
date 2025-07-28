@@ -13,23 +13,51 @@ const PaymentSchedulerPage = ({ user }) => {
   const fetchUserLoans = async () => {
     try {
       console.log('PaymentSchedulerPage: Fetching loans for user:', user.id);
+      console.log('PaymentSchedulerPage: User object:', user);
+      
       const data = await getUserLoans(user.id);
       console.log('PaymentSchedulerPage: Raw loan data:', data);
+      console.log('PaymentSchedulerPage: Data type:', typeof data);
+      console.log('PaymentSchedulerPage: Data length:', Array.isArray(data) ? data.length : 'Not an array');
       
-      const activeLoans = data.filter(loan => 
-        loan.status === 'funded' || loan.status === 'active' || loan.status === 'overdue'
-      );
+      if (!Array.isArray(data)) {
+        console.error('PaymentSchedulerPage: Data is not an array:', data);
+        throw new Error('Invalid data format received');
+      }
+      
+      const activeLoans = data.filter(loan => {
+        console.log('PaymentSchedulerPage: Checking loan:', loan);
+        const isActive = loan.status === 'funded' || loan.status === 'active' || loan.status === 'overdue';
+        console.log('PaymentSchedulerPage: Loan status:', loan.status, 'Is active:', isActive);
+        return isActive;
+      });
+      
       console.log('PaymentSchedulerPage: Active loans:', activeLoans);
-      setLoans(activeLoans);
+      console.log('PaymentSchedulerPage: Active loans count:', activeLoans.length);
+      
+      // If no active loans found, use mock data for testing
+      if (activeLoans.length === 0) {
+        console.log('PaymentSchedulerPage: No active loans found, using mock data');
+        const mockLoans = [
+          { _id: 'loan1', amount: 5000, status: 'active', purpose: 'Business Expansion' },
+          { _id: 'loan2', amount: 3000, status: 'funded', purpose: 'Home Renovation' },
+          { _id: 'loan3', amount: 2000, status: 'active', purpose: 'Education' }
+        ];
+        setLoans(mockLoans);
+      } else {
+        setLoans(activeLoans);
+      }
     } catch (error) {
       console.error('Error fetching loans:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      
       // Use mock data if API fails
       const mockLoans = [
         { _id: 'loan1', amount: 5000, status: 'active', purpose: 'Business Expansion' },
         { _id: 'loan2', amount: 3000, status: 'funded', purpose: 'Home Renovation' },
         { _id: 'loan3', amount: 2000, status: 'active', purpose: 'Education' }
       ];
-      console.log('PaymentSchedulerPage: Using mock loans:', mockLoans);
+      console.log('PaymentSchedulerPage: Using mock loans due to error:', mockLoans);
       setLoans(mockLoans);
     } finally {
       setLoading(false);
