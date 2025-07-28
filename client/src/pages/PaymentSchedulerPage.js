@@ -12,19 +12,25 @@ const PaymentSchedulerPage = ({ user }) => {
 
   const fetchUserLoans = async () => {
     try {
+      console.log('PaymentSchedulerPage: Fetching loans for user:', user.id);
       const data = await getUserLoans(user.id);
+      console.log('PaymentSchedulerPage: Raw loan data:', data);
+      
       const activeLoans = data.filter(loan => 
         loan.status === 'funded' || loan.status === 'active' || loan.status === 'overdue'
       );
+      console.log('PaymentSchedulerPage: Active loans:', activeLoans);
       setLoans(activeLoans);
     } catch (error) {
       console.error('Error fetching loans:', error);
       // Use mock data if API fails
-      setLoans([
+      const mockLoans = [
         { _id: 'loan1', amount: 5000, status: 'active', purpose: 'Business Expansion' },
         { _id: 'loan2', amount: 3000, status: 'funded', purpose: 'Home Renovation' },
         { _id: 'loan3', amount: 2000, status: 'active', purpose: 'Education' }
-      ]);
+      ];
+      console.log('PaymentSchedulerPage: Using mock loans:', mockLoans);
+      setLoans(mockLoans);
     } finally {
       setLoading(false);
     }

@@ -44,11 +44,19 @@ const PaymentScheduler = ({ user, loans }) => {
   useEffect(() => {
     // Load mock schedules
     setSchedules(mockSchedules);
-  }, []);
+    console.log('PaymentScheduler: Loans received:', loans);
+  }, [loans]);
 
   const createPaymentSchedule = async () => {
     if (!newSchedule.loanId || !newSchedule.amount || !newSchedule.startDate) {
       setMessage('Please fill in all required fields');
+      return;
+    }
+
+    // Validate that the selected loan exists
+    const selectedLoan = loans?.find(loan => loan._id === newSchedule.loanId);
+    if (!selectedLoan) {
+      setMessage('Please select a valid loan');
       return;
     }
 
@@ -135,6 +143,16 @@ const PaymentScheduler = ({ user, loans }) => {
         </div>
       )}
 
+      {/* Debug section - remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h3 className="text-sm font-semibold text-yellow-800 mb-2">Debug Info:</h3>
+          <p className="text-xs text-yellow-700">Loans count: {loans?.length || 0}</p>
+          <p className="text-xs text-yellow-700">Selected loan: {newSchedule.loanId || 'None'}</p>
+          <p className="text-xs text-yellow-700">Loans: {JSON.stringify(loans?.map(l => ({ id: l._id, amount: l.amount, status: l.status })))}</p>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Create New Schedule */}
         <div className="bg-white rounded-lg shadow-lg p-6">
@@ -151,12 +169,19 @@ const PaymentScheduler = ({ user, loans }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Choose a loan</option>
-                {loans?.map(loan => (
-                  <option key={loan._id} value={loan._id}>
-                    Loan #{loan._id.slice(-6)} - ${loan.amount}
-                  </option>
-                ))}
+                {loans && loans.length > 0 ? (
+                  loans.map(loan => (
+                    <option key={loan._id} value={loan._id}>
+                      Loan #{loan._id?.slice(-6) || 'N/A'} - ${loan.amount || 0} - {loan.status || 'Unknown'}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>No active loans available</option>
+                )}
               </select>
+              {loans && loans.length === 0 && (
+                <p className="text-sm text-red-600 mt-1">No active loans found. Please create a loan first.</p>
+              )}
             </div>
 
             <div>
