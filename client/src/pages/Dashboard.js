@@ -263,7 +263,7 @@ const navItems = [
 
   // Top Navbar Component
   const TopNavbar = () => (
-    <nav className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm overflow-hidden">
+    <nav className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm overflow-hidden relative z-[9998]">
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 max-w-full">
         {/* Left side - Logo and Search */}
         <div className="flex items-center space-x-4 w-full sm:w-auto">
@@ -308,7 +308,7 @@ const navItems = [
             </button>
             
             {navbarDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-[9999]">
                 {quickActions && quickActions.length > 0 ? (
                   quickActions.map((action, index) => (
                     <button
@@ -352,7 +352,7 @@ const navItems = [
             </button>
             
             {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-[9999]">
                 <div className="px-4 py-2 border-b border-slate-200">
                   <h3 className="font-semibold text-slate-800">Notifications</h3>
                 </div>
