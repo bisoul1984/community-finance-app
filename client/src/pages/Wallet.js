@@ -72,11 +72,11 @@ const Wallet = ({ user }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-4 sm:py-6 lg:py-10 px-3 sm:px-4">
+    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 lg:py-10 px-3 sm:px-4">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-slate-900">My Wallet</h2>
       
-      {/* Wallet Balance Card */}
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6 sm:mb-8 flex flex-col items-center">
+             {/* Wallet Balance Card */}
+       <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6 sm:mb-8 flex flex-col items-center w-full">
         <span className="text-slate-500 text-xs sm:text-sm mb-1">Wallet Balance</span>
         <span className="text-2xl sm:text-3xl font-bold text-blue-700 mb-3 sm:mb-2">${(balance || 0).toLocaleString()}</span>
         
@@ -112,8 +112,8 @@ const Wallet = ({ user }) => {
         {success && <div className="text-green-600 mt-3 text-sm sm:text-base text-center">{success}</div>}
       </div>
       
-      {/* Transaction History */}
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+             {/* Transaction History */}
+       <div className="bg-white rounded-lg shadow p-4 sm:p-6 w-full">
         <h3 className="text-base sm:text-lg font-semibold mb-4 text-slate-800">Transaction History</h3>
         {transactions.length === 0 ? (
           <div className="text-slate-400 text-center py-8 text-sm sm:text-base">No transactions yet.</div>
