@@ -109,149 +109,167 @@ const navItems = [
   // Quick actions based on user role
   const quickActions = user.role === 'borrower' ? [
     {
-      label: 'Test Action',
-      icon: CheckCircle,
-      action: () => {
-        console.log('Test action clicked!');
-        alert('Test action works!');
-      }
-    },
-    {
       label: 'Request New Loan',
       icon: FilePlus,
       action: () => {
-        console.log('Navigating to create-loan');
+        console.log('Quick Action: Navigating to create-loan');
         setCurrentView('create-loan');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
       action: () => {
-        console.log('Navigating to wallet');
+        console.log('Quick Action: Navigating to wallet');
         setCurrentView('wallet');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Check Repayments',
       icon: CreditCard,
       action: () => {
-        console.log('Navigating to repayment-tracker');
+        console.log('Quick Action: Navigating to repayment-tracker');
         setCurrentView('repayment-tracker');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Upload Documents',
       icon: FileText,
       action: () => {
-        console.log('Navigating to document-upload');
+        console.log('Quick Action: Navigating to document-upload');
         setCurrentView('document-upload');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Loan Calculator',
       icon: TrendingUp,
       action: () => {
-        console.log('Navigating to loan-calculator');
+        console.log('Quick Action: Navigating to loan-calculator');
         setCurrentView('loan-calculator');
+        setNavbarDropdownOpen(false);
+      }
+    },
+    {
+      label: 'Enhanced Dashboard',
+      icon: BarChart2,
+      action: () => {
+        console.log('Quick Action: Navigating to enhanced-dashboard');
+        setCurrentView('enhanced-dashboard');
+        setNavbarDropdownOpen(false);
       }
     }
   ] : user.role === 'lender' ? [
     {
-      label: 'Test Action',
-      icon: CheckCircle,
-      action: () => {
-        console.log('Test action clicked!');
-        alert('Test action works!');
-      }
-    },
-    {
       label: 'Browse Loans',
       icon: ClipboardList,
       action: () => {
-        console.log('Navigating to browse-loans');
+        console.log('Quick Action: Navigating to browse-loans');
         setCurrentView('browse-loans');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
       action: () => {
-        console.log('Navigating to wallet');
+        console.log('Quick Action: Navigating to wallet');
         setCurrentView('wallet');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Track Returns',
       icon: BarChart2,
       action: () => {
-        console.log('Navigating to returns-tracker');
+        console.log('Quick Action: Navigating to returns-tracker');
         setCurrentView('returns-tracker');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Investment History',
       icon: TrendingUp,
       action: () => {
-        console.log('Navigating to investment-history');
+        console.log('Quick Action: Navigating to investment-history');
         setCurrentView('investment-history');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'Loan Calculator',
       icon: TrendingUp,
       action: () => {
-        console.log('Navigating to loan-calculator');
+        console.log('Quick Action: Navigating to loan-calculator');
         setCurrentView('loan-calculator');
+        setNavbarDropdownOpen(false);
+      }
+    },
+    {
+      label: 'Enhanced Dashboard',
+      icon: BarChart2,
+      action: () => {
+        console.log('Quick Action: Navigating to enhanced-dashboard');
+        setCurrentView('enhanced-dashboard');
+        setNavbarDropdownOpen(false);
       }
     }
   ] : [
     {
-      label: 'Test Action',
-      icon: CheckCircle,
-      action: () => {
-        console.log('Test action clicked!');
-        alert('Test action works!');
-      }
-    },
-    {
       label: 'Admin Panel',
       icon: Shield,
       action: () => {
-        console.log('Navigating to admin-panel');
+        console.log('Quick Action: Navigating to admin-panel');
         setCurrentView('admin-panel');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'System Reports',
       icon: FileText,
       action: () => {
-        console.log('Navigating to reporting');
+        console.log('Quick Action: Navigating to reporting');
         setCurrentView('reporting');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'User Management',
       icon: Users,
       action: () => {
-        console.log('Navigating to admin-panel');
+        console.log('Quick Action: Navigating to admin-panel');
         setCurrentView('admin-panel');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
       action: () => {
-        console.log('Navigating to wallet');
+        console.log('Quick Action: Navigating to wallet');
         setCurrentView('wallet');
+        setNavbarDropdownOpen(false);
       }
     },
     {
       label: 'System Settings',
       icon: Settings,
       action: () => {
-        console.log('Navigating to admin-panel');
+        console.log('Quick Action: Navigating to admin-panel');
         setCurrentView('admin-panel');
+        setNavbarDropdownOpen(false);
+      }
+    },
+    {
+      label: 'Enhanced Dashboard',
+      icon: BarChart2,
+      action: () => {
+        console.log('Quick Action: Navigating to enhanced-dashboard');
+        setCurrentView('enhanced-dashboard');
+        setNavbarDropdownOpen(false);
       }
     }
   ];
@@ -295,7 +313,8 @@ const navItems = [
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Actions button clicked, current state:', navbarDropdownOpen);
+                console.log('Quick Actions button clicked, current state:', navbarDropdownOpen);
+                console.log('Quick actions available:', quickActions?.length || 0);
                 setNavbarDropdownOpen(!navbarDropdownOpen);
               }}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md font-medium transition-colors text-sm sm:text-base"
@@ -513,6 +532,9 @@ const navItems = [
       {/* Dropdowns rendered at root level */}
       {navbarDropdownOpen && (
         <div className="fixed top-20 right-4 w-48 sm:w-56 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999]">
+          <div className="px-4 py-2 border-b border-slate-200">
+            <h3 className="font-semibold text-slate-800 text-sm">Quick Actions</h3>
+          </div>
           {quickActions && quickActions.length > 0 ? (
             quickActions.map((action, index) => (
               <button
@@ -521,8 +543,12 @@ const navItems = [
                   e.preventDefault();
                   e.stopPropagation();
                   console.log('Quick action clicked:', action.label);
-                  action.action();
-                  setNavbarDropdownOpen(false);
+                  console.log('Executing action for:', action.label);
+                  try {
+                    action.action();
+                  } catch (error) {
+                    console.error('Error executing quick action:', error);
+                  }
                 }}
                 className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
               >
@@ -532,7 +558,7 @@ const navItems = [
             ))
           ) : (
             <div className="px-4 py-2 text-sm text-slate-500">
-              No actions available
+              No actions available for {user.role} role
             </div>
           )}
         </div>
