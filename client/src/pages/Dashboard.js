@@ -435,29 +435,31 @@ const navItems = [
   // Sidebar
   const Sidebar = () => (
     <aside className={`fixed md:static z-[99999] top-0 left-0 h-screen w-64 bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700 shadow-2xl md:shadow-none transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-      <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-700">
-        <span className="text-lg sm:text-xl font-bold text-white">MicroLoan</span>
-        <button className="md:hidden text-slate-300 hover:text-white p-1" onClick={() => setSidebarOpen(false)}>
-          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-      </div>
-      <nav className="mt-4 sm:mt-6 flex flex-col gap-1 px-3 sm:px-4" aria-label="Sidebar Navigation">
-        {filteredNav.map(item => (
-          <button
-            key={item.key}
-            onClick={() => { setCurrentView(item.key); setSidebarOpen(false); }}
-            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-lg font-medium text-slate-200 hover:bg-slate-700 hover:text-white transition-colors text-sm sm:text-base ${currentView === item.key ? 'bg-slate-700 text-white font-bold' : ''}`}
-            title={item.label}
-            aria-label={item.label}
-          >
-            <item.icon className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{item.label}</span><span className="sm:hidden">{item.label.split(' ')[0]}</span>
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-700">
+          <span className="text-lg sm:text-xl font-bold text-white">MicroLoan</span>
+          <button className="md:hidden text-slate-300 hover:text-white p-1" onClick={() => setSidebarOpen(false)}>
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
-        ))}
-      </nav>
-      <div className="mt-auto px-3 sm:px-4 py-4 sm:py-6">
-        <button onClick={onLogout} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium shadow transition-colors w-full text-sm sm:text-base" title="Logout" aria-label="Logout">
-          <LogOut className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Logout</span><span className="sm:hidden">Exit</span>
-        </button>
+        </div>
+        <nav className="flex-1 mt-4 sm:mt-6 flex flex-col gap-1 px-3 sm:px-4 overflow-y-auto" aria-label="Sidebar Navigation">
+          {filteredNav.map(item => (
+            <button
+              key={item.key}
+              onClick={() => { setCurrentView(item.key); setSidebarOpen(false); }}
+              className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-lg font-medium text-slate-200 hover:bg-slate-700 hover:text-white transition-colors text-sm sm:text-base ${currentView === item.key ? 'bg-slate-700 text-white font-bold' : ''}`}
+              title={item.label}
+              aria-label={item.label}
+            >
+              <item.icon className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">{item.label}</span><span className="sm:hidden">{item.label.split(' ')[0]}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="px-3 sm:px-4 py-4 sm:py-6 border-t border-slate-700">
+          <button onClick={onLogout} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium shadow transition-colors w-full text-sm sm:text-base" title="Logout" aria-label="Logout">
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" /> <span className="hidden sm:inline">Logout</span><span className="sm:hidden">Exit</span>
+          </button>
+        </div>
       </div>
     </aside>
   );
