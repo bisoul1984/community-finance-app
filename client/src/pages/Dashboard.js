@@ -415,7 +415,7 @@ const navItems = [
 
   // Sidebar
   const Sidebar = () => (
-    <aside className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700 shadow-lg md:shadow-none transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+    <aside className={`fixed md:static z-[99999] top-0 left-0 h-full w-64 bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700 shadow-2xl md:shadow-none transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
       <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-700">
         <span className="text-lg sm:text-xl font-bold text-white">MicroLoan</span>
         <button className="md:hidden text-slate-300 hover:text-white p-1" onClick={() => setSidebarOpen(false)}>
@@ -472,7 +472,7 @@ const navItems = [
         {/* Mobile overlay for sidebar */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden" 
+            className="fixed inset-0 bg-black bg-opacity-50 z-[99998] md:hidden" 
             onClick={() => setSidebarOpen(false)}
           />
         )}
