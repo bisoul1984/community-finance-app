@@ -56,7 +56,7 @@ const navItems = [
       setNotificationsOpen(false);
     };
 
-    // Handle clicking outside dropdowns
+    // Simple click outside handler
     useEffect(() => {
       const handleClickOutside = (event) => {
         if (navbarDropdownOpen || notificationsOpen) {
@@ -75,10 +75,12 @@ const navItems = [
         }
       };
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
+      if (navbarDropdownOpen || notificationsOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }
     }, [navbarDropdownOpen, notificationsOpen]);
 
     // Debug: Track currentView changes
@@ -290,7 +292,12 @@ const navItems = [
           {/* Quick Actions Dropdown */}
           <div className="relative" data-dropdown>
             <button
-              onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Actions button clicked, current state:', navbarDropdownOpen);
+                setNavbarDropdownOpen(!navbarDropdownOpen);
+              }}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md font-medium transition-colors text-sm sm:text-base"
             >
               <span className="hidden sm:block">Quick Actions</span>
@@ -301,42 +308,42 @@ const navItems = [
             </button>
             
             {navbarDropdownOpen && (
-              <>
-                {/* Backdrop for mobile */}
-                <div 
-                  className="fixed inset-0 z-40 md:hidden" 
-                  onClick={() => setNavbarDropdownOpen(false)}
-                />
-                <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                  {quickActions && quickActions.length > 0 ? (
-                    quickActions.map((action, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          console.log('Quick action clicked:', action.label);
-                          action.action();
-                          setNavbarDropdownOpen(false);
-                        }}
-                        className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                      >
-                        <action.icon className="w-4 h-4" />
-                        <span>{action.label}</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="px-4 py-2 text-sm text-slate-500">
-                      No actions available
-                    </div>
-                  )}
-                </div>
-              </>
+              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                {quickActions && quickActions.length > 0 ? (
+                  quickActions.map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Quick action clicked:', action.label);
+                        action.action();
+                        setNavbarDropdownOpen(false);
+                      }}
+                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <action.icon className="w-4 h-4" />
+                      <span>{action.label}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-sm text-slate-500">
+                    No actions available
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
           {/* Notifications */}
           <div className="relative" data-dropdown>
             <button
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Notifications button clicked, current state:', notificationsOpen);
+                setNotificationsOpen(!notificationsOpen);
+              }}
               className="relative p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
             >
               <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -345,47 +352,43 @@ const navItems = [
             </button>
             
             {notificationsOpen && (
-              <>
-                {/* Backdrop for mobile */}
-                <div 
-                  className="fixed inset-0 z-40 md:hidden" 
-                  onClick={() => setNotificationsOpen(false)}
-                />
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-slate-200">
-                    <h3 className="font-semibold text-slate-800">Notifications</h3>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto">
-                    {[
-                      { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
-                      { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
-                      { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
-                    ].map((notification, index) => (
-                      <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer">
-                        <div className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-800">{notification.title}</p>
-                            <p className="text-xs text-slate-600">{notification.message}</p>
-                            <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
-                          </div>
+              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                <div className="px-4 py-2 border-b border-slate-200">
+                  <h3 className="font-semibold text-slate-800">Notifications</h3>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {[
+                    { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
+                    { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
+                    { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
+                  ].map((notification, index) => (
+                    <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-slate-800">{notification.title}</p>
+                          <p className="text-xs text-slate-600">{notification.message}</p>
+                          <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                  <div className="px-4 py-2 border-t border-slate-200">
-                    <button
-                      onClick={() => {
-                        setCurrentView('notifications');
-                        setNotificationsOpen(false);
-                      }}
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      View all notifications
-                    </button>
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              </>
+                <div className="px-4 py-2 border-t border-slate-200">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('View all notifications clicked');
+                      setCurrentView('notifications');
+                      setNotificationsOpen(false);
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    View all notifications
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
