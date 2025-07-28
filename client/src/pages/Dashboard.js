@@ -104,81 +104,130 @@ const navItems = [
     {
       label: 'Request New Loan',
       icon: FilePlus,
-      action: () => setCurrentView('create-loan')
+      action: () => {
+        console.log('Navigating to create-loan');
+        setCurrentView('create-loan');
+      }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
-      action: () => setCurrentView('wallet')
+      action: () => {
+        console.log('Navigating to wallet');
+        setCurrentView('wallet');
+      }
     },
     {
       label: 'Check Repayments',
       icon: CreditCard,
-      action: () => setCurrentView('repayment-tracker')
+      action: () => {
+        console.log('Navigating to repayment-tracker');
+        setCurrentView('repayment-tracker');
+      }
     },
     {
       label: 'Upload Documents',
       icon: FileText,
-      action: () => setCurrentView('document-upload')
+      action: () => {
+        console.log('Navigating to document-upload');
+        setCurrentView('document-upload');
+      }
     },
     {
       label: 'Loan Calculator',
       icon: TrendingUp,
-      action: () => setCurrentView('loan-calculator')
+      action: () => {
+        console.log('Navigating to loan-calculator');
+        setCurrentView('loan-calculator');
+      }
     }
   ] : user.role === 'lender' ? [
     {
       label: 'Browse Loans',
       icon: ClipboardList,
-      action: () => setCurrentView('browse-loans')
+      action: () => {
+        console.log('Navigating to browse-loans');
+        setCurrentView('browse-loans');
+      }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
-      action: () => setCurrentView('wallet')
+      action: () => {
+        console.log('Navigating to wallet');
+        setCurrentView('wallet');
+      }
     },
     {
       label: 'Track Returns',
       icon: BarChart2,
-      action: () => setCurrentView('returns-tracker')
+      action: () => {
+        console.log('Navigating to returns-tracker');
+        setCurrentView('returns-tracker');
+      }
     },
     {
       label: 'Investment History',
       icon: TrendingUp,
-      action: () => setCurrentView('investment-history')
+      action: () => {
+        console.log('Navigating to investment-history');
+        setCurrentView('investment-history');
+      }
     },
     {
       label: 'Loan Calculator',
       icon: TrendingUp,
-      action: () => setCurrentView('loan-calculator')
+      action: () => {
+        console.log('Navigating to loan-calculator');
+        setCurrentView('loan-calculator');
+      }
     }
   ] : [
     {
       label: 'Admin Panel',
       icon: Shield,
-      action: () => setCurrentView('admin-panel')
+      action: () => {
+        console.log('Navigating to admin-panel');
+        setCurrentView('admin-panel');
+      }
     },
     {
       label: 'System Reports',
       icon: FileText,
-      action: () => setCurrentView('reporting')
+      action: () => {
+        console.log('Navigating to reporting');
+        setCurrentView('reporting');
+      }
     },
     {
       label: 'User Management',
       icon: Users,
-      action: () => setCurrentView('admin-panel')
+      action: () => {
+        console.log('Navigating to admin-panel');
+        setCurrentView('admin-panel');
+      }
     },
     {
       label: 'View Wallet',
       icon: WalletIcon,
-      action: () => setCurrentView('wallet')
+      action: () => {
+        console.log('Navigating to wallet');
+        setCurrentView('wallet');
+      }
     },
     {
       label: 'System Settings',
       icon: Settings,
-      action: () => setCurrentView('admin-panel')
+      action: () => {
+        console.log('Navigating to admin-panel');
+        setCurrentView('admin-panel');
+      }
     }
   ];
+
+  // Debug: Log quickActions for troubleshooting
+  console.log('User role:', user.role);
+  console.log('Quick actions:', quickActions);
 
   // Top Navbar Component
   const TopNavbar = () => (
@@ -229,19 +278,26 @@ const navItems = [
                   onClick={() => setNavbarDropdownOpen(false)}
                 />
                 <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                  {quickActions.map((action, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        action.action();
-                        setNavbarDropdownOpen(false);
-                      }}
-                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                    >
-                      <action.icon className="w-4 h-4" />
-                      <span>{action.label}</span>
-                    </button>
-                  ))}
+                  {quickActions && quickActions.length > 0 ? (
+                    quickActions.map((action, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          console.log('Quick action clicked:', action.label);
+                          action.action();
+                          setNavbarDropdownOpen(false);
+                        }}
+                        className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <action.icon className="w-4 h-4" />
+                        <span>{action.label}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-sm text-slate-500">
+                      No actions available
+                    </div>
+                  )}
                 </div>
               </>
             )}
