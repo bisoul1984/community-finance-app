@@ -85,8 +85,8 @@ const Dashboard = ({ user, onLogout }) => {
 
   // Top Navbar Component
   const TopNavbar = () => (
-    <nav className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm">
-      <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+    <nav className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 max-w-full">
         {/* Left side - Logo and Search */}
         <div className="flex items-center space-x-4 w-full sm:w-auto">
           <div className="flex items-center space-x-2 flex-shrink-0">
@@ -99,7 +99,7 @@ const Dashboard = ({ user, onLogout }) => {
           </div>
           
           {/* Search Bar */}
-          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2 flex-1 max-w-md">
+          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2 w-64 flex-shrink-0">
             <Search className="w-4 h-4 text-slate-500" />
             <input
               type="text"
@@ -115,7 +115,7 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
-              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors flex-shrink-0"
+              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors flex-shrink-0 whitespace-nowrap"
             >
               <span className="hidden sm:block">Quick Actions</span>
               <span className="sm:hidden">Actions</span>
@@ -194,16 +194,16 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setCurrentView('user-profile')}
-              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors flex-shrink-0"
+              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors flex-shrink-0 whitespace-nowrap"
             >
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-medium text-xs sm:text-sm">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </span>
               </div>
-              <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-slate-800">{user.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+              <div className="hidden md:block text-left flex-shrink-0">
+                <p className="text-sm font-medium text-slate-800 truncate">{user.name}</p>
+                <p className="text-xs text-slate-500 capitalize truncate">{user.role}</p>
               </div>
             </button>
           </div>
@@ -211,7 +211,7 @@ const Dashboard = ({ user, onLogout }) => {
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors flex-shrink-0"
+            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors flex-shrink-0 whitespace-nowrap"
           >
             <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden md:block">Logout</span>
