@@ -62,8 +62,8 @@ const RepaymentCalendar = ({ loans, onDateClick }) => {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
         <button 
           onClick={() => {
             if (currentMonth === 0) {
@@ -79,7 +79,7 @@ const RepaymentCalendar = ({ loans, onDateClick }) => {
         >
           <Minus className="w-4 h-4" />
         </button>
-        <h3 className="text-xl font-bold text-slate-800">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-800">
           {monthNames[currentMonth]} {currentYear}
         </h3>
         <button 
@@ -99,7 +99,7 @@ const RepaymentCalendar = ({ loans, onDateClick }) => {
         </button>
       </div>
       
-      <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium text-slate-600 mb-3">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs sm:text-sm font-medium text-slate-600 mb-3">
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => <div key={d}>{d}</div>)}
       </div>
       
@@ -130,7 +130,7 @@ const RepaymentCalendar = ({ loans, onDateClick }) => {
           return (
             <div 
               key={day.toISOString()} 
-              className={`rounded-lg p-2 cursor-pointer ${bg} ${border} hover:ring-2 ring-slate-300 transition-all duration-200 min-h-[40px] flex items-center justify-center`} 
+              className={`rounded-lg p-1 sm:p-2 cursor-pointer ${bg} ${border} hover:ring-2 ring-slate-300 transition-all duration-200 min-h-[32px] sm:min-h-[40px] flex items-center justify-center text-xs sm:text-sm`} 
               title={`${day.toLocaleDateString()} - ${status || 'No payments'}`} 
               aria-label={`${day.toLocaleDateString()} - ${status || 'No payments'}`}
               onClick={() => {
@@ -144,29 +144,29 @@ const RepaymentCalendar = ({ loans, onDateClick }) => {
         })}
       </div>
       
-      <div className="flex flex-wrap gap-4 mt-6 text-sm">
-        <span className="inline-flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full bg-emerald-100 border-2 border-emerald-300"></span>
+      <div className="flex flex-wrap gap-3 sm:gap-4 mt-4 sm:mt-6 text-xs sm:text-sm">
+        <span className="inline-flex items-center gap-1 sm:gap-2">
+          <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-100 border-2 border-emerald-300"></span>
           Paid
         </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full bg-amber-100 border-2 border-amber-300"></span>
+        <span className="inline-flex items-center gap-1 sm:gap-2">
+          <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-amber-100 border-2 border-amber-300"></span>
           Upcoming
         </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full bg-red-100 border-2 border-red-300"></span>
+        <span className="inline-flex items-center gap-1 sm:gap-2">
+          <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-100 border-2 border-red-300"></span>
           Late
         </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-300"></span>
+        <span className="inline-flex items-center gap-1 sm:gap-2">
+          <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-blue-100 border-2 border-blue-300"></span>
           Today
         </span>
       </div>
       
       {/* Selected Date Details */}
       {selectedDate && (
-        <div className="mt-6 p-4 bg-slate-50 rounded-lg">
-          <h4 className="font-semibold text-slate-800 mb-3">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-slate-50 rounded-lg">
+          <h4 className="text-sm sm:text-base font-semibold text-slate-800 mb-3">
             {selectedDate.toLocaleDateString('en-US', { 
               weekday: 'long', 
               year: 'numeric', 
@@ -251,51 +251,51 @@ const RepaymentAnalytics = ({ loans }) => {
   const repaymentRate = totalAmount > 0 ? (totalRepaid / totalAmount) * 100 : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Total Loans</p>
-            <p className="text-2xl font-bold text-slate-900">{totalLoans}</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-600">Total Loans</p>
+            <p className="text-xl sm:text-2xl font-bold text-slate-900">{totalLoans}</p>
           </div>
-          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <DollarSign className="w-6 h-6 text-blue-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Total Amount</p>
-            <p className="text-2xl font-bold text-slate-900">${totalAmount.toLocaleString()}</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-600">Total Amount</p>
+            <p className="text-lg sm:text-2xl font-bold text-slate-900">${totalAmount.toLocaleString()}</p>
           </div>
-          <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-            <TrendingUp className="w-6 h-6 text-emerald-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Repayment Rate</p>
-            <p className="text-2xl font-bold text-slate-900">{repaymentRate.toFixed(1)}%</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-600">Repayment Rate</p>
+            <p className="text-xl sm:text-2xl font-bold text-slate-900">{repaymentRate.toFixed(1)}%</p>
           </div>
-          <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-            <BarChart3 className="w-6 h-6 text-amber-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-full flex items-center justify-center">
+            <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+      <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600">Overdue Loans</p>
-            <p className="text-2xl font-bold text-red-600">{overdueLoans}</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-600">Overdue Loans</p>
+            <p className="text-xl sm:text-2xl font-bold text-red-600">{overdueLoans}</p>
           </div>
-          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
           </div>
         </div>
       </div>
@@ -556,26 +556,27 @@ const RepaymentTracker = ({ user }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 py-4 sm:py-8 px-3 sm:px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Repayment Tracker</h1>
-            <p className="text-slate-600">Monitor and manage your loan repayments</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Repayment Tracker</h1>
+            <p className="text-sm sm:text-base text-slate-600">Monitor and manage your loan repayments</p>
           </div>
-          <div className="flex items-center gap-4 mt-4 md:mt-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-4 md:mt-0">
             <button
               onClick={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base"
             >
               {viewMode === 'list' ? <Calendar className="w-4 h-4" /> : <BarChart3 className="w-4 h-4" />}
-              {viewMode === 'list' ? 'Calendar View' : 'List View'}
+              <span className="hidden sm:inline">{viewMode === 'list' ? 'Calendar View' : 'List View'}</span>
+              <span className="sm:hidden">{viewMode === 'list' ? 'Calendar' : 'List'}</span>
             </button>
             <select
               value={exportFormat}
               onChange={(e) => setExportFormat(e.target.value)}
-              className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="pdf">PDF</option>
               <option value="csv">CSV</option>
@@ -583,10 +584,11 @@ const RepaymentTracker = ({ user }) => {
             </select>
             <button
               onClick={exportData}
-              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              className="flex items-center justify-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base"
             >
               <Download className="w-4 h-4" />
-              Export Data
+              <span className="hidden sm:inline">Export Data</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </div>
         </div>
@@ -604,8 +606,8 @@ const RepaymentTracker = ({ user }) => {
 
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -614,7 +616,7 @@ const RepaymentTracker = ({ user }) => {
                   placeholder="Search loans by purpose or amount..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -623,7 +625,7 @@ const RepaymentTracker = ({ user }) => {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               >
                 <option value="all">All Loans</option>
                 <option value="overdue">Overdue</option>
@@ -652,7 +654,7 @@ const RepaymentTracker = ({ user }) => {
               </p>
             </div>
           ) : (
-            <div className="grid gap-6">
+            <div className="grid gap-4 sm:gap-6">
               {filteredLoans.map((loan) => {
                 const daysRemaining = loan.dueDate ? getDaysRemaining(loan.dueDate) : null;
                 const isOverdue = daysRemaining !== null && daysRemaining < 0;
@@ -662,39 +664,39 @@ const RepaymentTracker = ({ user }) => {
                 return (
                   <div key={loan._id} className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
                     {/* Header */}
-                    <div className="p-6 border-b border-slate-200">
-                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="p-4 sm:p-6 border-b border-slate-200">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-xl font-bold text-slate-900">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                            <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                               ${loan.amount.toLocaleString()} Loan
                             </h3>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(loan.status, loan.dueDate)}`}>
+                            <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium border ${getStatusColor(loan.status, loan.dueDate)}`}>
                               {getStatusText(loan.status, loan.dueDate)}
                             </span>
                           </div>
-                          <p className="text-slate-600 mb-1">
+                          <p className="text-sm sm:text-base text-slate-600 mb-1">
                             <strong>Purpose:</strong> {loan.purpose}
                           </p>
-                          <p className="text-slate-600">
+                          <p className="text-sm sm:text-base text-slate-600">
                             <strong>Term:</strong> {loan.term} days • <strong>Created:</strong> {new Date(loan.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                         
                         {isOverdue && (
                           <div className="flex items-center gap-2 text-red-600">
-                            <AlertTriangle className="w-5 h-5" />
-                            <span className="font-medium">Overdue by {Math.abs(daysRemaining)} days</span>
+                            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="text-sm sm:text-base font-medium">Overdue by {Math.abs(daysRemaining)} days</span>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {/* Progress and Stats */}
-                    <div className="p-6 border-b border-slate-200">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-4 sm:p-6 border-b border-slate-200">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         <div>
-                          <p className="text-sm font-medium text-slate-600 mb-1">Repayment Progress</p>
+                          <p className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Repayment Progress</p>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 bg-slate-200 rounded-full h-2">
                               <div 
@@ -702,7 +704,7 @@ const RepaymentTracker = ({ user }) => {
                                 style={{ width: `${repaymentPercentage}%` }}
                               ></div>
                             </div>
-                            <span className="text-sm font-medium text-slate-700">{repaymentPercentage.toFixed(1)}%</span>
+                            <span className="text-xs sm:text-sm font-medium text-slate-700">{repaymentPercentage.toFixed(1)}%</span>
                           </div>
                           <p className="text-xs text-slate-500 mt-1">
                             ${loan.totalRepaid.toLocaleString()} / ${loan.amount.toLocaleString()}
@@ -710,17 +712,17 @@ const RepaymentTracker = ({ user }) => {
                         </div>
                         
                         <div>
-                          <p className="text-sm font-medium text-slate-600 mb-1">Remaining Amount</p>
-                          <p className="text-2xl font-bold text-amber-600">${remainingAmount.toLocaleString()}</p>
+                          <p className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Remaining Amount</p>
+                          <p className="text-lg sm:text-2xl font-bold text-amber-600">${remainingAmount.toLocaleString()}</p>
                         </div>
                         
                         <div>
-                          <p className="text-sm font-medium text-slate-600 mb-1">Due Date</p>
-                          <p className="text-lg font-semibold text-slate-900">
+                          <p className="text-xs sm:text-sm font-medium text-slate-600 mb-1">Due Date</p>
+                          <p className="text-base sm:text-lg font-semibold text-slate-900">
                             {loan.dueDate ? new Date(loan.dueDate).toLocaleDateString() : 'Not set'}
                           </p>
                           {loan.dueDate && (
-                            <p className={`text-sm ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
+                            <p className={`text-xs sm:text-sm ${isOverdue ? 'text-red-600' : 'text-slate-500'}`}>
                               {isOverdue 
                                 ? `Overdue by ${Math.abs(daysRemaining)} days`
                                 : `${daysRemaining} days remaining`
@@ -732,9 +734,9 @@ const RepaymentTracker = ({ user }) => {
                     </div>
 
                     {/* Repayment Form */}
-                    <div className="p-6 border-b border-slate-200">
-                      <h4 className="text-lg font-semibold text-slate-800 mb-4">Make a Payment</h4>
-                      <div className="flex flex-col md:flex-row gap-4">
+                    <div className="p-4 sm:p-6 border-b border-slate-200">
+                      <h4 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">Make a Payment</h4>
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <div className="flex-1 relative">
                           <input
                             type={showPassword[loan._id] ? "text" : "number"}
@@ -744,7 +746,7 @@ const RepaymentTracker = ({ user }) => {
                             min="1"
                             max={remainingAmount}
                             step="0.01"
-                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                           />
                           <button
                             type="button"
@@ -757,7 +759,7 @@ const RepaymentTracker = ({ user }) => {
                         <button 
                           onClick={() => handleRepayment(loan._id)}
                           disabled={!repaymentAmounts[loan._id] || parseFloat(repaymentAmounts[loan._id]) <= 0 || parseFloat(repaymentAmounts[loan._id]) > remainingAmount}
-                          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                          className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors text-sm sm:text-base ${
                             isOverdue 
                               ? 'bg-red-600 hover:bg-red-700 text-white' 
                               : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -770,21 +772,21 @@ const RepaymentTracker = ({ user }) => {
 
                     {/* Recent Payments */}
                     {loan.repayments && loan.repayments.length > 0 && (
-                      <div className="p-6">
-                        <h4 className="text-lg font-semibold text-slate-800 mb-4">Recent Payments</h4>
+                      <div className="p-4 sm:p-6">
+                        <h4 className="text-base sm:text-lg font-semibold text-slate-800 mb-3 sm:mb-4">Recent Payments</h4>
                         <div className="space-y-3">
                           {loan.repayments.slice(-5).reverse().map((repayment, index) => (
                             <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                  <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
                                 </div>
                                 <div>
-                                  <p className="font-medium text-slate-900">${repayment.amount.toLocaleString()}</p>
-                                  <p className="text-sm text-slate-500">{new Date(repayment.date).toLocaleDateString()}</p>
+                                  <p className="text-sm sm:text-base font-medium text-slate-900">${repayment.amount.toLocaleString()}</p>
+                                  <p className="text-xs sm:text-sm text-slate-500">{new Date(repayment.date).toLocaleDateString()}</p>
                                 </div>
                               </div>
-                              <span className="text-sm text-slate-500">
+                              <span className="text-xs sm:text-sm text-slate-500">
                                 {new Date(repayment.date).toLocaleTimeString()}
                               </span>
                             </div>
@@ -806,17 +808,17 @@ const RepaymentTracker = ({ user }) => {
 
         {/* Scheduled Payments */}
         {scheduledPayments.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">Scheduled Payments</h3>
-            <div className="grid gap-4">
+          <div className="mt-6 sm:mt-8">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-3 sm:mb-4">Scheduled Payments</h3>
+            <div className="grid gap-3 sm:gap-4">
               {scheduledPayments.map((payment) => (
-                <div key={payment.id} className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                <div key={payment.id} className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-slate-900">${payment.amount.toLocaleString()}</p>
-                      <p className="text-sm text-slate-500">Scheduled for {new Date(payment.scheduleDate).toLocaleDateString()}</p>
+                      <p className="text-sm sm:text-base font-medium text-slate-900">${payment.amount.toLocaleString()}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">Scheduled for {new Date(payment.scheduleDate).toLocaleDateString()}</p>
                     </div>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                    <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-medium">
                       {payment.frequency}
                     </span>
                   </div>
