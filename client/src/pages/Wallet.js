@@ -28,19 +28,36 @@ const Wallet = ({ user }) => {
       setError('');
       const token = localStorage.getItem('token');
       console.log('Fetching wallet for user:', user.id);
-      console.log('API URL:', `/api/users/${user.id}/wallet`);
+      console.log('API URL:', `${API_ENDPOINTS.USERS}/${user.id}/wallet`);
       console.log('Token:', token ? 'Present' : 'Missing');
+      console.log('API_BASE_URL:', process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
       
       const res = await axios.get(`${API_ENDPOINTS.USERS}/${user.id}/wallet`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 10000 // 10 second timeout
       });
       console.log('Wallet response:', res.data);
       setBalance(res.data.walletBalance || 0);
       setTransactions((res.data.walletTransactions || []).reverse());
     } catch (err) {
       console.error('Wallet fetch error:', err);
+      console.error('Error message:', err.message);
+      console.error('Error code:', err.code);
       console.error('Error response:', err.response?.data);
-      setError('Failed to load wallet info');
+      console.error('Error status:', err.response?.status);
+      
+      // Provide more specific error messages
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again.');
+      } else if (!err.response) {
+        setError('Network error. Please check your connection.');
+      } else if (err.response.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else if (err.response.status === 404) {
+        setError('Wallet not found. Please contact support.');
+      } else {
+        setError(`Failed to load wallet: ${err.response?.data?.message || err.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -58,14 +75,34 @@ const Wallet = ({ user }) => {
     try {
       const token = localStorage.getItem('token');
       const url = `${API_ENDPOINTS.USERS}/${user.id}/wallet/${type}`;
+      console.log('Submitting transaction:', { type, amount, url });
+      
       const res = await axios.post(url, { amount: Number(amount) }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 10000 // 10 second timeout
       });
+      console.log('Transaction response:', res.data);
       setSuccess(type === 'fund' ? 'Wallet funded!' : 'Withdrawal successful!');
       setAmount('');
       fetchWallet();
     } catch (err) {
-      setError(err.response?.data?.message || 'Transaction failed');
+      console.error('Transaction error:', err);
+      console.error('Error message:', err.message);
+      console.error('Error code:', err.code);
+      console.error('Error response:', err.response?.data);
+      
+      // Provide more specific error messages
+      if (err.code === 'ECONNABORTED') {
+        setError('Transaction timed out. Please try again.');
+      } else if (!err.response) {
+        setError('Network error. Please check your connection.');
+      } else if (err.response.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else if (err.response.status === 400) {
+        setError(err.response?.data?.message || 'Invalid transaction request.');
+      } else {
+        setError(err.response?.data?.message || 'Transaction failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,7 +115,14 @@ const Wallet = ({ user }) => {
       {/* Wallet Balance Card */}
       <div className="bg-white rounded-lg shadow p-1 sm:p-2 lg:p-3 mb-2 sm:mb-3 lg:mb-4 flex flex-col items-center w-full">
         <span className="text-slate-500 text-xs mb-1">Wallet Balance</span>
-        <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-700 mb-1 sm:mb-2">${(balance || 0).toLocaleString()}</span>
+        {loading ? (
+          <div className="flex items-center gap-2 mb-1 sm:mb-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-700">Loading...</span>
+          </div>
+        ) : (
+          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-700 mb-1 sm:mb-2">${(balance || 0).toLocaleString()}</span>
+        )}
         
         {/* Fund/Withdraw Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-1 sm:gap-2 items-center mt-2 w-full max-w-sm">
@@ -108,7 +152,17 @@ const Wallet = ({ user }) => {
         </form>
         
         {/* Messages */}
-        {error && <div className="text-red-600 mt-1 sm:mt-2 text-xs text-center">{error}</div>}
+        {error && (
+          <div className="text-red-600 mt-1 sm:mt-2 text-xs text-center">
+            <div>{error}</div>
+            <button 
+              onClick={fetchWallet}
+              className="mt-1 px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
         {success && <div className="text-green-600 mt-1 sm:mt-2 text-xs text-center">{success}</div>}
       </div>
       
