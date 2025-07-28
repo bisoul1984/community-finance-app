@@ -13,6 +13,13 @@ const userSchema = new mongoose.Schema({
     accountAlerts: { type: Boolean, default: true },
     marketingEmails: { type: Boolean, default: false }
   },
+  // Notification settings for the frontend
+  emailNotifications: { type: Boolean, default: true },
+  smsNotifications: { type: Boolean, default: false },
+  paymentReminders: { type: Boolean, default: true },
+  loanUpdates: { type: Boolean, default: true },
+  marketingEmails: { type: Boolean, default: false },
+  phone: { type: String, default: '' },
   emailVerified: { type: Boolean, default: false },
   verificationCode: { type: String },
   verificationCodeExpires: { type: Date },

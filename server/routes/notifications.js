@@ -19,6 +19,26 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Get user notifications by user ID
+router.get('/user/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // Only allow the user themselves or an admin to access
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    const notifications = await Notification.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ message: 'Failed to fetch notifications' });
+  }
+});
+
 // Mark notification as read
 router.patch('/:id/read', auth, async (req, res) => {
   try {
@@ -156,6 +176,34 @@ router.post('/test-email', auth, async (req, res) => {
   } catch (error) {
     console.error('Error sending test email:', error);
     res.status(500).json({ message: 'Failed to send test email', error: error.message });
+  }
+});
+
+// Get notification settings
+router.get('/settings/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // Only allow the user themselves or an admin to access
+    if (req.user.id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    const settings = {
+      emailNotifications: user.emailNotifications,
+      smsNotifications: user.smsNotifications,
+      paymentReminders: user.paymentReminders,
+      loanUpdates: user.loanUpdates,
+      marketingEmails: user.marketingEmails,
+      email: user.email,
+      phone: user.phone
+    };
+    
+    res.json(settings);
+  } catch (err) {
+    console.error('Error fetching notification settings:', err);
+    res.status(500).json({ message: 'Failed to fetch notification settings' });
   }
 });
 

@@ -18,8 +18,22 @@ const notificationSchema = new mongoose.Schema({
       'loanRepaid',
       'accountVerification',
       'passwordReset',
-      'welcomeEmail'
+      'welcomeEmail',
+      'payment_reminder',
+      'loan_approved',
+      'loan_rejected',
+      'payment_received',
+      'document_required',
+      'system_alert'
     ]
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
   },
   email: {
     type: String,
