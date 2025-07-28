@@ -72,16 +72,16 @@ const Wallet = ({ user }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-4 sm:py-6 lg:py-10 px-3 sm:px-4">
+    <div className="w-full max-w-4xl mx-auto py-2 sm:py-4 lg:py-6 px-2 sm:px-4 lg:px-6">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-slate-900">My Wallet</h2>
       
              {/* Wallet Balance Card */}
-       <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6 sm:mb-8 flex flex-col items-center w-full">
+       <div className="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 lg:mb-8 flex flex-col items-center w-full">
         <span className="text-slate-500 text-xs sm:text-sm mb-1">Wallet Balance</span>
         <span className="text-2xl sm:text-3xl font-bold text-blue-700 mb-3 sm:mb-2">${(balance || 0).toLocaleString()}</span>
         
         {/* Fund/Withdraw Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 items-center mt-4 w-full max-w-md">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center mt-4 w-full max-w-lg">
           <select 
             value={type} 
             onChange={e => setType(e.target.value)} 
@@ -113,10 +113,10 @@ const Wallet = ({ user }) => {
       </div>
       
              {/* Transaction History */}
-       <div className="bg-white rounded-lg shadow p-4 sm:p-6 w-full">
+       <div className="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6 w-full">
         <h3 className="text-base sm:text-lg font-semibold mb-4 text-slate-800">Transaction History</h3>
         {transactions.length === 0 ? (
-          <div className="text-slate-400 text-center py-8 text-sm sm:text-base">No transactions yet.</div>
+          <div className="text-slate-400 text-center py-4 sm:py-8 text-sm sm:text-base">No transactions yet.</div>
         ) : (
           <div className="overflow-x-auto">
             {/* Desktop Table */}
@@ -142,9 +142,9 @@ const Wallet = ({ user }) => {
             </table>
             
             {/* Mobile Cards */}
-            <div className="space-y-3 sm:hidden">
+            <div className="space-y-2 sm:hidden">
               {transactions.map((tx, i) => (
-                <div key={i} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                <div key={i} className="border border-gray-200 rounded-lg p-2 sm:p-3 bg-gray-50">
                   <div className="flex justify-between items-start mb-2">
                     <span className="font-medium text-sm capitalize text-blue-600">{tx.type}</span>
                     <span className="font-bold text-sm text-green-600">${(tx.amount || 0).toLocaleString()}</span>
