@@ -1,8 +1,8 @@
-# 🏦 Microloan & Community Finance Web Application
+# Microloan & Community Finance Web Application
 
 A full-stack web application for community-based microlending with reputation systems, repayment tracking, and admin management.
 
-## 🌟 Features
+## Features
 
 ### **Core Functionality**
 - **User Authentication** - JWT-based authentication with role-based access
@@ -22,7 +22,7 @@ A full-stack web application for community-based microlending with reputation sy
 - **Responsive Design** - Modern UI/UX with mobile compatibility
 - **Security** - JWT authentication with role-based permissions
 
-## 🚀 Tech Stack
+## Tech Stack
 
 ### **Frontend**
 - **React.js** - User interface and state management
@@ -39,13 +39,13 @@ A full-stack web application for community-based microlending with reputation sy
 - **CORS** - Cross-origin resource sharing
 - **Dotenv** - Environment variable management
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Node.js** (v14 or higher)
 - **MongoDB** (local or cloud instance)
 - **Git** (for version control)
 
-## 🛠️ Installation
+## Installation
 
 ### **1. Clone the Repository**
 ```bash
@@ -86,7 +86,7 @@ REACT_APP_API_URL=http://localhost:5000/api
 ### **4. Database Setup**
 Ensure MongoDB is running on your system or update the `MONGO_URI` in your backend `.env` file.
 
-## 🚀 Running the Application
+## Running the Application
 
 ### **Start Backend Server**
 ```bash
@@ -102,7 +102,7 @@ npm start
 ```
 The frontend will run on `http://localhost:3000`
 
-## 📱 Usage Guide
+## Usage Guide
 
 ### **For Borrowers**
 1. **Register/Login** with borrower role
@@ -122,7 +122,7 @@ The frontend will run on `http://localhost:3000`
 3. **User Management** - Monitor and manage user accounts
 4. **Loan Oversight** - Track all loans and system statistics
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### **Authentication**
 - `POST /api/auth/register` - User registration
@@ -147,7 +147,7 @@ The frontend will run on `http://localhost:3000`
 - `PUT /api/admin/loans/:loanId/status` - Update loan status
 - `GET /api/admin/stats` - Get system statistics
 
-## 📊 Database Schema
+## Database Schema
 
 ### **User Model**
 ```javascript
@@ -189,7 +189,7 @@ The frontend will run on `http://localhost:3000`
 }
 ```
 
-## 🔒 Security Features
+## Security Features
 
 - **JWT Authentication** - Secure token-based authentication
 - **Role-based Access Control** - Different permissions for different user types
@@ -197,7 +197,7 @@ The frontend will run on `http://localhost:3000`
 - **CORS Protection** - Cross-origin request security
 - **Password Hashing** - Secure password storage
 
-## 🎯 Key Features in Detail
+## Key Features in Detail
 
 ### **Repayment Tracking**
 - Visual progress bars showing repayment status
@@ -217,7 +217,7 @@ The frontend will run on `http://localhost:3000`
 - Loan management with status updates
 - Real-time monitoring of all activities
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 
@@ -237,7 +237,7 @@ The frontend will run on `http://localhost:3000`
    - Verify the frontend URL is allowed in backend CORS settings
    - Check API URL configuration
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
@@ -245,17 +245,17 @@ The frontend will run on `http://localhost:3000`
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## Author
 
 **Your Name**
 - GitHub: [@yourusername](https://github.com/yourusername)
 - Email: your.email@example.com
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - React.js community for the amazing framework
 - MongoDB team for the robust database
