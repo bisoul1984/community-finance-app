@@ -60,11 +60,21 @@ const navItems = [
     useEffect(() => {
       const handleClickOutside = (event) => {
         if (navbarDropdownOpen || notificationsOpen) {
-          const dropdowns = document.querySelectorAll('[data-dropdown]');
+          // Check if click is inside any dropdown container
+          const dropdownContainers = document.querySelectorAll('[data-dropdown]');
+          const dropdownMenus = document.querySelectorAll('.dropdown-menu');
           let clickedInside = false;
           
-          dropdowns.forEach(dropdown => {
-            if (dropdown.contains(event.target)) {
+          // Check dropdown containers
+          dropdownContainers.forEach(container => {
+            if (container.contains(event.target)) {
+              clickedInside = true;
+            }
+          });
+          
+          // Check dropdown menus (the actual dropdown content)
+          dropdownMenus.forEach(menu => {
+            if (menu.contains(event.target)) {
               clickedInside = true;
             }
           });
@@ -275,9 +285,12 @@ const navItems = [
   ];
 
   // Debug: Log quickActions for troubleshooting
-  console.log('User role:', user.role);
-  console.log('Quick actions:', quickActions);
-  console.log('Current view:', currentView);
+  useEffect(() => {
+    console.log('User role:', user.role);
+    console.log('Quick actions:', quickActions);
+    console.log('Current view:', currentView);
+    console.log('Navbar dropdown open:', navbarDropdownOpen);
+  }, [user.role, quickActions, currentView, navbarDropdownOpen]);
 
   // Top Navbar Component
   const TopNavbar = () => (
@@ -533,7 +546,7 @@ const navItems = [
       
       {/* Dropdowns rendered at root level */}
       {navbarDropdownOpen && (
-        <div className="fixed top-20 right-4 w-48 sm:w-56 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999]">
+        <div className="fixed top-20 right-4 w-48 sm:w-56 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999] dropdown-menu">
           <div className="px-4 py-2 border-b border-slate-200">
             <h3 className="font-semibold text-slate-800 text-sm">Quick Actions</h3>
           </div>
@@ -546,10 +559,17 @@ const navItems = [
                   e.stopPropagation();
                   console.log('Quick action clicked:', action.label);
                   console.log('Executing action for:', action.label);
+                  console.log('Action function:', action.action);
                   try {
+                    // Execute the action first
                     action.action();
+                    // Then close the dropdown
+                    setTimeout(() => {
+                      setNavbarDropdownOpen(false);
+                    }, 100);
                   } catch (error) {
                     console.error('Error executing quick action:', error);
+                    setNavbarDropdownOpen(false);
                   }
                 }}
                 className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
@@ -567,7 +587,7 @@ const navItems = [
       )}
       
       {notificationsOpen && (
-        <div className="fixed top-20 right-4 w-72 sm:w-80 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999]">
+        <div className="fixed top-20 right-4 w-72 sm:w-80 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999] dropdown-menu">
           <div className="px-4 py-2 border-b border-slate-200">
             <h3 className="font-semibold text-slate-800">Notifications</h3>
           </div>
