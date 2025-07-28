@@ -90,8 +90,8 @@ const Dashboard = ({ user, onLogout }) => {
         {/* Left side - Logo and Search */}
         <div className="flex items-center space-x-4 w-full sm:w-auto">
           <div className="flex items-center space-x-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">ML</span>
+            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-md font-medium shadow transition-colors text-sm sm:text-base">
+              <span className="font-bold">ML</span>
             </div>
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-800 to-gray-700 bg-clip-text text-transparent">
               MicroLoan
@@ -115,11 +115,11 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
-              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors flex-shrink-0 whitespace-nowrap"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md font-medium transition-colors text-sm sm:text-base"
             >
               <span className="hidden sm:block">Quick Actions</span>
               <span className="sm:hidden">Actions</span>
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
@@ -194,16 +194,16 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setCurrentView('user-profile')}
-              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors flex-shrink-0 whitespace-nowrap"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md font-medium transition-colors text-sm sm:text-base"
             >
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-medium text-xs sm:text-sm">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </span>
               </div>
-              <div className="hidden md:block text-left flex-shrink-0">
-                <p className="text-sm font-medium text-slate-800 truncate">{user.name}</p>
-                <p className="text-xs text-slate-500 capitalize truncate">{user.role}</p>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-medium text-slate-800">{user.name}</p>
+                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
               </div>
             </button>
           </div>
@@ -211,10 +211,11 @@ const Dashboard = ({ user, onLogout }) => {
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors flex-shrink-0 whitespace-nowrap"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium shadow transition-colors text-sm sm:text-base"
           >
-            <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden md:block">Logout</span>
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden sm:inline">Logout</span>
+            <span className="sm:hidden">Exit</span>
           </button>
         </div>
       </div>
