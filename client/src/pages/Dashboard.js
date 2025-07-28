@@ -306,33 +306,6 @@ const navItems = [
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            
-            {navbarDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-[9999]">
-                {quickActions && quickActions.length > 0 ? (
-                  quickActions.map((action, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Quick action clicked:', action.label);
-                        action.action();
-                        setNavbarDropdownOpen(false);
-                      }}
-                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                    >
-                      <action.icon className="w-4 h-4" />
-                      <span>{action.label}</span>
-                    </button>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-sm text-slate-500">
-                    No actions available
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Notifications */}
@@ -350,46 +323,6 @@ const navItems = [
               {/* Notification badge */}
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
             </button>
-            
-            {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-[9999]">
-                <div className="px-4 py-2 border-b border-slate-200">
-                  <h3 className="font-semibold text-slate-800">Notifications</h3>
-                </div>
-                <div className="max-h-64 overflow-y-auto">
-                  {[
-                    { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
-                    { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
-                    { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
-                  ].map((notification, index) => (
-                    <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-800">{notification.title}</p>
-                          <p className="text-xs text-slate-600">{notification.message}</p>
-                          <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-4 py-2 border-t border-slate-200">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log('View all notifications clicked');
-                      setCurrentView('notifications');
-                      setNotificationsOpen(false);
-                    }}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    View all notifications
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* User Profile */}
@@ -576,6 +509,74 @@ const navItems = [
       
       {/* Chat Widget */}
       <ChatWidget user={user} />
+      
+      {/* Dropdowns rendered at root level */}
+      {navbarDropdownOpen && (
+        <div className="fixed top-20 right-4 w-48 sm:w-56 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999]">
+          {quickActions && quickActions.length > 0 ? (
+            quickActions.map((action, index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Quick action clicked:', action.label);
+                  action.action();
+                  setNavbarDropdownOpen(false);
+                }}
+                className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <action.icon className="w-4 h-4" />
+                <span>{action.label}</span>
+              </button>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-sm text-slate-500">
+              No actions available
+            </div>
+          )}
+        </div>
+      )}
+      
+      {notificationsOpen && (
+        <div className="fixed top-20 right-4 w-72 sm:w-80 bg-white rounded-lg shadow-2xl border border-slate-200 py-2 z-[99999]">
+          <div className="px-4 py-2 border-b border-slate-200">
+            <h3 className="font-semibold text-slate-800">Notifications</h3>
+          </div>
+          <div className="max-h-64 overflow-y-auto">
+            {[
+              { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
+              { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
+              { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
+            ].map((notification, index) => (
+              <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-800">{notification.title}</p>
+                    <p className="text-xs text-slate-600">{notification.message}</p>
+                    <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="px-4 py-2 border-t border-slate-200">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('View all notifications clicked');
+                setCurrentView('notifications');
+                setNotificationsOpen(false);
+              }}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              View all notifications
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
