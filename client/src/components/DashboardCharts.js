@@ -233,24 +233,65 @@ const DashboardCharts = ({ user, loans, payments }) => {
 
   // Export chart data
   const exportChartData = (type) => {
-    let data;
-    if (type === 'category') data = categoryBreakdown;
-    else if (type === 'region') data = regionBreakdown;
-    else if (type === 'risk') data = riskOverTime;
-    else data = chartData;
-    const blob = new Blob([
-      exportFormat === 'csv' ?
-        Object.entries(data).map(([k, v]) => `${k},${typeof v === 'object' ? JSON.stringify(v) : v}`).join('\n') :
-        JSON.stringify(data, null, 2)
-    ], { type: exportFormat === 'csv' ? 'text/csv' : 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${type}_chart.${exportFormat}`;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    try {
+      let data;
+      let fileName;
+      
+      if (type === 'category') {
+        data = categoryBreakdown;
+        fileName = 'portfolio_diversification';
+      } else if (type === 'region') {
+        data = regionBreakdown;
+        fileName = 'region_breakdown';
+      } else if (type === 'risk') {
+        data = riskOverTime;
+        fileName = 'risk_over_time';
+      } else {
+        data = chartData;
+        fileName = 'chart_data';
+      }
+
+      let content;
+      let mimeType;
+      
+      if (exportFormat === 'csv') {
+        // Handle different data structures for CSV export
+        if (Array.isArray(data)) {
+          // For risk over time data (array of objects)
+          const headers = Object.keys(data[0] || {}).join(',');
+          const rows = data.map(item => 
+            Object.values(item).map(val => 
+              typeof val === 'string' && val.includes(',') ? `"${val}"` : val
+            ).join(',')
+          );
+          content = [headers, ...rows].join('\n');
+        } else {
+          // For category and region breakdown (object)
+          const rows = Object.entries(data).map(([key, value]) => 
+            `${key},${value}`
+          );
+          content = rows.join('\n');
+        }
+        mimeType = 'text/csv';
+      } else {
+        // JSON format
+        content = JSON.stringify(data, null, 2);
+        mimeType = 'application/json';
+      }
+
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileName}.${exportFormat}`;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export data. Please try again.');
+    }
   };
 
   return (
@@ -270,7 +311,17 @@ const DashboardCharts = ({ user, loans, payments }) => {
               <li key={cat} className="flex justify-between text-sm sm:text-base"><span>{cat}</span><span>{count}</span></li>
             ))}
           </ul>
-          <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('category')}>Export</button>
+          <div className="flex items-center gap-2">
+            <select 
+              value={exportFormat} 
+              onChange={(e) => setExportFormat(e.target.value)}
+              className="px-2 py-1 border border-gray-300 rounded text-xs sm:text-sm"
+            >
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+            </select>
+            <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('category')}>Export</button>
+          </div>
         </div>
         {/* Region Breakdown */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
@@ -280,7 +331,17 @@ const DashboardCharts = ({ user, loans, payments }) => {
               <li key={region} className="flex justify-between text-sm sm:text-base"><span>{region}</span><span>{count}</span></li>
             ))}
           </ul>
-          <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('region')}>Export</button>
+          <div className="flex items-center gap-2">
+            <select 
+              value={exportFormat} 
+              onChange={(e) => setExportFormat(e.target.value)}
+              className="px-2 py-1 border border-gray-300 rounded text-xs sm:text-sm"
+            >
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+            </select>
+            <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('region')}>Export</button>
+          </div>
         </div>
         {/* Risk Over Time */}
         <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg col-span-1 md:col-span-2">
@@ -290,7 +351,17 @@ const DashboardCharts = ({ user, loans, payments }) => {
               <li key={idx} className="flex flex-col items-center text-xs sm:text-sm"><span className="font-bold">{item.month}</span><span>{item.defaultRate.toFixed(1)}%</span></li>
             ))}
           </ul>
-          <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('risk')}>Export</button>
+          <div className="flex items-center gap-2">
+            <select 
+              value={exportFormat} 
+              onChange={(e) => setExportFormat(e.target.value)}
+              className="px-2 py-1 border border-gray-300 rounded text-xs sm:text-sm"
+            >
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+            </select>
+            <button className="px-2 sm:px-3 py-1 bg-blue-600 text-white rounded text-xs sm:text-sm" onClick={() => exportChartData('risk')}>Export</button>
+          </div>
         </div>
       </div>
 
