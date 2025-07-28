@@ -72,13 +72,21 @@ const Wallet = ({ user }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
-      <h2 className="text-2xl font-bold mb-6 text-slate-900">My Wallet</h2>
-      <div className="bg-white rounded-lg shadow p-6 mb-8 flex flex-col items-center">
-        <span className="text-slate-500 text-sm mb-1">Wallet Balance</span>
-        <span className="text-3xl font-bold text-blue-700 mb-2">${(balance || 0).toLocaleString()}</span>
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3 items-center mt-4 w-full max-w-md">
-          <select value={type} onChange={e => setType(e.target.value)} className="border rounded px-3 py-2">
+    <div className="max-w-2xl mx-auto py-4 sm:py-6 lg:py-10 px-3 sm:px-4">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-slate-900">My Wallet</h2>
+      
+      {/* Wallet Balance Card */}
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6 sm:mb-8 flex flex-col items-center">
+        <span className="text-slate-500 text-xs sm:text-sm mb-1">Wallet Balance</span>
+        <span className="text-2xl sm:text-3xl font-bold text-blue-700 mb-3 sm:mb-2">${(balance || 0).toLocaleString()}</span>
+        
+        {/* Fund/Withdraw Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 items-center mt-4 w-full max-w-md">
+          <select 
+            value={type} 
+            onChange={e => setType(e.target.value)} 
+            className="w-full sm:w-auto border rounded px-3 py-2 text-sm sm:text-base"
+          >
             <option value="fund">Fund Wallet</option>
             <option value="withdraw">Withdraw</option>
           </select>
@@ -88,40 +96,69 @@ const Wallet = ({ user }) => {
             value={amount}
             onChange={e => setAmount(e.target.value)}
             placeholder="Amount"
-            className="border rounded px-3 py-2 flex-1"
+            className="w-full sm:flex-1 border rounded px-3 py-2 text-sm sm:text-base"
           />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded font-semibold" disabled={loading}>
+          <button 
+            type="submit" 
+            className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded font-semibold text-sm sm:text-base hover:bg-blue-700 transition-colors" 
+            disabled={loading}
+          >
             {loading ? 'Processing...' : type === 'fund' ? 'Fund' : 'Withdraw'}
           </button>
         </form>
-        {error && <div className="text-red-600 mt-2">{error}</div>}
-        {success && <div className="text-green-600 mt-2">{success}</div>}
+        
+        {/* Messages */}
+        {error && <div className="text-red-600 mt-3 text-sm sm:text-base text-center">{error}</div>}
+        {success && <div className="text-green-600 mt-3 text-sm sm:text-base text-center">{success}</div>}
       </div>
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold mb-4 text-slate-800">Transaction History</h3>
+      
+      {/* Transaction History */}
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold mb-4 text-slate-800">Transaction History</h3>
         {transactions.length === 0 ? (
-          <div className="text-slate-400 text-center">No transactions yet.</div>
+          <div className="text-slate-400 text-center py-8 text-sm sm:text-base">No transactions yet.</div>
         ) : (
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="bg-slate-100">
-                <th className="px-4 py-2 text-left">Type</th>
-                <th className="px-4 py-2 text-left">Amount</th>
-                <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((tx, i) => (
-                <tr key={i} className="border-b">
-                  <td className="px-4 py-2 capitalize">{tx.type}</td>
-                  <td className="px-4 py-2">${(tx.amount || 0).toLocaleString()}</td>
-                  <td className="px-4 py-2">{new Date(tx.date).toLocaleString()}</td>
-                  <td className="px-4 py-2">{tx.description || '-'}</td>
+          <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <table className="min-w-full text-xs sm:text-sm hidden sm:table">
+              <thead>
+                <tr className="bg-slate-100">
+                  <th className="px-3 sm:px-4 py-2 text-left">Type</th>
+                  <th className="px-3 sm:px-4 py-2 text-left">Amount</th>
+                  <th className="px-3 sm:px-4 py-2 text-left">Date</th>
+                  <th className="px-3 sm:px-4 py-2 text-left">Description</th>
                 </tr>
+              </thead>
+              <tbody>
+                {transactions.map((tx, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="px-3 sm:px-4 py-2 capitalize">{tx.type}</td>
+                    <td className="px-3 sm:px-4 py-2">${(tx.amount || 0).toLocaleString()}</td>
+                    <td className="px-3 sm:px-4 py-2">{new Date(tx.date).toLocaleString()}</td>
+                    <td className="px-3 sm:px-4 py-2">{tx.description || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            {/* Mobile Cards */}
+            <div className="space-y-3 sm:hidden">
+              {transactions.map((tx, i) => (
+                <div key={i} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-medium text-sm capitalize text-blue-600">{tx.type}</span>
+                    <span className="font-bold text-sm text-green-600">${(tx.amount || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="text-xs text-gray-600 mb-1">
+                    {new Date(tx.date).toLocaleDateString()} {new Date(tx.date).toLocaleTimeString()}
+                  </div>
+                  <div className="text-xs text-gray-700">
+                    {tx.description || 'No description'}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         )}
       </div>
     </div>
