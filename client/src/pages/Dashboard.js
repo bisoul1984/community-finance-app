@@ -89,7 +89,7 @@ const Dashboard = ({ user, onLogout }) => {
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         {/* Left side - Logo and Search */}
         <div className="flex items-center space-x-4 w-full sm:w-auto">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-shrink-0">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">ML</span>
             </div>
@@ -99,23 +99,23 @@ const Dashboard = ({ user, onLogout }) => {
           </div>
           
           {/* Search Bar */}
-          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2 flex-1 sm:flex-none">
+          <div className="hidden md:flex items-center space-x-2 bg-slate-100 rounded-lg px-3 py-2 flex-1 max-w-md">
             <Search className="w-4 h-4 text-slate-500" />
             <input
               type="text"
               placeholder="Search loans, users, or documents..."
-              className="bg-transparent border-none outline-none text-sm text-slate-700 placeholder-slate-500 w-64"
+              className="bg-transparent border-none outline-none text-sm text-slate-700 placeholder-slate-500 w-full"
             />
           </div>
         </div>
 
         {/* Right side - Notifications, Profile, etc. */}
-        <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto justify-center sm:justify-end">
+        <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
           {/* Quick Actions Dropdown */}
           <div className="relative">
             <button
               onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
-              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors"
+              className="flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors flex-shrink-0"
             >
               <span className="hidden sm:block">Quick Actions</span>
               <span className="sm:hidden">Actions</span>
@@ -194,7 +194,7 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="relative">
             <button
               onClick={() => setCurrentView('user-profile')}
-              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors"
+              className="flex items-center space-x-2 sm:space-x-3 bg-slate-100 hover:bg-slate-200 rounded-lg px-2 sm:px-3 py-2 transition-colors flex-shrink-0"
             >
               <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-medium text-xs sm:text-sm">
@@ -211,7 +211,7 @@ const Dashboard = ({ user, onLogout }) => {
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors"
+            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors flex-shrink-0"
           >
             <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="hidden md:block">Logout</span>
