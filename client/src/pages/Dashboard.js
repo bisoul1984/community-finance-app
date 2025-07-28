@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LogOut, Bell, User, TrendingUp, FileText, CreditCard, Shield, Users, ClipboardList, Calendar, Settings, BarChart2, FilePlus, CheckCircle, AlertCircle, Search, Home, Wallet as WalletIcon, MessageCircle, HelpCircle } from 'lucide-react';
 import CreateLoan from './CreateLoan';
 import BrowseLoans from './BrowseLoans';
@@ -43,14 +43,45 @@ const navItems = [
   { key: 'chat', label: 'Community Chat', icon: MessageCircle, roles: ['borrower', 'lender', 'admin'] },
 ];
 
-const Dashboard = ({ user, onLogout }) => {
-  const [currentView, setCurrentView] = useState('main');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [navbarDropdownOpen, setNavbarDropdownOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const Dashboard = ({ user, onLogout }) => {
+    const [currentView, setCurrentView] = useState('main');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [navbarDropdownOpen, setNavbarDropdownOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-  // Dummy stats for demonstration
+        // Close dropdowns when clicking outside
+    const closeDropdowns = () => {
+      setNavbarDropdownOpen(false);
+      setNotificationsOpen(false);
+    };
+
+    // Handle clicking outside dropdowns
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (navbarDropdownOpen || notificationsOpen) {
+          const dropdowns = document.querySelectorAll('[data-dropdown]');
+          let clickedInside = false;
+          
+          dropdowns.forEach(dropdown => {
+            if (dropdown.contains(event.target)) {
+              clickedInside = true;
+            }
+          });
+          
+          if (!clickedInside) {
+            closeDropdowns();
+          }
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [navbarDropdownOpen, notificationsOpen]);
+
+    // Dummy stats for demonstration
   const stats = user.role === 'borrower' ? [
     { label: 'Active Loans', value: 0, icon: CreditCard, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Total Borrowed', value: '$0', icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50' },
@@ -112,81 +143,97 @@ const Dashboard = ({ user, onLogout }) => {
         {/* Right side - Notifications, Profile, etc. */}
         <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
           {/* Quick Actions Dropdown */}
-          <div className="relative">
+          <div className="relative" data-dropdown>
             <button
               onClick={() => setNavbarDropdownOpen(!navbarDropdownOpen)}
               className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-md font-medium transition-colors text-sm sm:text-base"
             >
               <span className="hidden sm:block">Quick Actions</span>
               <span className="sm:hidden">Actions</span>
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${navbarDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             
             {navbarDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                {quickActions.map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      action.action();
-                      setNavbarDropdownOpen(false);
-                    }}
-                    className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                  >
-                    <action.icon className="w-4 h-4" />
-                    <span>{action.label}</span>
-                  </button>
-                ))}
-              </div>
+              <>
+                {/* Backdrop for mobile */}
+                <div 
+                  className="fixed inset-0 z-40 md:hidden" 
+                  onClick={() => setNavbarDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                  {quickActions.map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        action.action();
+                        setNavbarDropdownOpen(false);
+                      }}
+                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <action.icon className="w-4 h-4" />
+                      <span>{action.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative" data-dropdown>
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               className="relative p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
             >
               <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+              {/* Notification badge */}
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
             </button>
             
             {notificationsOpen && (
-              <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                <div className="px-4 py-2 border-b border-slate-200">
-                  <h3 className="font-semibold text-slate-800">Notifications</h3>
-                </div>
-                <div className="max-h-64 overflow-y-auto">
-                  {[
-                    { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
-                    { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
-                    { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
-                  ].map((notification, index) => (
-                    <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-800">{notification.title}</p>
-                          <p className="text-xs text-slate-600">{notification.message}</p>
-                          <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
+              <>
+                {/* Backdrop for mobile */}
+                <div 
+                  className="fixed inset-0 z-40 md:hidden" 
+                  onClick={() => setNotificationsOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                  <div className="px-4 py-2 border-b border-slate-200">
+                    <h3 className="font-semibold text-slate-800">Notifications</h3>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {[
+                      { title: 'Loan Approved', message: 'Your loan request has been approved', time: '2 min ago' },
+                      { title: 'Payment Due', message: 'Payment reminder for loan #1234', time: '1 hour ago' },
+                      { title: 'New Investment', message: 'Someone invested in your loan', time: '3 hours ago' },
+                    ].map((notification, index) => (
+                      <div key={index} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 cursor-pointer">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-800">{notification.title}</p>
+                            <p className="text-xs text-slate-600">{notification.message}</p>
+                            <p className="text-xs text-slate-400 mt-1">{notification.time}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <div className="px-4 py-2 border-t border-slate-200">
+                    <button
+                      onClick={() => {
+                        setCurrentView('notifications');
+                        setNotificationsOpen(false);
+                      }}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      View all notifications
+                    </button>
+                  </div>
                 </div>
-                <div className="px-4 py-2 border-t border-slate-200">
-                  <button
-                    onClick={() => {
-                      setCurrentView('notifications');
-                      setNotificationsOpen(false);
-                    }}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    View all notifications
-                  </button>
-                </div>
-              </div>
+              </>
             )}
           </div>
 
