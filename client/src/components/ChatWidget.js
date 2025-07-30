@@ -34,7 +34,7 @@ const ChatWidget = ({ user }) => {
           onClick={() => setIsOpen(true)}
           className="bg-blue-500 text-white p-2 sm:p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
         >
-          <MessageCircle size={20} className="sm:size-24" />
+          <MessageCircle size={20} />
         </button>
       </div>
     );
@@ -46,14 +46,14 @@ const ChatWidget = ({ user }) => {
         {/* Header */}
         <div className="bg-blue-500 text-white p-2 sm:p-3 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center">
-            <MessageCircle size={16} className="sm:size-20 mr-2" />
+            <MessageCircle size={16} className="mr-2" />
             <span className="font-medium text-sm sm:text-base">Chat</span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
             className="p-1 hover:bg-blue-600 rounded"
           >
-            <X size={14} className="sm:size-16" />
+            <X size={14} />
           </button>
         </div>
 
@@ -92,7 +92,7 @@ const ChatWidget = ({ user }) => {
               disabled={!message.trim()}
               className="p-1 sm:p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send size={14} className="sm:size-16" />
+              <Send size={14} />
             </button>
           </div>
         </div>
