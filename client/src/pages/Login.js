@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../api/auth';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Login = ({ onLogin }) => {
+  useDocumentTitle('Sign In');
+  
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

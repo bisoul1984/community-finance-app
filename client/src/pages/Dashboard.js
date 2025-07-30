@@ -19,6 +19,7 @@ import LenderNotifications from './LenderNotifications';
 import Wallet from './Wallet';
 import ChatSystem from '../components/ChatSystem';
 import ChatWidget from '../components/ChatWidget';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const navItems = [
   { key: 'main', label: 'Overview', icon: BarChart2 },
@@ -44,6 +45,8 @@ const navItems = [
 ];
 
   const Dashboard = ({ user, onLogout }) => {
+    useDocumentTitle('Dashboard');
+    
     const [currentView, setCurrentView] = useState('main');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [navbarDropdownOpen, setNavbarDropdownOpen] = useState(false);
@@ -96,6 +99,35 @@ const navItems = [
     // Debug: Track currentView changes
     useEffect(() => {
       console.log('Current view changed to:', currentView);
+    }, [currentView]);
+
+    // Update document title based on current view
+    useEffect(() => {
+      const viewTitles = {
+        'main': 'Dashboard',
+        'create-loan': 'Request Loan',
+        'repayment-tracker': 'Repayments',
+        'loan-history': 'Loan History',
+        'community-verification': 'Community',
+        'payments': 'Payments',
+        'loan-calculator': 'Loan Calculator',
+        'document-upload': 'Documents',
+        'enhanced-dashboard': 'Enhanced Dashboard',
+        'notifications': 'Notifications',
+        'payment-scheduler': 'Payment Scheduler',
+        'user-profile': 'Profile',
+        'admin-panel': 'Admin Panel',
+        'reporting': 'Reporting',
+        'browse-loans': 'Browse Loans',
+        'investment-history': 'Investments',
+        'returns-tracker': 'Returns Tracker',
+        'lender-notifications': 'Lender Notifications',
+        'wallet': 'Wallet',
+        'chat': 'Community Chat'
+      };
+      
+      const title = viewTitles[currentView] || 'Dashboard';
+      document.title = `💰 MicroLoan - ${title}`;
     }, [currentView]);
 
     // Dummy stats for demonstration

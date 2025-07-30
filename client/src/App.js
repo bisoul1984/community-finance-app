@@ -10,6 +10,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Security from './pages/Security';
 import { logout, getCurrentUser } from './api/auth';
+import useDocumentTitle from './hooks/useDocumentTitle';
 
 // Wrapper component to use useNavigate hook
 function AppContent() {
@@ -62,6 +63,8 @@ function AppContent() {
 }
 
 function App() {
+  useDocumentTitle('Peer-to-Peer Lending Platform');
+
   return (
     <Router>
       <AppContent />

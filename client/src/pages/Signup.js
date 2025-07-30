@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signup } from '../api/auth';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const Signup = ({ onSignup }) => {
+  useDocumentTitle('Create Account');
+  
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'borrower' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

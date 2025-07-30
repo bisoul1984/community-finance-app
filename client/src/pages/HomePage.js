@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 // Add custom CSS for animations and modern design
 const styles = `
@@ -157,6 +158,8 @@ if (typeof document !== 'undefined') {
 }
 
 const HomePage = () => {
+  useDocumentTitle('Community Finance Platform');
+  
   const [isVisible, setIsVisible] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [stats, setStats] = useState({
